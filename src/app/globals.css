@@ -3,19 +3,84 @@
 @tailwind utilities;
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+  --black-dark: #0d0d0d;
+  --black-light: #1a1a1a;
+  --white-ivory: #fdf6e3;
+  --white-basic: #f8f8f8;
+  --gray-ash: #b0b0b0;
+  --gold-soft: #d4af37;
+  --gold-dark: #92781f;
+  --green-olive: #9cb380;
+  --green-dark: #7c985a;
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --primary-font: "Merriweather", serif;
+  --secondary-font: "Roboto", sans-serif;
 }
 
 body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--secondary-font);
+  background: var(--black-light);
+  color: var(--white-basic);
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  min-width: 100%;
+  flex-grow: 1;
+}
+
+.wrapper {
+  width: 95%;
+  max-width: 1390px;
+  margin: 0 auto;
+}
+
+h1 {
+  margin-top: 0.3rem;
+  margin-bottom: 0.3rem;
+  font-family: var(--primary-font);
+  font-size: 2.8rem;
+  font-weight: 500;
+  text-align: center;
+}
+
+h2 {
+  font-size: 2rem;
+  font-weight: 500;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.button_gold {
+  background-color: var(--gold-soft);
+  color: var(--black-dark);
+  font-size: 1.25rem;
+  font-weight: bold;
+  display: block;
+  width: max-content;
+  padding: 0.5rem 1.5rem;
+  border-radius: 9999px;
+  transition: background-color 0.3s ease;
+}
+
+.button_gold:hover {
+  background-color: var(--gold-dark);
+}
+
+.button_green {
+  background-color: var(--green-olive);
+  color: var(--black-dark);
+  font-size: 1.25rem;
+  font-weight: bold;
+  display: block;
+  width: max-content;
+  padding: 0.5rem 1.5rem;
+  border-radius: 9999px;
+  transition: background-color 0.3s ease;
+}
+
+.button_green:hover {
+  background-color: var(--green-dark);
 }
