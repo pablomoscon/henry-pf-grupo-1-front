@@ -1,2 +1,52 @@
-node_modules
+# Dependencias de Node.js
+node_modules/
+
+# Archivos y carpetas generados por Next.js
+.next/
+out/
+
+# Archivos de logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Archivos de construcción
+build/
+dist/
+
+# Archivos de configuración locales y del sistema operativo
 .env
+.env.* # Variables de entorno específicas
+.DS_Store # macOS
+Thumbs.db # Windows
+
+# Archivos del editor
+*.swp
+*.swo
+*.idea/
+*.vscode/
+*.history/
+*.log
+
+# Archivos de paquetes
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Archivos relacionados con tests
+coverage/
+*.lcov
+
+# Archivos temporales
+*.temp
+*.tmp
+*.bak
+*.orig
+
+# Otros casos comunes
+*.cache
+*.gz
+
+# Archivos relacionados con Git
+*.rej
