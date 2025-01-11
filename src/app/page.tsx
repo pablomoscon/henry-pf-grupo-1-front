@@ -6,7 +6,7 @@ const Home = () => {
       <div className="flex flex-col">
         <div className="relative mb-9 w-full h-[300px] sm:h-[400px] md:h-[500px] lg:h-[600px]">
           <Image
-            src="/gato banner2.jpg"
+            src="/gato bannerhome.jpg"
             alt="Banner del sitio"
             layout="fill"
             objectFit="cover"

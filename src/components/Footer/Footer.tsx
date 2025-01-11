@@ -1,3 +1,5 @@
+//comentario para probando github
+
 const Footer = () => {
   return (
     <footer className="w-full bg-green-olive text-black-dark fixed bottom-0 left-0 h-9 z-50">
