@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Merriweather, Roboto } from "next/font/google";
 import "./globals.css";
+import Navbar from "@/components/Navbar/Navbar";
+import Footer from "@/components/Footer/Footer";
 
 const primaryFont = Merriweather({
   subsets: ["latin"],
@@ -29,7 +31,12 @@ export default function RootLayout({
       <body
         className={`${primaryFont.variable} ${secondaryFont.variable} antialiased`}
       >
-        {children}
+        <div className="flex flex-col min-h-screen">
+          <Navbar />
+          <main className="flex-1 mt-12 mb-footer">{children}</main>
+
+          <Footer />
+        </div>
       </body>
     </html>
   );
