@@ -408,6 +408,10 @@ img, video {
   margin-top: 2rem;
 }
 
+.mr-2 {
+  margin-right: .5rem;
+}
+
 .flex {
   display: flex;
 }
@@ -672,6 +676,11 @@ h2 {
 
 .button_green:hover {
   background-color: var(--green-dark);
+}
+
+.hover\:text-green-dark:hover {
+  --tw-text-opacity: 1;
+  color: rgb(124 152 90 / var(--tw-text-opacity, 1));
 }
 
 @media (width >= 640px) {
