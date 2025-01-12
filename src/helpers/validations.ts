@@ -32,12 +32,19 @@ export const suitesSchema = yup.object().shape({
     .max(500, "Description should not exceed 500 characters")
     .trim()
     .required("Required"),
-  features: yup.object().shape({
-    hidingPlace: yup.boolean().required("Required"),
-    hammocks: yup.boolean().required("Required"),
-    scratchers: yup.boolean().required("Required"),
-    suspensionBridges: yup.boolean().required("Required"),
-  }),
+  features: yup
+    .object()
+    .shape({
+      hidingPlace: yup.boolean(),
+      hammocks: yup.boolean(),
+      scratchers: yup.boolean(),
+      suspensionBridges: yup.boolean(),
+    })
+    .test(
+      "at-least-one-feature",
+      "Please select at least one feature",
+      (value) => Object.values(value || {}).some(Boolean)
+    ),
   numberOfCats: yup
     .number()
     .positive("Minimum 1")
@@ -52,23 +59,17 @@ export const suitesSchema = yup.object().shape({
 });
 
 export const registerSchema = yup.object().shape({
-  firstName: yup
+  customerId: yup
     .string()
-    .min(2, "First name should have at least 2 characters")
-    .max(50, "First name should not exceed 50 characters")
-    .trim()
+    .matches(/^\d+$/, "Only numbers are allowed")
     .required("Required"),
-  lastName: yup
+  fullName: yup.string().required("Required"),
+  address: yup.string().required("Required"),
+  phone: yup
     .string()
-    .min(2, "Last name should have at least 2 characters")
-    .max(50, "Last name should not exceed 50 characters")
-    .trim()
+    .matches(/^\d+$/, "Only numbers are allowed")
     .required("Required"),
-  email: yup
-    .string()
-    .email("Please enter a valid email")
-    .trim()
-    .required("Required"),
+  email: yup.string().email("Please enter a valid email").required("Required"),
   password: yup
     .string()
     .min(5)
@@ -81,4 +82,22 @@ export const registerSchema = yup.object().shape({
     .string()
     .oneOf([yup.ref("password")], "Passwords must match")
     .required("Required"),
+  catName: yup.string().required("Required"),
+  dateOfBirth: yup.string().required("Required"),
+  isNeutered: yup.boolean(),
+  weight: yup
+    .string()
+    .matches(/^\d+$/, "Only numbers are allowed")
+    .required("Required"),
+  personality: yup.string(),
+  getsAlongWithCats: yup.string(),
+  food: yup.string(),
+  medication: yup.string(),
+  veterinarianBehavior: yup.string(),
+  vaccinations: yup.object().shape({
+    rabies: yup.boolean(),
+    tripleFeline: yup.boolean(),
+    fivFelv: yup.boolean(),
+  }),
+  catPhoto: yup.string(),
 });
