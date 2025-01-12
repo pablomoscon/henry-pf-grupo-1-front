@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
+import UserWidget from "../UserWidget/UserWidget";
 
 const Navbar = () => {
   return (
@@ -18,68 +19,42 @@ const Navbar = () => {
           />
           The Fancy Box
         </Link>
-        <ul className="flex items-center gap-6 text-xs font-semibold text-black-dark">
-          <li>
-            <Link
-              href="/"
-              className="flex items-center hover:text-green-dark transition-colors"
-            >
-              <Image
-                src="/HomeIcono.png"
-                alt="Home Icon"
-                width={16}
-                height={16}
-                className="mr-2"
-              />
-              Home
-            </Link>
-          </li>
-          <li>
-            <Link
-              href="#"
-              className="flex items-center hover:text-green-dark transition-colors"
-            >
-              <Image
-                src="/AboutIcono.png"
-                alt="About Us Icon"
-                width={16}
-                height={16}
-                className="mr-2"
-              />
-              About Us
-            </Link>
-          </li>
-          <li>
-            <Link
-              href="/login"
-              className="flex items-center hover:text-green-dark transition-colors"
-            >
-              <Image
-                src="/PerfilIcono.png"
-                alt="Sign In Icon"
-                width={16}
-                height={16}
-                className="mr-2"
-              />
-              Sign In
-            </Link>
-          </li>
-          <li>
-            <Link
-              href="/dashboard"
-              className="flex items-center hover:text-green-dark transition-colors"
-            >
-              <Image
-                src="/PerfilIcono.png"
-                alt="Sign In Icon"
-                width={16}
-                height={16}
-                className="mr-2"
-              />
-              Dashboard
-            </Link>
-          </li>
-        </ul>
+
+        <div className="flex items-center gap-6 text-xs font-semibold text-black-dark">
+          <ul className="flex items-center gap-6">
+            <li>
+              <Link
+                href="/"
+                className="flex items-center hover:text-green-dark transition-colors"
+              >
+                <Image
+                  src="/HomeIcono.png"
+                  alt="Home Icon"
+                  width={16}
+                  height={16}
+                  className="mr-2"
+                />
+                Home
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="#"
+                className="flex items-center hover:text-green-dark transition-colors"
+              >
+                <Image
+                  src="/AboutIcono.png"
+                  alt="About Us Icon"
+                  width={16}
+                  height={16}
+                  className="mr-2"
+                />
+                About Us
+              </Link>
+            </li>
+          </ul>
+          <UserWidget />
+        </div>
       </div>
     </nav>
   );
