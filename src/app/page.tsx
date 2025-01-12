@@ -1,4 +1,10 @@
+"use client";
 import Image from "next/image";
+import { getRooms } from "@/services/roomService";
+import { IRoom } from "@/interfaces/IRoom";
+import Card from "@/components/Card/Card";
+
+const rooms = await getRooms();
 
 const Home = () => {
   return (
@@ -23,59 +29,17 @@ const Home = () => {
         </div>
       </div>
       <div className="container">
-        <h1 className="mt-5  mb-10">Colors</h1>
-        <h2>White-Ivory</h2>
-        <div className="wrapper bg-white-ivory flex items-center justify-center  p-6">
-          <p className="text-black-dark font-primary">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent
-            vitae eros eget tellus tristique bibendum. Donec rutrum sed sem quis
-            venenatis.
-          </p>
+        <h1 className="mt-5  mb-10 text-gold-soft">Our Suites</h1>
+        <hr />
+        <br />
+
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 w-11/12 mx-auto my-4">
+          {rooms.map((room: IRoom) => (
+            <div key={room.id}>
+              <Card room={room} />
+            </div>
+          ))}
         </div>
-
-        <h2 className="mt-8">Green-Olive</h2>
-        <div className="wrapper bg-green-olive flex items-center justify-center  p-6 mb-4">
-          <p className="text-black-dark font-secondary">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent
-            vitae eros eget tellus tristique bibendum. Donec rutrum sed sem quis
-            venenatis.
-          </p>
-        </div>
-
-        <h2 className="mt-8">Gold-Soft</h2>
-        <div className="wrapper bg-gold-soft flex items-center justify-center  p-6 mb-4">
-          <p className="text-black-dark">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent
-            vitae eros eget tellus tristique bibendum. Donec rutrum sed sem quis
-            venenatis.
-          </p>
-        </div>
-
-        <h2 className="mt-8">Gray-Ash</h2>
-        <div className="wrapper bg-gray-ash flex items-center justify-center  p-6 mb-4">
-          <p className="text-black-dark">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent
-            vitae eros eget tellus tristique bibendum. Donec rutrum sed sem quis
-            venenatis.
-          </p>
-        </div>
-
-        <h2 className="mt-8">Black-Dark</h2>
-        <div className="wrapper bg-black-dark flex items-center justify-center  p-6 mb-4">
-          <p className=" text-white">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent
-            vitae eros eget tellus tristique bibendum. Donec rutrum sed sem quis
-            venenatis.
-          </p>
-        </div>
-      </div>
-
-      <div className="mb-3 flex items-center justify-center  p-3">
-        <button className="button_gold">Boton Dorado</button>
-      </div>
-
-      <div className="mb-5 flex items-center justify-center  p-3">
-        <button className="button_green">Boton Verde</button>
       </div>
     </main>
   );
