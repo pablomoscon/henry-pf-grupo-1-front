@@ -3,41 +3,75 @@ import { useFormik } from "formik";
 import { registerSchema } from "../../helpers/validations";
 
 const RegisterForm = () => {
-  const { values, isSubmitting, handleBlur, handleChange, handleSubmit } =
-    useFormik({
-      initialValues: {
-        customerId: "",
-        fullName: "",
-        address: "",
-        phone: "",
-        email: "",
-        password: "",
-        confirmPassword: "",
-        catName: "",
-        dateOfBirth: "",
-        isNeutered: false,
-        weight: "",
-        personality: "",
-        getsAlongWithCats: "",
-        food: "",
-        medication: "",
-        veterinarianBehavior: "",
-        vaccinations: {
-          rabies: false,
-          tripleFeline: false,
-          fivFelv: false,
+  const {
+    values,
+    errors,
+    touched,
+    isSubmitting,
+    handleBlur,
+    handleChange,
+    handleSubmit,
+  } = useFormik({
+    initialValues: {
+      customerId: "",
+      fullName: "",
+      address: "",
+      phone: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+      catName: "",
+      dateOfBirth: "",
+      isNeutered: false,
+      weight: "",
+      personality: "",
+      getsAlongWithCats: "unsure",
+      food: "",
+      medication: "",
+      veterinarianBehavior: "",
+      vaccinations: {
+        rabies: false,
+        tripleFeline: false,
+        fivFelv: false,
+      },
+      catPhoto: "",
+    },
+    validationSchema: registerSchema,
+    onSubmit: async (values, actions) => {
+      actions.setSubmitting(true);
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      const formattedData = {
+        customer: {
+          customerId: values.customerId,
+          fullName: values.fullName,
+          address: values.address,
+          phone: values.phone,
+          email: values.email,
+          password: values.password,
         },
-        catPhoto: "",
-      },
-      validationSchema: registerSchema,
-      onSubmit: async (values, actions) => {
-        actions.setSubmitting(true);
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-        console.log("Registration successful", values);
-        actions.resetForm();
-        actions.setSubmitting(false);
-      },
-    });
+        cat: {
+          name: values.catName,
+          dateOfBirth: values.dateOfBirth,
+          isNeutered: values.isNeutered,
+          weight: values.weight,
+          personality: values.personality,
+          getsAlongWithCats: values.getsAlongWithCats,
+          food: values.food,
+          medication: values.medication,
+          veterinarianBehavior: values.veterinarianBehavior,
+          vaccinations: Object.entries(values.vaccinations)
+            .filter(([, isSelected]) => isSelected)
+            .map(([vaccineName]) => vaccineName),
+          photo: values.catPhoto,
+        },
+      };
+
+      console.log("Registration data:", formattedData);
+      actions.resetForm();
+      actions.setSubmitting(false);
+    },
+  });
 
   return (
     <div className="flex items-center justify-center mt-2">
@@ -49,7 +83,6 @@ const RegisterForm = () => {
       >
         <h2 style={{ color: "var(--gold-soft)" }}>Customer Data</h2>
 
-        {/* Customer Data Section */}
         <div className="space-y-4">
           <div>
             <label
@@ -65,12 +98,19 @@ const RegisterForm = () => {
               value={values.customerId}
               onChange={handleChange}
               onBlur={handleBlur}
-              className="mt-1 block w-full rounded-md border p-2 border-gray-600 focus:outline-none focus:ring-2"
+              className={`mt-1 block w-full rounded-md border p-2 ${
+                errors.customerId && touched.customerId
+                  ? "border-red-500"
+                  : "border-gray-600"
+              } focus:outline-none focus:ring-2`}
               style={{
                 backgroundColor: "var(--black-light)",
                 color: "var(--white-basic)",
               }}
             />
+            {errors.customerId && touched.customerId && (
+              <p className="mt-1 text-sm text-red-500">{errors.customerId}</p>
+            )}
           </div>
 
           <div>
@@ -87,12 +127,19 @@ const RegisterForm = () => {
               value={values.fullName}
               onChange={handleChange}
               onBlur={handleBlur}
-              className="mt-1 block w-full rounded-md border p-2 border-gray-600 focus:outline-none focus:ring-2"
+              className={`mt-1 block w-full rounded-md border p-2 ${
+                errors.fullName && touched.fullName
+                  ? "border-red-500"
+                  : "border-gray-600"
+              } focus:outline-none focus:ring-2`}
               style={{
                 backgroundColor: "var(--black-light)",
                 color: "var(--white-basic)",
               }}
             />
+            {errors.fullName && touched.fullName && (
+              <p className="mt-1 text-sm text-red-500">{errors.fullName}</p>
+            )}
           </div>
 
           <div>
@@ -109,12 +156,19 @@ const RegisterForm = () => {
               value={values.address}
               onChange={handleChange}
               onBlur={handleBlur}
-              className="mt-1 block w-full rounded-md border p-2 border-gray-600 focus:outline-none focus:ring-2"
+              className={`mt-1 block w-full rounded-md border p-2 ${
+                errors.address && touched.address
+                  ? "border-red-500"
+                  : "border-gray-600"
+              } focus:outline-none focus:ring-2`}
               style={{
                 backgroundColor: "var(--black-light)",
                 color: "var(--white-basic)",
               }}
             />
+            {errors.address && touched.address && (
+              <p className="mt-1 text-sm text-red-500">{errors.address}</p>
+            )}
           </div>
 
           <div>
@@ -131,12 +185,19 @@ const RegisterForm = () => {
               value={values.phone}
               onChange={handleChange}
               onBlur={handleBlur}
-              className="mt-1 block w-full rounded-md border p-2 border-gray-600 focus:outline-none focus:ring-2"
+              className={`mt-1 block w-full rounded-md border p-2 ${
+                errors.phone && touched.phone
+                  ? "border-red-500"
+                  : "border-gray-600"
+              } focus:outline-none focus:ring-2`}
               style={{
                 backgroundColor: "var(--black-light)",
                 color: "var(--white-basic)",
               }}
             />
+            {errors.phone && touched.phone && (
+              <p className="mt-1 text-sm text-red-500">{errors.phone}</p>
+            )}
           </div>
 
           <div>
@@ -153,12 +214,19 @@ const RegisterForm = () => {
               value={values.email}
               onChange={handleChange}
               onBlur={handleBlur}
-              className="mt-1 block w-full rounded-md border p-2 border-gray-600 focus:outline-none focus:ring-2"
+              className={`mt-1 block w-full rounded-md border p-2 ${
+                errors.email && touched.email
+                  ? "border-red-500"
+                  : "border-gray-600"
+              } focus:outline-none focus:ring-2`}
               style={{
                 backgroundColor: "var(--black-light)",
                 color: "var(--white-basic)",
               }}
             />
+            {errors.email && touched.email && (
+              <p className="mt-1 text-sm text-red-500">{errors.email}</p>
+            )}
           </div>
 
           <div>
@@ -175,12 +243,19 @@ const RegisterForm = () => {
               value={values.password}
               onChange={handleChange}
               onBlur={handleBlur}
-              className="mt-1 block w-full rounded-md border p-2 border-gray-600 focus:outline-none focus:ring-2"
+              className={`mt-1 block w-full rounded-md border p-2 ${
+                errors.password && touched.password
+                  ? "border-red-500"
+                  : "border-gray-600"
+              } focus:outline-none focus:ring-2`}
               style={{
                 backgroundColor: "var(--black-light)",
                 color: "var(--white-basic)",
               }}
             />
+            {errors.password && touched.password && (
+              <p className="mt-1 text-sm text-red-500">{errors.password}</p>
+            )}
           </div>
 
           <div>
@@ -197,18 +272,26 @@ const RegisterForm = () => {
               value={values.confirmPassword}
               onChange={handleChange}
               onBlur={handleBlur}
-              className="mt-1 block w-full rounded-md border p-2 border-gray-600 focus:outline-none focus:ring-2"
+              className={`mt-1 block w-full rounded-md border p-2 ${
+                errors.confirmPassword && touched.confirmPassword
+                  ? "border-red-500"
+                  : "border-gray-600"
+              } focus:outline-none focus:ring-2`}
               style={{
                 backgroundColor: "var(--black-light)",
                 color: "var(--white-basic)",
               }}
             />
+            {errors.confirmPassword && touched.confirmPassword && (
+              <p className="mt-1 text-sm text-red-500">
+                {errors.confirmPassword}
+              </p>
+            )}
           </div>
         </div>
 
-        {/* Cat Data Section */}
         <h2 style={{ color: "var(--gold-soft)", marginTop: "2rem" }}>
-          Cat Data
+          Kitty Cat Data
         </h2>
         <div className="space-y-4">
           <div>
@@ -217,7 +300,7 @@ const RegisterForm = () => {
               className="block text-sm font-medium mb-1"
               style={{ color: "var(--white-ivory)" }}
             >
-              Full name of cat
+              Kitty Cat Name
             </label>
             <input
               id="catName"
@@ -225,12 +308,19 @@ const RegisterForm = () => {
               value={values.catName}
               onChange={handleChange}
               onBlur={handleBlur}
-              className="mt-1 block w-full rounded-md border p-2 border-gray-600 focus:outline-none focus:ring-2"
+              className={`mt-1 block w-full rounded-md border p-2 ${
+                errors.catName && touched.catName
+                  ? "border-red-500"
+                  : "border-gray-600"
+              } focus:outline-none focus:ring-2`}
               style={{
                 backgroundColor: "var(--black-light)",
                 color: "var(--white-basic)",
               }}
             />
+            {errors.catName && touched.catName && (
+              <p className="mt-1 text-sm text-red-500">{errors.catName}</p>
+            )}
           </div>
 
           <div>
@@ -247,12 +337,19 @@ const RegisterForm = () => {
               value={values.dateOfBirth}
               onChange={handleChange}
               onBlur={handleBlur}
-              className="mt-1 block w-full rounded-md border p-2 border-gray-600 focus:outline-none focus:ring-2"
+              className={`mt-1 block w-full rounded-md border p-2 ${
+                errors.dateOfBirth && touched.dateOfBirth
+                  ? "border-red-500"
+                  : "border-gray-600"
+              } focus:outline-none focus:ring-2`}
               style={{
                 backgroundColor: "var(--black-light)",
                 color: "var(--white-basic)",
               }}
             />
+            {errors.dateOfBirth && touched.dateOfBirth && (
+              <p className="mt-1 text-sm text-red-500">{errors.dateOfBirth}</p>
+            )}
           </div>
 
           <div>
@@ -304,18 +401,33 @@ const RegisterForm = () => {
             >
               Weight
             </label>
-            <input
-              id="weight"
-              type="text"
-              value={values.weight}
-              onChange={handleChange}
-              onBlur={handleBlur}
-              className="mt-1 block w-full rounded-md border p-2 border-gray-600 focus:outline-none focus:ring-2"
-              style={{
-                backgroundColor: "var(--black-light)",
-                color: "var(--white-basic)",
-              }}
-            />
+            <div className="relative">
+              <input
+                id="weight"
+                type="text"
+                value={values.weight}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                className={`mt-1 block w-full rounded-md border p-2 pr-8 ${
+                  errors.weight && touched.weight
+                    ? "border-red-500"
+                    : "border-gray-600"
+                } focus:outline-none focus:ring-2`}
+                style={{
+                  backgroundColor: "var(--black-light)",
+                  color: "var(--white-basic)",
+                }}
+              />
+              <span
+                className="absolute right-3 top-1/2 transform -translate-y-1/2"
+                style={{ color: "var(--white-basic)" }}
+              >
+                kg
+              </span>
+            </div>
+            {errors.weight && touched.weight && (
+              <p className="mt-1 text-sm text-red-500">{errors.weight}</p>
+            )}
           </div>
 
           <div>
@@ -331,12 +443,19 @@ const RegisterForm = () => {
               value={values.personality}
               onChange={handleChange}
               onBlur={handleBlur}
-              className="mt-1 block w-full rounded-md border p-2 border-gray-600 focus:outline-none focus:ring-2"
+              className={`mt-1 block w-full rounded-md border p-2 ${
+                errors.personality && touched.personality
+                  ? "border-red-500"
+                  : "border-gray-600"
+              } focus:outline-none focus:ring-2`}
               style={{
                 backgroundColor: "var(--black-light)",
                 color: "var(--white-basic)",
               }}
             />
+            {errors.personality && touched.personality && (
+              <p className="mt-1 text-sm text-red-500">{errors.personality}</p>
+            )}
           </div>
 
           <div>
@@ -376,12 +495,19 @@ const RegisterForm = () => {
               value={values.food}
               onChange={handleChange}
               onBlur={handleBlur}
-              className="mt-1 block w-full rounded-md border p-2 border-gray-600 focus:outline-none focus:ring-2"
+              className={`mt-1 block w-full rounded-md border p-2 ${
+                errors.food && touched.food
+                  ? "border-red-500"
+                  : "border-gray-600"
+              } focus:outline-none focus:ring-2`}
               style={{
                 backgroundColor: "var(--black-light)",
                 color: "var(--white-basic)",
               }}
             />
+            {errors.food && touched.food && (
+              <p className="mt-1 text-sm text-red-500">{errors.food}</p>
+            )}
           </div>
 
           <div>
@@ -397,12 +523,19 @@ const RegisterForm = () => {
               value={values.medication}
               onChange={handleChange}
               onBlur={handleBlur}
-              className="mt-1 block w-full rounded-md border p-2 border-gray-600 focus:outline-none focus:ring-2"
+              className={`mt-1 block w-full rounded-md border p-2 ${
+                errors.medication && touched.medication
+                  ? "border-red-500"
+                  : "border-gray-600"
+              } focus:outline-none focus:ring-2`}
               style={{
                 backgroundColor: "var(--black-light)",
                 color: "var(--white-basic)",
               }}
             />
+            {errors.medication && touched.medication && (
+              <p className="mt-1 text-sm text-red-500">{errors.medication}</p>
+            )}
           </div>
 
           <div>
@@ -418,12 +551,21 @@ const RegisterForm = () => {
               value={values.veterinarianBehavior}
               onChange={handleChange}
               onBlur={handleBlur}
-              className="mt-1 block w-full rounded-md border p-2 border-gray-600 focus:outline-none focus:ring-2"
+              className={`mt-1 block w-full rounded-md border p-2 ${
+                errors.veterinarianBehavior && touched.veterinarianBehavior
+                  ? "border-red-500"
+                  : "border-gray-600"
+              } focus:outline-none focus:ring-2`}
               style={{
                 backgroundColor: "var(--black-light)",
                 color: "var(--white-basic)",
               }}
             />
+            {errors.veterinarianBehavior && touched.veterinarianBehavior && (
+              <p className="mt-1 text-sm text-red-500">
+                {errors.veterinarianBehavior}
+              </p>
+            )}
           </div>
 
           <div>
@@ -468,16 +610,24 @@ const RegisterForm = () => {
             </label>
             <input
               id="catPhoto"
-              type="file"
-              accept="image/*"
+              type="text"
+              placeholder="Enter image URL"
+              value={values.catPhoto}
               onChange={handleChange}
               onBlur={handleBlur}
-              className="mt-1 block w-full rounded-md border p-2 border-gray-600 focus:outline-none focus:ring-2"
+              className={`mt-1 block w-full rounded-md border p-2 ${
+                errors.catPhoto && touched.catPhoto
+                  ? "border-red-500"
+                  : "border-gray-600"
+              } focus:outline-none focus:ring-2`}
               style={{
                 backgroundColor: "var(--black-light)",
                 color: "var(--white-basic)",
               }}
             />
+            {errors.catPhoto && touched.catPhoto && (
+              <p className="mt-1 text-sm text-red-500">{errors.catPhoto}</p>
+            )}
           </div>
         </div>
 
@@ -485,7 +635,11 @@ const RegisterForm = () => {
           <button type="button" className="button_green">
             Add New Cat
           </button>
-          <button type="submit" disabled={isSubmitting} className="button_gold">
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className="button_gold w-full"
+          >
             {isSubmitting ? "Registering..." : "Register"}
           </button>
         </div>

@@ -2,12 +2,16 @@
 import { useFormik } from "formik";
 import { suitesSchema } from "../../helpers/validations";
 
-const onSubmit = () => {
-  console.log("Suite created successfully");
-};
-
 const SuitesForm = () => {
-  const { values, errors, handleBlur, handleChange, handleSubmit } = useFormik({
+  const {
+    values,
+    errors,
+    touched,
+    isSubmitting,
+    handleBlur,
+    handleChange,
+    handleSubmit,
+  } = useFormik({
     initialValues: {
       name: "",
       image: "",
@@ -22,7 +26,28 @@ const SuitesForm = () => {
       price: "",
     },
     validationSchema: suitesSchema,
-    onSubmit,
+    onSubmit: async (values, actions) => {
+      console.log("Form submitted with values:", values);
+      actions.setSubmitting(true);
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      const selectedFeatures = Object.entries(values.features)
+        .filter(([, isSelected]) => isSelected)
+        .map(([feature]) => feature);
+
+      const formattedData = {
+        name: values.name,
+        description: values.description,
+        imgs: values.image,
+        features: selectedFeatures,
+        number_of_cats: Number(values.numberOfCats),
+        price: Number(values.price),
+      };
+
+      console.log("Suite created successfully:", formattedData);
+      actions.resetForm();
+      actions.setSubmitting(false);
+    },
   });
 
   return (
@@ -51,14 +76,14 @@ const SuitesForm = () => {
             placeholder="Enter the name of the suite"
             onBlur={handleBlur}
             className={`mt-1 block w-full rounded-md border p-2 ${
-              errors.name ? "border-red-500" : "border-gray-600"
+              errors.name && touched.name ? "border-red-500" : "border-gray-600"
             } focus:outline-none focus:ring-2`}
             style={{
               backgroundColor: "var(--black-light)",
               color: "var(--white-basic)",
             }}
           />
-          {errors.name && (
+          {errors.name && touched.name && (
             <p className="mt-1 text-sm text-red-500">{errors.name}</p>
           )}
         </div>
@@ -84,6 +109,9 @@ const SuitesForm = () => {
               color: "var(--white-basic)",
             }}
           />
+          {errors.description && touched.description && (
+            <p className="mt-1 text-sm text-red-500">{errors.description}</p>
+          )}
         </div>
 
         <div>
@@ -107,6 +135,9 @@ const SuitesForm = () => {
               color: "var(--white-basic)",
             }}
           />
+          {errors.image && touched.image && (
+            <p className="mt-1 text-sm text-red-500">{errors.image}</p>
+          )}
         </div>
 
         <div className="space-y-3">
@@ -138,17 +169,23 @@ const SuitesForm = () => {
                     }
                     onChange={handleChange}
                     onBlur={handleBlur}
-                    className="hidden peer"
+                    className="w-4 h-4 mr-2"
                   />
                   <label
                     htmlFor={id}
-                    className="flex items-center space-x-3 p-2 rounded-lg border-2 border-gray-200 
-                         cursor-pointer select-none transition-all duration-200
-                         peer-checked:border-primary peer-checked:bg-primary/5
-                         hover:bg-gray-50 w-full"
+                    className={`flex items-center space-x-3 p-2 rounded-lg border-2 
+                      cursor-pointer select-none transition-all duration-200 w-full
+                      ${
+                        values.features[id as keyof typeof values.features]
+                          ? "border-primary bg-primary/5 text-primary"
+                          : "border-gray-200 hover:bg-gray-50"
+                      }`}
                   >
                     <span className="text-xl">{icon}</span>
-                    <span className="text-sm text-gray-600 peer-checked:text-primary">
+                    <span
+                      className="text-sm"
+                      style={{ color: "var(--white-ivory)" }}
+                    >
                       {label}
                     </span>
                   </label>
@@ -156,6 +193,11 @@ const SuitesForm = () => {
               </div>
             ))}
           </div>
+          {errors.features && touched.features && (
+            <p className="mt-1 text-sm text-red-500">
+              {errors.features as string}
+            </p>
+          )}
         </div>
 
         <div>
@@ -179,6 +221,9 @@ const SuitesForm = () => {
               color: "var(--white-basic)",
             }}
           />
+          {errors.numberOfCats && touched.numberOfCats && (
+            <p className="mt-1 text-sm text-red-500">{errors.numberOfCats}</p>
+          )}
         </div>
 
         <div>
@@ -210,10 +255,17 @@ const SuitesForm = () => {
               }}
             />
           </div>
+          {errors.price && touched.price && (
+            <p className="mt-1 text-sm text-red-500">{errors.price}</p>
+          )}
         </div>
 
-        <button type="submit" className="button_gold w-full">
-          Create Suite
+        <button
+          type="submit"
+          className="button_gold w-full"
+          disabled={isSubmitting}
+        >
+          {isSubmitting ? "Creating..." : "Create Suite"}
         </button>
       </form>
     </div>
