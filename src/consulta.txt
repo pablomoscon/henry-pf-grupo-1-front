@@ -1,0 +1,36 @@
+Buenísimo, quedó genial compañero! Ahora tendría que poner en accion mi boton Mas Info, que tendrá que ir al detalle de la Suite a la que el usuario hace clik.
+
+Para ello ya definí en src/app las carpetas rooms/[id] con el siguiente código:
+
+import { getRoomById } from "@/services/roomService";
+import { notFound } from "next/navigation";
+import Detail from "@/components/Detail/Detail";
+
+interface PageProps {
+  params: {
+    id: string;
+  };
+}
+
+const Room = async ({ params }: PageProps) => {
+  const { id } = await params;
+
+  const roomFind = await getRoomById(parseInt(id));
+
+  if (!roomFind) {
+    return notFound();
+  }
+
+  return (
+    <div>
+      <h1 className="mb-6">{roomFind.name}</h1>
+      <div>
+        <Detail room={roomFind} />
+      </div>
+    </div>
+  );
+};
+
+export default Room;
+
+me faltaría enlazar esto con mis botones más info, esto sería a través de Link a href={`rooms/${room.id}`?

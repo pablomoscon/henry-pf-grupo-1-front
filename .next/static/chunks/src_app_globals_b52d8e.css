@@ -367,9 +367,18 @@ img, video {
   z-index: 50;
 }
 
+.m-6 {
+  margin: 1.5rem;
+}
+
 .mx-auto {
   margin-left: auto;
   margin-right: auto;
+}
+
+.my-4 {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
 }
 
 .mb-10 {
@@ -384,12 +393,20 @@ img, video {
   margin-bottom: 1rem;
 }
 
-.mb-5 {
-  margin-bottom: 1.25rem;
+.mb-6 {
+  margin-bottom: 1.5rem;
+}
+
+.mb-8 {
+  margin-bottom: 2rem;
 }
 
 .mb-9 {
   margin-bottom: 2.25rem;
+}
+
+.mr-2 {
+  margin-right: .5rem;
 }
 
 .mt-12 {
@@ -404,16 +421,12 @@ img, video {
   margin-top: 1.25rem;
 }
 
-.mt-8 {
-  margin-top: 2rem;
-}
-
-.mr-2 {
-  margin-right: .5rem;
-}
-
 .flex {
   display: flex;
+}
+
+.grid {
+  display: grid;
 }
 
 .h-12 {
@@ -428,6 +441,10 @@ img, video {
   height: 300px;
 }
 
+.h-\[500px\] {
+  height: 500px;
+}
+
 .h-full {
   height: 100%;
 }
@@ -436,8 +453,16 @@ img, video {
   min-height: 100vh;
 }
 
+.w-11\/12 {
+  width: 91.6667%;
+}
+
 .w-full {
   width: 100%;
+}
+
+.max-w-5xl {
+  max-width: 64rem;
 }
 
 .max-w-7xl {
@@ -448,8 +473,24 @@ img, video {
   flex: 1;
 }
 
+.flex-shrink-0 {
+  flex-shrink: 0;
+}
+
+.list-disc {
+  list-style-type: disc;
+}
+
+.grid-cols-1 {
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+}
+
 .flex-col {
   flex-direction: column;
+}
+
+.items-start {
+  align-items: flex-start;
 }
 
 .items-center {
@@ -464,8 +505,39 @@ img, video {
   justify-content: space-between;
 }
 
+.gap-10 {
+  gap: 2.5rem;
+}
+
+.gap-4 {
+  gap: 1rem;
+}
+
 .gap-6 {
   gap: 1.5rem;
+}
+
+.space-y-2 > :not([hidden]) ~ :not([hidden]) {
+  --tw-space-y-reverse: 0;
+  margin-top: calc(.5rem * calc(1 - var(--tw-space-y-reverse)));
+  margin-bottom: calc(.5rem * var(--tw-space-y-reverse));
+}
+
+.rounded-lg {
+  border-radius: .5rem;
+}
+
+.rounded-md {
+  border-radius: .375rem;
+}
+
+.border {
+  border-width: 1px;
+}
+
+.border-white-basic {
+  --tw-border-opacity: 1;
+  border-color: rgb(248 248 248 / var(--tw-border-opacity, 1));
 }
 
 .bg-black {
@@ -478,19 +550,14 @@ img, video {
   background-color: rgb(13 13 13 / var(--tw-bg-opacity, 1));
 }
 
-.bg-gold-soft {
-  --tw-bg-opacity: 1;
-  background-color: rgb(212 175 55 / var(--tw-bg-opacity, 1));
-}
-
-.bg-gray-ash {
-  --tw-bg-opacity: 1;
-  background-color: rgb(176 176 176 / var(--tw-bg-opacity, 1));
-}
-
 .bg-green-olive {
   --tw-bg-opacity: 1;
   background-color: rgb(156 179 128 / var(--tw-bg-opacity, 1));
+}
+
+.bg-white-basic {
+  --tw-bg-opacity: 1;
+  background-color: rgb(248 248 248 / var(--tw-bg-opacity, 1));
 }
 
 .bg-white-ivory {
@@ -502,12 +569,12 @@ img, video {
   --tw-bg-opacity: .5;
 }
 
-.p-3 {
-  padding: .75rem;
+.object-cover {
+  object-fit: cover;
 }
 
-.p-6 {
-  padding: 1.5rem;
+.p-4 {
+  padding: 1rem;
 }
 
 .px-6 {
@@ -515,8 +582,16 @@ img, video {
   padding-right: 1.5rem;
 }
 
+.pl-6 {
+  padding-left: 1.5rem;
+}
+
 .text-center {
   text-align: center;
+}
+
+.text-justify {
+  text-align: justify;
 }
 
 .font-primary {
@@ -542,6 +617,16 @@ img, video {
   line-height: 1.75rem;
 }
 
+.text-sm {
+  font-size: .875rem;
+  line-height: 1.25rem;
+}
+
+.text-xl {
+  font-size: 1.25rem;
+  line-height: 1.75rem;
+}
+
 .text-xs {
   font-size: .75rem;
   line-height: 1rem;
@@ -559,9 +644,18 @@ img, video {
   font-weight: 600;
 }
 
+.leading-relaxed {
+  line-height: 1.625;
+}
+
 .text-black-dark {
   --tw-text-opacity: 1;
   color: rgb(13 13 13 / var(--tw-text-opacity, 1));
+}
+
+.text-gold-soft {
+  --tw-text-opacity: 1;
+  color: rgb(212 175 55 / var(--tw-text-opacity, 1));
 }
 
 .text-gray-ash {
@@ -569,9 +663,9 @@ img, video {
   color: rgb(176 176 176 / var(--tw-text-opacity, 1));
 }
 
-.text-white {
+.text-green-dark {
   --tw-text-opacity: 1;
-  color: rgb(255 255 255 / var(--tw-text-opacity, 1));
+  color: rgb(124 152 90 / var(--tw-text-opacity, 1));
 }
 
 .text-white-ivory {
@@ -702,6 +796,22 @@ h2 {
 @media (width >= 768px) {
   .md\:h-\[500px\] {
     height: 500px;
+  }
+
+  .md\:w-\[380px\] {
+    width: 380px;
+  }
+
+  .md\:w-\[500px\] {
+    width: 500px;
+  }
+
+  .md\:grid-cols-4 {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .md\:flex-row {
+    flex-direction: row;
   }
 
   .md\:text-2xl {
