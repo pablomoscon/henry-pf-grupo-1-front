@@ -8,9 +8,9 @@ const Home = () => {
           <Image
             src="/BannerHome.jpg"
             alt="Banner del sitio"
-            layout="fill"
-            objectFit="cover"
-            priority
+            width={800}
+            height={400}
+            className="object-cover w-full h-full"
           />
           <div className="absolute inset-0 flex flex-col items-center justify-center bg-black bg-opacity-50">
             <h1 className="text-3xl sm:text-4xl md:text-5xl font-secondary font-medium text-center text-white-ivory">
