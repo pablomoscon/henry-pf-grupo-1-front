@@ -51,7 +51,7 @@ const Navbar = () => {
           </li>
           <li>
             <Link
-              href="#"
+              href="/login"
               className="flex items-center hover:text-green-dark transition-colors"
             >
               <Image
@@ -62,6 +62,21 @@ const Navbar = () => {
                 className="mr-2"
               />
               Sign In
+            </Link>
+          </li>
+          <li>
+            <Link
+              href="/dashboard"
+              className="flex items-center hover:text-green-dark transition-colors"
+            >
+              <Image
+                src="/PerfilIcono.png"
+                alt="Sign In Icon"
+                width={16}
+                height={16}
+                className="mr-2"
+              />
+              Dashboard
             </Link>
           </li>
         </ul>
