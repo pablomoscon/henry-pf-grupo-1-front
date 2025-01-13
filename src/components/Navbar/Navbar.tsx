@@ -8,7 +8,7 @@ const Navbar = () => {
       <div className="flex items-center justify-between h-full max-w-7xl mx-auto px-6">
         <Link
           href="/"
-          className="flex items-center text-black-dark text-2xl font-bold hover:text-green-dark transition-colors"
+          className="flex items-center text-black-dark text-2xl font-bold hover:text-gold-dark transition-colors"
         >
           <Image
             src="/LogoApp.png"
@@ -25,7 +25,7 @@ const Navbar = () => {
             <li>
               <Link
                 href="/"
-                className="flex items-center hover:text-green-dark transition-colors"
+                className="flex items-center hover:text-gold-dark transition-colors"
               >
                 <Image
                   src="/HomeIcono.png"
@@ -40,7 +40,7 @@ const Navbar = () => {
             <li>
               <Link
                 href="#"
-                className="flex items-center hover:text-green-dark transition-colors"
+                className="flex items-center hover:text-gold-dark transition-colors"
               >
                 <Image
                   src="/AboutIcono.png"

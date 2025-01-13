@@ -1,6 +1,7 @@
 "use client";
 import { useFormik } from "formik";
 import { suitesSchema } from "../../helpers/validations";
+import { registerRoom } from "@/services/roomService";
 
 const SuitesForm = () => {
   const {
@@ -44,7 +45,12 @@ const SuitesForm = () => {
         price: Number(values.price),
       };
 
-      console.log("Suite created successfully:", formattedData);
+      const res = await registerRoom(formattedData);
+      if (!res.message) {
+        alert("Registered!");
+      } else {
+        alert(res.message);
+      }
       actions.resetForm();
       actions.setSubmitting(false);
     },
