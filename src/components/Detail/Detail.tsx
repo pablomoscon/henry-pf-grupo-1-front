@@ -8,39 +8,52 @@ const handleBook = () => {
 
 const Detail = ({ room }: { room: IRoom }) => {
   return (
-    <div className="flex justify-center mb-8">
-      <div className="flex flex-col md:flex-row items-start gap-10 max-w-5xl mx-auto">
-        <div className="flex-shrink-0 w-full md:w-[380px] h-[500px]  bg-white-basic border border-white-basic rounded-lg">
-          <Image src={room.imgs} alt={room.name} width={380} height={400} />
+    <div className="flex justify-center px-4 py-6 bg-dark-soft">
+      <div className="flex flex-col md:flex-row items-start gap-6 max-w-4xl mx-auto bg-black rounded-lg shadow-lg overflow-hidden">
+        <div className="w-full md:w-[300px] h-full relative">
+          <Image
+            src={room.imgs}
+            alt={room.name}
+            layout="fill"
+            objectFit="cover"
+            className="rounded-l-lg"
+          />
         </div>
 
-        <div className="flex flex-col justify-between w-full md:w-[500px]">
+        <div className="flex flex-col justify-between w-full p-6 md:w-[380px] h-full">
           <div>
-            <p className="text-gray-basic text-justify text-xl leading-relaxed mb-6 mt-12">
+            <h2 className="text-2xl text-gold-soft font-secondary font-semibold mb-3">
+              {room.name}
+            </h2>
+            <p className="text-gray-ash text-justify text-base leading-relaxed mb-4">
               {room.description}
             </p>
           </div>
+
           <div>
-            <p className="text-2xl  text-pink-basic mb-6">
-              <span className="text-gold-soft">Cats:</span>{" "}
+            <p className="text-base text-gray-basic mb-3">
+              <span className="text-gold-soft font-medium">Cats:</span>{" "}
               {room.number_of_cats}
             </p>
 
-            <div className="mb-6">
-              <h4 className="text-2xl text-green-dark mb-3">Features</h4>
-              <ul className="list-disc pl-6 space-y-2">
+            <div className="mb-4">
+              <h4 className="text-lg text-gold-soft font-semibold mb-2">
+                Features
+              </h4>
+              <ul className="list-disc pl-6 space-y-1">
                 {room.features.map((feature, index) => (
-                  <li key={index} className="text-gray-basic text-lg">
+                  <li key={index} className="text-gray-ash text-sm">
                     {feature}
                   </li>
                 ))}
               </ul>
             </div>
-            <h3 className="text-3xl font-semibold text-white-ivory mb-6">
+
+            <h3 className="text-xl font-bold text-gold-soft mb-4">
               ${room.price} USD / day
             </h3>
 
-            <button className="button_gold" onClick={handleBook}>
+            <button className="px-5 py-2 button_green" onClick={handleBook}>
               Book
             </button>
           </div>

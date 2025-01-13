@@ -18,10 +18,19 @@ const Room = async ({ params }: PageProps) => {
   }
 
   return (
-    <div>
-      <h1 className=" text-gold-soft mb-6">{roomFind.name}</h1>
-      <div>
-        <Detail room={roomFind} />
+    <div
+      className="relative bg-cover bg-center"
+      style={{
+        backgroundImage: `url('/BannerHome.jpg')`,
+      }}
+    >
+      <div className="absolute inset-0 bg-black/70"></div>
+
+      {/* Content */}
+      <div className="relative flex items-center justify-center h-full">
+        <div className="w-full max-w-5xl p-4">
+          <Detail room={roomFind} />
+        </div>
       </div>
     </div>
   );

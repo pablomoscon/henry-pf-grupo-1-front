@@ -18,7 +18,7 @@ const UserWidget = () => {
         <>
           <Link
             href="/dashboard"
-            className="flex items-center hover:text-green-dark transition-colors"
+            className="flex items-center hover:text-gold-dark transition-colors"
           >
             <Image
               src="/PerfilIcono.png"
@@ -31,7 +31,7 @@ const UserWidget = () => {
           </Link>
           <button
             onClick={handleLogout}
-            className="flex items-center hover:text-green-dark transition-colors"
+            className="flex items-center hover:text-gold-dark transition-colors"
           >
             <Image
               src="/LogoutIcon.png"
@@ -46,7 +46,7 @@ const UserWidget = () => {
       ) : (
         <Link
           href="/login"
-          className="flex items-center hover:text-green-dark transition-colors"
+          className="flex items-center hover:text-gold-dark transition-colors"
         >
           <Image
             src="/PerfilIcono.png"
