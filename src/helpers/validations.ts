@@ -101,3 +101,45 @@ export const registerSchema = yup.object().shape({
   }),
   catPhoto: yup.string(),
 });
+
+export const newCatSchema = yup.object().shape({
+  catName: yup.string().required("Required"),
+  dateOfBirth: yup.string().required("Required"),
+  isNeutered: yup.boolean(),
+  weight: yup
+    .string()
+    .matches(/^\d+$/, "Only numbers are allowed")
+    .required("Required"),
+  personality: yup.string(),
+  getsAlongWithCats: yup.string(),
+  food: yup.string(),
+  medication: yup.string(),
+  veterinarianBehavior: yup.string(),
+  vaccinations: yup.object().shape({
+    rabies: yup.boolean(),
+    tripleFeline: yup.boolean(),
+    fivFelv: yup.boolean(),
+  }),
+  catPhoto: yup.string(),
+});
+
+export const reservationSchema = yup.object().shape({
+  selectedSuite: yup.string().required("Please select a suite"),
+  checkIn: yup.date().required("Check-in date is required"),
+  checkOut: yup
+    .date()
+    .required("Check-out date is required")
+    .min(yup.ref("checkIn"), "Check-out date must be after check-in date"),
+  numberOfCats: yup
+    .number()
+    .required("Required")
+    .positive("Must be at least 1")
+    .integer("Must be a whole number")
+    .max(4, "Maximum 4 cats"),
+  cats: yup.array().of(
+    yup.object().shape({
+      name: yup.string().required("Cat name is required"),
+      isNew: yup.boolean(),
+    })
+  ),
+});
