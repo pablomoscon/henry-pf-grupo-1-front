@@ -6,6 +6,7 @@ const nextConfig: NextConfig = {
       {
         protocol: "https",
         hostname: "hoteldegatos.com.ar",
+        pathname: "/**",
       },
     ],
   },
