@@ -7,7 +7,7 @@ const Card = ({ room }: { room: IRoom }) => {
     <div className="p-3 bg-black-dark rounded-lg text-gold-soft">
       <div className="relative w-full aspect-[16/9] overflow-hidden rounded-md">
         <Image
-          src={room.imgs}
+          src={room.img}
           alt={room.name}
           fill
           sizes="(max-width: 768px) 100vw, 380px"

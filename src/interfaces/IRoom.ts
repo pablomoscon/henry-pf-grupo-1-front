@@ -1,8 +1,8 @@
 export interface IRoom {
-  id?: number;
+  id?: string;
   name: string;
   description: string;
-  imgs: string;
+  img: string;
   features: string[];
   number_of_cats: number;
   price: number;

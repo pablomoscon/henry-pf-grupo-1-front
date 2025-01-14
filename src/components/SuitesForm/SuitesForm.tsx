@@ -39,11 +39,13 @@ const SuitesForm = () => {
       const formattedData = {
         name: values.name,
         description: values.description,
-        imgs: values.image,
+        img: values.image,
         features: selectedFeatures,
         number_of_cats: Number(values.numberOfCats),
         price: Number(values.price),
       };
+
+      console.log("Suite created successfully:", formattedData);
 
       const res = await registerRoom(formattedData);
       if (!res.message) {

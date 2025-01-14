@@ -12,7 +12,7 @@ const Detail = ({ room }: { room: IRoom }) => {
       <div className="flex flex-col md:flex-row items-start gap-6 max-w-4xl mx-auto bg-black rounded-lg shadow-lg overflow-hidden">
         <div className="w-full md:w-[300px] h-full relative">
           <Image
-            src={room.imgs}
+            src={room.img}
             alt={room.name}
             layout="fill"
             objectFit="cover"

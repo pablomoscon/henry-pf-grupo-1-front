@@ -11,7 +11,7 @@ interface PageProps {
 const Room = async ({ params }: PageProps) => {
   const { id } = await params;
 
-  const roomFind = await getRoomById(parseInt(id));
+  const roomFind = await getRoomById(id);
 
   if (!roomFind) {
     return notFound();

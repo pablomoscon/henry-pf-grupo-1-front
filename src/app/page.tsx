@@ -1,4 +1,3 @@
-"use client";
 import { getRooms } from "@/services/roomService";
 import { IRoom } from "@/interfaces/IRoom";
 import Card from "@/components/Card/Card";
