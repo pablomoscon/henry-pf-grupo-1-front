@@ -29,24 +29,27 @@ export const registerRoom = async (room: IRoom) => {
   return res.json();
 };
 
-/* 
-export const registerRoom = async (
-room: IRoom
-): Promise<IRegisterRoomResponse> => {
-try {
- const rooms = await getRooms();
- const newId = rooms.length > 0 ? rooms[rooms.length - 1].id + 1 : 1;
- const newRoom = { ...room, id: newId };
- rooms.push(newRoom);
+// Filtrar habitaciones
+export const filterRooms = async (
+  checkInDate: string,
+  checkOutDate: string,
+  numberOfCats: string,
+  minPrice: string,
+  maxPrice: string
+): Promise<IRoom[]> => {
+  const params = new URLSearchParams({
+    checkInDate,
+    checkOutDate,
+    numberOfCats,
+    minPrice,
+    maxPrice,
+  });
 
- return {
- success: true,
-  rooms,
- };
-} catch (error) {
- return {
- success: false,
-  message: "Error registering room",
- };
-}
-}; */
+  try {
+    const res = await fetch(`http://localhost:3000/rooms/filters?${params}`);
+    const data = await res.json();
+    return data as IRoom[];
+  } catch {
+    return [];
+  }
+};
