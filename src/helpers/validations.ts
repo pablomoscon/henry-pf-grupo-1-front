@@ -9,14 +9,7 @@ export const loginSchema = yup.object().shape({
     .email("Please enter a valid email")
     .trim()
     .required("Required"),
-  password: yup
-    .string()
-    .min(5)
-    .matches(passwordRules, {
-      message:
-        "Please enter at least 5 characters, 1 upper case letter, 1 lower case letter and 1 number",
-    })
-    .required("Required"),
+  password: yup.string().required("Required"),
 });
 
 export const suitesSchema = yup.object().shape({

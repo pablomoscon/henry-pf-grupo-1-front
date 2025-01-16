@@ -2,8 +2,15 @@
 import { useFormik } from "formik";
 import { loginSchema } from "../../helpers/validations";
 import Link from "next/link";
+import { userLogin } from "../../services/userServices";
+import { useRouter } from "next/navigation";
+import { useContext } from "react";
+import { UserContext } from "@/contexts/userContext";
 
 const LoginForm = () => {
+  const router = useRouter();
+  const { setUser } = useContext(UserContext);
+
   const {
     values,
     errors,
@@ -20,10 +27,24 @@ const LoginForm = () => {
     validationSchema: loginSchema,
     onSubmit: async (values, actions) => {
       actions.setSubmitting(true);
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      console.log("Sign in successful", values);
-      actions.resetForm();
-      actions.setSubmitting(false);
+      try {
+        const res = await userLogin(values);
+
+        if (res.success) {
+          setUser(res);
+          alert("Login successful");
+          router.push("/");
+        } else {
+          alert("Login failed. Please check your credentials.");
+          actions.resetForm();
+          actions.setSubmitting(false);
+        }
+      } catch (error) {
+        console.error("Login error:", error);
+        alert("Connection error. Please try again later.");
+      } finally {
+        actions.setSubmitting(false);
+      }
     },
   });
 
