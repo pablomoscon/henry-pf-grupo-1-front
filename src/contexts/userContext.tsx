@@ -31,7 +31,7 @@ const UserProvider = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   const isLogged = () => {
-    return user !== null && user.token !== undefined;
+    return user !== null && user.response.token !== undefined;
   };
 
   const logOut = () => {
