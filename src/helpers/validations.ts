@@ -56,7 +56,7 @@ export const registerSchema = yup.object().shape({
     .string()
     .matches(/^\d+$/, "Only numbers are allowed")
     .required("Required"),
-  fullName: yup.string().required("Required"),
+  name: yup.string().required("Required"),
   address: yup.string().required("Required"),
   phone: yup
     .string()
@@ -75,24 +75,6 @@ export const registerSchema = yup.object().shape({
     .string()
     .oneOf([yup.ref("password")], "Passwords must match")
     .required("Required"),
-  catName: yup.string().required("Required"),
-  dateOfBirth: yup.string().required("Required"),
-  isNeutered: yup.boolean(),
-  weight: yup
-    .string()
-    .matches(/^\d+$/, "Only numbers are allowed")
-    .required("Required"),
-  personality: yup.string(),
-  getsAlongWithCats: yup.string(),
-  food: yup.string(),
-  medication: yup.string(),
-  veterinarianBehavior: yup.string(),
-  vaccinations: yup.object().shape({
-    rabies: yup.boolean(),
-    tripleFeline: yup.boolean(),
-    fivFelv: yup.boolean(),
-  }),
-  catPhoto: yup.string(),
 });
 
 export const newCatSchema = yup.object().shape({
