@@ -1,8 +1,11 @@
 "use client";
 import { useFormik } from "formik";
 import { newCatSchema } from "../../helpers/validations";
+import { useRouter } from "next/navigation";
 
 const NewCatForm = () => {
+  const router = useRouter();
+
   const {
     values,
     errors,
@@ -32,29 +35,34 @@ const NewCatForm = () => {
     validationSchema: newCatSchema,
     onSubmit: async (values, actions) => {
       actions.setSubmitting(true);
-      await new Promise((resolve) => setTimeout(resolve, 1000));
 
       const formattedData = {
-        cat: {
-          name: values.catName,
-          dateOfBirth: values.dateOfBirth,
-          isNeutered: values.isNeutered,
-          weight: values.weight,
-          personality: values.personality,
-          getsAlongWithCats: values.getsAlongWithCats,
-          food: values.food,
-          medication: values.medication,
-          veterinarianBehavior: values.veterinarianBehavior,
-          vaccinations: Object.entries(values.vaccinations)
-            .filter(([, isSelected]) => isSelected)
-            .map(([vaccineName]) => vaccineName),
-          photo: values.catPhoto,
-        },
+        id: Date.now().toString(),
+        name: values.catName,
+        dateOfBirth: values.dateOfBirth,
+        isNeutered: values.isNeutered,
+        weight: values.weight,
+        personality: values.personality,
+        getsAlongWithCats: values.getsAlongWithCats,
+        food: values.food,
+        medication: values.medication,
+        veterinarianBehavior: values.veterinarianBehavior,
+        vaccinations: Object.entries(values.vaccinations)
+          .filter(([, isSelected]) => isSelected)
+          .map(([vaccineName]) => vaccineName),
+        photo: values.catPhoto,
       };
 
-      console.log("Registration data:", formattedData);
+      // Guardar en localStorage
+      const existingCats = JSON.parse(localStorage.getItem("cats") || "[]");
+      localStorage.setItem(
+        "cats",
+        JSON.stringify([...existingCats, formattedData])
+      );
+
       actions.resetForm();
       actions.setSubmitting(false);
+      router.push("/dashboard");
     },
   });
 
@@ -407,16 +415,9 @@ const NewCatForm = () => {
           </div>
         </div>
 
-        <div className="flex gap-4">
-          <button type="button" className="button_green">
-            Add New Cat
-          </button>
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            className="button_gold w-full"
-          >
-            {isSubmitting ? "Adding..." : "Add New Cat"}
+        <div className="flex justify-center">
+          <button type="submit" disabled={isSubmitting} className="button_gold">
+            {isSubmitting ? "Adding..." : "Register Cat"}
           </button>
         </div>
       </form>
