@@ -9,6 +9,10 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@emotion/styled": "^11.14.0",
+    "@mui/material": "^6.4.0",
+    "@mui/x-date-pickers": "^7.24.0",
+    "dayjs": "^1.11.13",
     "formik": "^2.4.6",
     "next": "15.1.4",
     "react": "^19.0.0",

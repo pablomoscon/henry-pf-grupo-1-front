@@ -1,9 +1,9 @@
-import SuitesForm from "@/components/SuitesForm/SuitesForm";
+import ClientProfile from "../../components/ClientProfile/ClientProfile";
 
 const DashboardPage = () => {
   return (
     <div>
-      <SuitesForm />
+      <ClientProfile />
     </div>
   );
 };

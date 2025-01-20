@@ -1,12 +1,26 @@
 "use client";
 import Image from "next/image";
 import { IRoom } from "@/interfaces/IRoom";
-
-const handleBook = () => {
-  alert("Iniciar proceso Reserva");
-};
+import { useContext } from "react";
+import { UserContext } from "@/contexts/userContext";
+import { useRouter, usePathname } from "next/navigation";
 
 const Detail = ({ room }: { room: IRoom }) => {
+  const { user } = useContext(UserContext);
+  const router = useRouter();
+  const pathname = usePathname();
+
+  const handleBook = () => {
+    if (user) {
+      router.push(
+        `/reserve?roomId=${room.id}&name=${room.name}&price=${room.price}`
+      );
+    } else {
+      alert("Please log in first!");
+      router.push(`/login?redirect=${pathname}`);
+    }
+  };
+
   return (
     <div className="flex justify-center px-4 py-6 bg-dark-soft">
       <div className="flex flex-col md:flex-row items-start gap-6 max-w-4xl mx-auto bg-black rounded-lg shadow-lg overflow-hidden">

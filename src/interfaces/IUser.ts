@@ -19,6 +19,7 @@ export interface LoginResponse {
 
 interface Response {
   token: string;
+  user: UserData;
 }
 
 interface UserData {
