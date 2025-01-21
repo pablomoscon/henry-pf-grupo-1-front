@@ -6,6 +6,7 @@ import { userLogin } from "../../services/userServices";
 import { useRouter } from "next/navigation";
 import { useContext } from "react";
 import { UserContext } from "@/contexts/userContext";
+import { googleAuth } from "@/services/authServices";
 
 const LoginForm = () => {
   const router = useRouter();
@@ -47,6 +48,15 @@ const LoginForm = () => {
       }
     },
   });
+
+  const handleGoogleLogin = async () => {
+    try {
+      await googleAuth();
+    } catch (error) {
+      console.error("Failed to initialize Google login:", error);
+      alert("Failed to connect with Google. Please try again.");
+    }
+  };
 
   return (
     <div className="flex items-center justify-center mt-8">
@@ -121,6 +131,24 @@ const LoginForm = () => {
         <div className="flex flex-col items-center gap-4">
           <button type="submit" disabled={isSubmitting} className="button_gold">
             {isSubmitting ? "Signing in..." : "Sign in"}
+          </button>
+
+          <div className="w-full flex items-center my-4">
+            <div className="flex-1 border-t border-gray-600"></div>
+            <span className="px-3 text-gray-400">or</span>
+            <div className="flex-1 border-t border-gray-600"></div>
+          </div>
+
+          <button
+            type="button"
+            onClick={handleGoogleLogin}
+            className="w-full flex items-center justify-center gap-2 px-4 py-2 border border-gray-600 rounded-md hover:bg-gray-700 transition-colors"
+            style={{ background: "var(--black-light)" }}
+          >
+            <img src="/google-icon.svg" alt="Google" className="w-5 h-5" />
+            <span style={{ color: "var(--white-ivory)" }}>
+              Continue with Google
+            </span>
           </button>
 
           <div className="text-center">
