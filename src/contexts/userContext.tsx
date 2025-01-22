@@ -1,6 +1,6 @@
-"use client";
-import { LoginResponse, UserData } from "@/interfaces/IUser";
-import { useState, createContext, useEffect } from "react";
+'use client';
+import { LoginResponse, UserData } from '@/interfaces/IUser';
+import { useState, createContext, useEffect } from 'react';
 
 interface UserContextProps {
   user: LoginResponse | null;
@@ -25,12 +25,12 @@ const UserProvider = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     if (user) {
-      localStorage.setItem("user", JSON.stringify(user));
+      localStorage.setItem('user', JSON.stringify(user));
     }
   }, [user]);
 
   useEffect(() => {
-    const localUser = localStorage.getItem("user");
+    const localUser = localStorage.getItem('user');
     setUser(localUser ? JSON.parse(localUser) : null);
   }, []);
 
@@ -40,9 +40,9 @@ const UserProvider = ({ children }: { children: React.ReactNode }) => {
 
   const logOut = () => {
     setUser(null);
-    localStorage.removeItem("user");
-    alert("You have logged out.");
-    window.location.href = "/";
+    localStorage.removeItem('user');
+    alert('You have logged out.');
+    window.location.href = '/';
   };
 
   const updateUser = (userData: Partial<UserData>) => {
@@ -63,7 +63,7 @@ const UserProvider = ({ children }: { children: React.ReactNode }) => {
 
   const handleGoogleLogin = (googleData: { token: string; user: UserData }) => {
     const formattedResponse: LoginResponse = {
-      success: "success",
+      success: 'success',
       response: {
         token: googleData.token,
         user: googleData.user,

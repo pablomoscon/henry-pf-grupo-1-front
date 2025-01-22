@@ -17,12 +17,12 @@ const ClientProfile = () => {
   useEffect(() => {
     const checkAuthCookie = async () => {
       try {
-        const cookieString = document.cookie
+        const cookieString = await document.cookie
           .split("; ")
           .find((row) => row.startsWith("auth="));
 
         if (cookieString) {
-          const cookieValue = decodeURIComponent(cookieString.split("=")[1]);
+          const cookieValue = await decodeURIComponent(cookieString.split("=")[1]);
           const { token, user: cookieUser } = JSON.parse(cookieValue);
 
           if (!isLogged() && token && cookieUser) {
