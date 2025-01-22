@@ -8,6 +8,11 @@ const nextConfig: NextConfig = {
         hostname: "hoteldegatos.com.ar",
         pathname: "/**",
       },
+      {
+        protocol: "https",
+        hostname: "res.cloudinary.com",
+        pathname: "/**",
+      },
     ],
     domains: ["res.cloudinary.com"],
   },
