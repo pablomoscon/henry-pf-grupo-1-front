@@ -10,6 +10,7 @@ import { VaccineMapType, CatFormData } from "@/interfaces/ICat";
 const NewCatForm = () => {
   const router = useRouter();
   const { user } = useContext(UserContext);
+  const userId = user?.response?.user?.id;
 
   const {
     values,
@@ -39,6 +40,11 @@ const NewCatForm = () => {
     },
     validationSchema: newCatSchema,
     onSubmit: async (values, actions) => {
+      if (!userId) {
+        alert("Please log in to register a cat.");
+        return;
+      }
+
       actions.setSubmitting(true);
 
       const vaccineMap: VaccineMapType = {
@@ -64,7 +70,7 @@ const NewCatForm = () => {
           .filter(([, isSelected]) => isSelected)
           .map(([vaccineName]) => vaccineMap[vaccineName]),
         photo: values.catPhoto,
-        userId: user?.response?.user?.id || "",
+        userId: userId,
       };
 
       try {
@@ -89,6 +95,14 @@ const NewCatForm = () => {
       }
     },
   });
+
+  if (!userId) {
+    return (
+      <div className="flex items-center justify-center mt-2">
+        <div className="text-gold-soft">Please log in to register a cat.</div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex items-center justify-center mt-2">
