@@ -4,9 +4,17 @@ import { UserContext } from "@/contexts/userContext";
 import { useContext } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 const UserWidget = () => {
   const { isLogged, logOut } = useContext(UserContext);
+  const router = useRouter();
+
+  const handleLogout = () => {
+    document.cookie = "auth=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+    logOut();
+    router.push("/");
+  };
 
   return (
     <div className="flex items-center gap-4 text-xs font-semibold text-black-dark">
@@ -26,7 +34,7 @@ const UserWidget = () => {
             Dashboard
           </Link>
           <button
-            onClick={logOut}
+            onClick={handleLogout}
             className="flex items-center hover:text-gold-dark transition-colors"
           >
             <Image
