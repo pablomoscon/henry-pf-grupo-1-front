@@ -1,7 +1,6 @@
 "use client";
 import {
   ChangeEvent,
-  FormEvent,
   useEffect,
   useState,
   useContext,
@@ -14,32 +13,64 @@ import { UserContext } from "@/contexts/userContext";
 import CheckIn from "../CheckIn/CheckIn";
 import CheckOut from "../CheckOut/CheckOut";
 import { useSearchParams } from "next/navigation";
+import { getCatsUser } from "@/services/catServices";
+import { ICat } from "../../interfaces/ICat";
+import { bookRegister } from "@/services/bookService";
+import ReservationModal from "../ReservationModal/ReservationModal";
+import { useRouter } from "next/navigation";
 
 const ReservationForm = () => {
+  const [isModalOpen, setModalOpen] = useState(false);
+  const openModal = () => setModalOpen(true);
+  const closeModal = () => setModalOpen(false);
+  const router = useRouter();
+
   const searchParams = useSearchParams();
   const { checkInDate } = useDateContext();
   const { checkOutDate } = useDateContext();
   const { user } = useContext(UserContext);
 
-  const [userData, setUserData] = useState({
-    checkInDate: "", // Inicializamos con un valor vacío
+  const [userData, setUserData] = useState<{
+    checkInDate: string;
+    checkOutDate: string;
+    roomId: string;
+    name: string;
+    price: string;
+    userId: string | undefined;
+    fullName: string | undefined;
+    customerId: string | undefined;
+    totalAmount: number;
+    catsIds: string[]; // Agregamos la propiedad catsIds como un array de strings
+  }>({
+    checkInDate: "",
     checkOutDate: "",
     roomId: searchParams.get("roomId") || "",
     name: searchParams.get("name") || "",
     price: searchParams.get("price") || "0",
-    userId: user?.response?.user?.id,
+    userId: user?.response.user.id,
     fullName: user?.response?.user?.name,
     customerId: user?.response?.user?.customerId,
     totalAmount: 0,
+    catsIds: [], // Inicializamos el array vacío para catsIds
   });
 
-  const [posData, setPosData] = useState({
+  const [posData, setPosData] = useState<{
+    userId: string;
+    roomId: string;
+    checkInDate: string;
+    checkOutDate: string;
+    totalAmount: number;
+    catsIds: string[]; // Aseguramos que sea un array de strings
+  }>({
     userId: "",
     roomId: "",
     checkInDate: "",
     checkOutDate: "",
-    totalAmount: "",
+    totalAmount: 0,
+    catsIds: [], // Inicializamos el array vacío
   });
+
+  const [cats, setCats] = useState<ICat[]>([]);
 
   const [totalAmount, setTotalAmount] = useState(0);
 
@@ -69,55 +100,110 @@ const ReservationForm = () => {
       roomId: userData.roomId || "",
       checkInDate: userData.checkInDate || "",
       checkOutDate: userData.checkOutDate || "",
-      totalAmount: totalAmount.toFixed(2) || "0", // Asegúrate de convertir a string si es necesario
+      totalAmount: Number(totalAmount) || 0,
+      catsIds: userData.catsIds,
     });
   }, [userData, totalAmount]);
 
+  useEffect(() => {
+    const fetchCats = async () => {
+      if (userData.userId) {
+        try {
+          const fetchedCats = await getCatsUser(userData.userId);
+          setCats(fetchedCats); // Actualiza el estado con los gatos obtenidos
+        } catch (error) {
+          console.error("Error al obtener los gatos:", error);
+        }
+      } else {
+        console.warn(
+          "No se puede obtener la lista de gatos: el ID del usuario no está definido."
+        );
+      }
+    };
+
+    fetchCats();
+  }, [userData.userId]); // Llama a fetchCats cada vez que cambie el userId
+
   const calculateTotalAmount = useCallback(() => {
-    // Validar fechas
     if (!userData.checkInDate || !userData.checkOutDate) {
-      console.warn("Una o ambas fechas están vacías.");
-      setTotalAmount(0); // Si no hay fechas, no hay total
+      setTotalAmount(0);
       return;
     }
 
     const checkIn = new Date(userData.checkInDate);
     const checkOut = new Date(userData.checkOutDate);
 
-    if (isNaN(checkIn.getTime()) || isNaN(checkOut.getTime())) {
-      console.error("Una o ambas fechas no son válidas.");
-      setTotalAmount(0); // Si no son válidas, no hay total
+    if (
+      isNaN(checkIn.getTime()) ||
+      isNaN(checkOut.getTime()) ||
+      checkOut < checkIn
+    ) {
+      setTotalAmount(0);
       return;
     }
 
-    // Calcular diferencia de tiempo
-    const differenceInTime = checkOut.getTime() - checkIn.getTime();
+    const differenceInDays = Math.ceil(
+      (checkOut.getTime() - checkIn.getTime()) / (1000 * 60 * 60 * 24)
+    );
 
-    // Validar que la fecha de salida sea posterior a la de entrada
-    if (differenceInTime < 0) {
-      console.error("La fecha de salida es anterior a la fecha de entrada.");
-      setTotalAmount(0); // No permitimos totales negativos
-      return;
-    }
-
-    const differenceInDays = differenceInTime / (1000 * 60 * 60 * 24);
-
-    const total = differenceInDays * Number(userData.price);
-    setTotalAmount(total);
-    userData.totalAmount = total;
+    setTotalAmount(differenceInDays * Number(userData.price));
   }, [userData.checkInDate, userData.checkOutDate, userData.price]);
 
   useEffect(() => {
     calculateTotalAmount();
   }, [calculateTotalAmount]);
 
-  const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (
+    event: ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     const { name, value } = event.target;
     setUserData({ ...userData, [name]: value });
     setErrors(validateBook({ ...userData, [name]: value }));
   };
 
-  const handleOnSubmit = async (event: FormEvent<HTMLFormElement>) => {
+  const handleModalConfirm = async () => {
+    closeModal();
+    try {
+      console.log(posData);
+      const res = await bookRegister(posData);
+      alert("Reservation successful!");
+
+      if (!res.message) {
+        const reservationId = res.id; // ID devuelto por el POST *********
+        /* const res1 = await confirmPayment(reservationId); */
+        router.push(
+          `http://localhost:3000/payments/create-checkout-session/${reservationId}`
+        ); // Redirige con el ID *********
+        setUserData({
+          checkInDate: "",
+          checkOutDate: "",
+          roomId: "",
+          name: "",
+          price: "0",
+          userId: "",
+          fullName: "",
+          customerId: "",
+          totalAmount: 0,
+          catsIds: [],
+        });
+        setPosData({
+          userId: "",
+          roomId: "",
+          checkInDate: "",
+          checkOutDate: "",
+          totalAmount: 0,
+          catsIds: [],
+        });
+      } else {
+        alert(res.message || "Reservation failed.");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      alert("Connection error. Please try again later.");
+    }
+  };
+
+  const handleOnSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     const validationErrors = validateBook(userData, true);
@@ -125,21 +211,16 @@ const ReservationForm = () => {
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
     } else {
-      // POST
-      console.log("Datos para enviar (postData):", posData);
-
-      alert(
-        `Reserva realizada correctamente:
-      RoomId: ${userData.roomId}
-      Suite Name: ${userData.name}
-      Check In: ${userData.checkInDate} 
-      Check Out: ${userData.checkOutDate}
-      Price: ${userData.price}
-      User Id: ${userData.userId}
-      Customer Id: ${userData.customerId}
-      Full Name: ${userData.fullName}
-      Total Amount: ${userData.totalAmount}`
-      );
+      // Configura `posData` antes de mostrar el modal
+      setPosData({
+        userId: userData.userId,
+        roomId: userData.roomId,
+        checkInDate: userData.checkInDate,
+        checkOutDate: userData.checkOutDate,
+        totalAmount: totalAmount, // Ejemplo de cómo calcular el monto total
+        catsIds: userData.catsIds,
+      });
+      openModal(); // Abre el modal
     }
   };
 
@@ -151,7 +232,7 @@ const ReservationForm = () => {
         className="w-full max-w-2xl mx-auto p-6 rounded-lg shadow-md space-y-4"
         style={{ background: "var(--black-dark)" }}
       >
-        <h2 style={{ color: "var(--gold-soft)" }}>Book Details</h2>
+        <h2 style={{ color: "var(--gold-soft)" }}>Book</h2>
         <div className="space-y-2">
           <h2
             className="text-xl font-semibold text-left"
@@ -165,7 +246,7 @@ const ReservationForm = () => {
               {userData.name}
             </span>
             <span>
-              -------------------------------------------------------------------------------------
+              --------------------------------------------------------------
             </span>
             <span className="text-lg" style={{ color: "var(--white-ivory)" }}>
               ${userData.price} USD / day
@@ -204,7 +285,7 @@ const ReservationForm = () => {
               )}
             </div>
             <div className="relative">
-              <CheckIn />
+              <CheckIn roomId={userData.roomId} />
             </div>
           </div>
 
@@ -229,7 +310,7 @@ const ReservationForm = () => {
                 <p className="text-red-600">{errors.checkOutDate}</p>
               )}
               <div className="relative">
-                <CheckOut />
+                <CheckOut roomId={userData.roomId} />
               </div>
             </div>
           </div>
@@ -246,7 +327,7 @@ const ReservationForm = () => {
             -------------------------------------------------------------------------------------
           </span>
           <span className="text-lg" style={{ color: "var(--gold-soft)" }}>
-            ${totalAmount.toFixed(2)} USD
+            ${totalAmount} USD
           </span>
         </div>
 
@@ -295,27 +376,33 @@ const ReservationForm = () => {
             >
               Kitty Cat Name
             </label>
-            <div className="flex items-center space-x-4">
-              {/* Select para los gatitos */}
+            <div className="space-y-4">
+              <label htmlFor="selectCat">Select Kitties:</label>
               <select
-                name="selectedKitty"
-                className="block w-full px-4 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring focus:ring-green-500"
-                style={{
-                  backgroundColor: "var(--white-ivory)",
-                  color: "var(--black-dark)",
+                name="catsIds"
+                multiple // Permite seleccionar múltiples gatitos
+                value={userData.catsIds} // Array de IDs seleccionados
+                onChange={(e) => {
+                  const selectedOptions = Array.from(
+                    e.target.selectedOptions,
+                    (option) => option.value
+                  );
+                  setUserData({
+                    ...userData,
+                    catsIds: selectedOptions, // Actualiza el array con los IDs seleccionados
+                  });
                 }}
+                className="block w-full px-4 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring focus:ring-gold-dark bg-black text-white"
               >
-                <option value="" disabled selected>
-                  Select a kitty
+                <option value="" disabled>
+                  Select one or more kitties
                 </option>
-                <option value="Whiskers">Whiskers</option>
-                <option value="Luna">Luna</option>
+                {cats.map((cat) => (
+                  <option key={cat.id} value={cat.id}>
+                    {cat.name}
+                  </option>
+                ))}
               </select>
-
-              {/* Botón New */}
-              <button type="button" className="button_green">
-                New
-              </button>
             </div>
           </div>
         </div>
@@ -325,6 +412,15 @@ const ReservationForm = () => {
           <button className="button_gold">Book</button>
         </div>
       </form>
+      {/* Renderiza el modal */}
+      <ReservationModal
+        isOpen={isModalOpen}
+        onClose={closeModal}
+        onConfirm={handleModalConfirm}
+        totalAmount={posData.totalAmount}
+        checkInDate={posData.checkInDate}
+        checkOutDate={posData.checkOutDate}
+      />
     </div>
   );
 };

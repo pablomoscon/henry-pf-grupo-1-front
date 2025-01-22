@@ -1,4 +1,5 @@
 "use client";
+import React, { useState, useEffect } from "react";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DateCalendar } from "@mui/x-date-pickers/DateCalendar";
@@ -6,12 +7,31 @@ import { useDateContext } from "@/contexts/dateContext"; // Contexto de fechas
 import dayjs, { Dayjs } from "dayjs";
 import { getDateReserved } from "@/services/bookService";
 
-const arrayReserve = getDateReserved();
-const reservedDates = arrayReserve.map((date) => dayjs(date));
+interface CheckInProps {
+  roomId: string;
+}
 
-const CheckOut = () => {
+const CheckOut: React.FC<CheckInProps> = ({ roomId }) => {
   const { checkOutDate, setCheckOutDate } = useDateContext(); // Contexto de fechas
 
+  const [reservedDates, setReservedDates] = useState<Dayjs[]>([]); // Estado para las fechas bloqueadas
+
+  // Llamada al servicio para obtener fechas bloqueadas
+  useEffect(() => {
+    const fetchReservedDates = async () => {
+      if (!roomId) return; // No hacemos nada si no hay roomId
+      try {
+        const blockedDates = await getDateReserved(roomId);
+        setReservedDates(blockedDates.map((date) => dayjs(date))); // Convertimos las fechas a Dayjs
+      } catch (error) {
+        console.error("Error al obtener las fechas bloqueadas:", error);
+      }
+    };
+
+    fetchReservedDates();
+  }, [roomId]);
+
+  // Función para verificar si una fecha está reservada
   const isReserved = (date: Dayjs) => {
     return reservedDates.some((reserved) => reserved.isSame(date, "day"));
   };

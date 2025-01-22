@@ -16,6 +16,17 @@ export const getCatsId = async (id: string): Promise<ICat | undefined> => {
   return cats.find((cat) => cat.id === id);
 };
 
+export const getCatsUser = async (id: string): Promise<ICat[]> => {
+  const res = await fetch(`http://localhost:3000/users/cats/${id}`, {
+    cache: "no-store",
+  })
+    .then((res) => res.json())
+    .catch(() => {
+      return [];
+    });
+  return res as ICat[];
+};
+
 export const catRegister = async (data: CatRegister) => {
   const res = await fetch("http://localhost:3000/cats", {
     method: "POST",
