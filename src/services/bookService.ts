@@ -45,3 +45,22 @@ export const bookRegister = async (data: IReserve) => {
   });
   return res.json();
 };
+
+export const getUserReservations = async (userId: string) => {
+  try {
+    const response = await fetch(`http://localhost:3000/users/${userId}`, {
+      cache: "no-store",
+    });
+
+    if (!response.ok) {
+      throw new Error("Error al obtener las reservas del usuario");
+    }
+
+    const userData = await response.json();
+    // Extraemos las reservaciones del objeto de usuario
+    return userData.reservations || [];
+  } catch (error) {
+    console.error("Error al obtener las reservas:", error);
+    return [];
+  }
+};

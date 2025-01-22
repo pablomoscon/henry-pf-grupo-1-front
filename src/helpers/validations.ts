@@ -83,7 +83,7 @@ export const newCatSchema = yup.object().shape({
   isNeutered: yup.boolean(),
   weight: yup
     .string()
-    .matches(/^\d+$/, "Only numbers are allowed")
+    .matches(/^\d*\.?\d*$/, "Please enter a valid number (e.g., 4.5)")
     .required("Required"),
   personality: yup.string(),
   getsAlongWithCats: yup.string(),

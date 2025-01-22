@@ -6,6 +6,8 @@ import Link from "next/link";
 import { ICat } from "@/interfaces/ICat";
 import EditCatModal from "../EditCatModal/EditCatModal";
 import { updateCat, getCats } from "@/services/catServices";
+import { getUserReservations } from "@/services/bookService";
+import { IReservation } from "@/interfaces/IReserve";
 
 const ClientProfile = () => {
   const { user, isLogged, handleGoogleLogin } = useContext(UserContext);
@@ -13,58 +15,58 @@ const ClientProfile = () => {
   const userData = user?.response?.user;
   const [selectedCat, setSelectedCat] = useState<ICat | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [reservations, setReservations] = useState<IReservation[]>([]);
 
   useEffect(() => {
-    const checkAuthCookie = async () => {
+    const fetchUserProfile = async () => {
       try {
-        const cookieString = await document.cookie
+        const authCookie = document.cookie
           .split("; ")
           .find((row) => row.startsWith("auth="));
 
-        if (cookieString) {
-          const cookieValue = await decodeURIComponent(cookieString.split("=")[1]);
-          const { token, user: cookieUser } = JSON.parse(cookieValue);
+        if (!authCookie) return;
 
-          if (!isLogged() && token && cookieUser) {
-            handleGoogleLogin({
-              token,
-              user: {
-                id: cookieUser.id,
-                name: cookieUser.name,
-                email: cookieUser.email,
-                role: cookieUser.role,
-                phone: cookieUser.phone || null,
-                address: cookieUser.address || null,
-                customerId: cookieUser.customerId || null,
-              },
-            });
-          }
-        }
+        const { token, user } = JSON.parse(
+          decodeURIComponent(authCookie.split("=")[1])
+        );
+
+        if (!token || !user?.id) return;
+
+        const response = await fetch(`http://localhost:3000/users/${user.id}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        if (!response.ok)
+          throw new Error(`Error fetching user: ${response.statusText}`);
+
+        const userProfile = await response.json();
+
+        console.log("User profile:", userProfile);
+
+        handleGoogleLogin({ token, user: userProfile });
       } catch (error) {
-        console.error("Error checking auth cookie:", error);
+        console.error("Error fetching user profile:", error);
       }
     };
 
     if (!isLogged()) {
-      checkAuthCookie();
+      fetchUserProfile();
     }
   }, [isLogged, handleGoogleLogin]);
 
   useEffect(() => {
     const fetchCats = async () => {
       try {
-        const catsData = await getCats();
         const userId = user?.response?.user?.id;
 
         if (!userId) {
-          console.warn("No user ID available");
+          console.warn("User ID not available yet");
           return;
         }
 
-        const userCats = catsData.filter((cat) => {
-          return cat.user?.id === userId;
-        });
+        const catsData = await getCats();
 
+        const userCats = catsData.filter((cat) => cat.user?.id === userId);
         setCats(userCats);
       } catch (error) {
         console.error("Error fetching cats:", error);
@@ -72,10 +74,32 @@ const ClientProfile = () => {
       }
     };
 
-    if (user?.response.user.id) {
+    if (user?.response?.user?.id) {
       fetchCats();
     }
-  }, [user?.response.user.id]);
+  }, [user?.response?.user?.id]);
+
+  useEffect(() => {
+    const fetchReservations = async () => {
+      try {
+        const userId = user?.response?.user?.id;
+        if (!userId) {
+          console.warn("User ID not available yet");
+          return;
+        }
+
+        const userReservations = await getUserReservations(userId);
+        setReservations(userReservations);
+      } catch (error) {
+        console.error("Error fetching reservations:", error);
+        alert("Failed to load reservations. Please try again.");
+      }
+    };
+
+    if (user?.response?.user?.id) {
+      fetchReservations();
+    }
+  }, [user?.response?.user?.id]);
 
   const handleEditCat = (cat: ICat) => {
     setSelectedCat(cat);
@@ -84,7 +108,7 @@ const ClientProfile = () => {
 
   const handleSaveCat = async (updatedCat: ICat) => {
     try {
-      await updateCat(updatedCat);
+      await updateCat(updatedCat, updatedCat.id);
       const updatedCats = cats.map((cat) =>
         cat.id === updatedCat.id ? updatedCat : cat
       );
@@ -298,10 +322,41 @@ const ClientProfile = () => {
       {/* My Reservations Section */}
       <div>
         <h2 className="text-2xl text-gold-soft mb-6">My Reservations</h2>
-        <div className="bg-black-dark p-6 rounded-lg shadow-md">
-          <p className="text-white-ivory text-center">
-            You do not have any reservations yet.
-          </p>
+        <div className="bg-black-dark p-8 rounded-xl shadow-lg border border-gold-soft/10 hover:border-gold-soft/30 transition-colors">
+          {reservations.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {reservations.map((reservation) => (
+                <div
+                  key={reservation.id}
+                  className="p-4 border border-gray-600 rounded-lg hover:border-gold-soft/50 transition-all duration-300"
+                >
+                  <div className="space-y-2">
+                    <h3 className="text-gold-soft text-lg font-medium">
+                      Suite: {reservation.room?.name || "N/A"}
+                    </h3>
+                    <p className="text-white-ivory">
+                      Check-in:{" "}
+                      {new Date(reservation.checkInDate).toLocaleDateString()}
+                    </p>
+                    <p className="text-white-ivory">
+                      Check-out:{" "}
+                      {new Date(reservation.checkOutDate).toLocaleDateString()}
+                    </p>
+                    <p className="text-white-ivory">
+                      Total Amount: ${reservation.totalAmount}
+                    </p>
+                    <p className="text-white-ivory">
+                      Status: {reservation.status || "Pending"}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-white-ivory text-center">
+              You do not have any reservations yet.
+            </p>
+          )}
         </div>
       </div>
 

@@ -20,26 +20,29 @@ const EditCatModal = ({ cat, isOpen, onClose, onSave }: EditCatModalProps) => {
   });
 
   useEffect(() => {
-    if (cat) {
-      const catFormData: CatFormData = {
-        name: cat.name,
-        dateOfBirth: cat.dateOfBirth,
-        isNeutered: cat.isNeutered,
-        weight: cat.weight,
-        personality: cat.personality,
-        getsAlongWithOtherCats: cat.getsAlongWithOtherCats as
-          | "yes"
-          | "no"
-          | "unsure",
-        food: cat.food,
-        medication: cat.medication || "",
-        behaviorAtVet: cat.behaviorAtVet || "",
-        vaccinationsAndTests: cat.vaccinationsAndTests,
-        photo: cat.photo,
-        userId: cat.user.id,
-      };
-      setFormData(catFormData);
+    if (!cat) {
+      console.warn("Cat data not available");
+      return;
     }
+
+    const catFormData: CatFormData = {
+      name: cat.name,
+      dateOfBirth: cat.dateOfBirth,
+      isNeutered: cat.isNeutered,
+      weight: cat.weight,
+      personality: cat.personality,
+      getsAlongWithOtherCats: cat.getsAlongWithOtherCats as
+        | "yes"
+        | "no"
+        | "unsure",
+      food: cat.food,
+      medication: cat.medication || "",
+      behaviorAtVet: cat.behaviorAtVet || "",
+      vaccinationsAndTests: cat.vaccinationsAndTests,
+      photo: cat.photo,
+      userId: cat.user.id,
+    };
+    setFormData(catFormData);
   }, [cat]);
 
   const handleChange = (

@@ -6,3 +6,15 @@ export interface IReserve {
   totalAmount: number;
   catsIds: string[];
 }
+
+export interface IReservation {
+  id: string;
+  checkInDate: string;
+  checkOutDate: string;
+  totalAmount: number;
+  status: string;
+  room: {
+    id: string;
+    name: string;
+  };
+}

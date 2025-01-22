@@ -1,7 +1,7 @@
 "use client";
 
 import { UserContext } from "@/contexts/userContext";
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { updateUserProfile } from "@/services/userServices";
 
@@ -11,11 +11,22 @@ const EditProfile = () => {
   const userData = user?.response?.user;
 
   const [formData, setFormData] = useState({
-    name: userData?.name || "",
-    email: userData?.email || "",
-    phone: userData?.phone || "",
-    address: userData?.address || "",
+    name: "",
+    email: "",
+    phone: "",
+    address: "",
   });
+
+  useEffect(() => {
+    if (userData) {
+      setFormData({
+        name: userData.name || "",
+        email: userData.email || "",
+        phone: userData.phone || "",
+        address: userData.address || "",
+      });
+    }
+  }, [userData]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -27,8 +38,13 @@ const EditProfile = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!userData) {
+      alert("User data not found. Please try again.");
+      return;
+    }
+
     try {
-      await updateUserProfile(formData);
+      await updateUserProfile(formData, userData.id);
       await updateUser({
         ...userData,
         ...formData,

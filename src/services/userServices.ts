@@ -23,8 +23,11 @@ export const userLogin = async (data: UserLogin): Promise<LoginResponse> => {
   return res.json();
 };
 
-export const updateUserProfile = async (userData: Partial<UserData>) => {
-  const res = await fetch("http://localhost:3000/users/id", {
+export const updateUserProfile = async (
+  userData: Partial<UserData>,
+  id: string
+) => {
+  const res = await fetch(`http://localhost:3000/users/${id}`, {
     method: "PATCH",
     headers: {
       "Content-Type": "application/json",
