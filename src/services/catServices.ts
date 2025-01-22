@@ -37,7 +37,7 @@ export const catRegister = async (formData: CatFormData) => {
     if (!res.ok) {
       const errorText = await res.text();
       console.error("4. Error del servidor:", errorText);
-      throw new Error(Failed to register cat: ${res.statusText});
+      throw new Error(`Failed to register cat: ${res.statusText}`); 
     }
 
     const responseData = await res.json();
@@ -48,8 +48,8 @@ export const catRegister = async (formData: CatFormData) => {
   }
 };
 
-export const updateCat = async (catData: ICat) => {
-  const res = await fetch(http://localhost:3000/cats/id, {
+export const updateCat = async (catData: ICat, id: string) => {
+  const res = await fetch(`http://localhost:3000/cats/${id}`, {  
     method: "PATCH",
     headers: {
       "Content-Type": "application/json",
