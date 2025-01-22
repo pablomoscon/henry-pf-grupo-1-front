@@ -2,9 +2,14 @@
 import { useFormik } from "formik";
 import { newCatSchema } from "../../helpers/validations";
 import { useRouter } from "next/navigation";
+import { catRegister } from "@/services/catServices";
+import { useContext } from "react";
+import { UserContext } from "@/contexts/userContext";
+import { VaccineMapType, CatFormData } from "@/interfaces/ICat";
 
 const NewCatForm = () => {
   const router = useRouter();
+  const { user } = useContext(UserContext);
 
   const {
     values,
@@ -36,33 +41,52 @@ const NewCatForm = () => {
     onSubmit: async (values, actions) => {
       actions.setSubmitting(true);
 
-      const formattedData = {
-        id: Date.now().toString(),
+      const vaccineMap: VaccineMapType = {
+        rabies: "rabies",
+        tripleFeline: "tripleFeline",
+        fivFelv: "FIV/Felv test",
+      };
+
+      const formattedData: CatFormData = {
         name: values.catName,
         dateOfBirth: values.dateOfBirth,
         isNeutered: values.isNeutered,
         weight: values.weight,
         personality: values.personality,
-        getsAlongWithCats: values.getsAlongWithCats,
+        getsAlongWithOtherCats: values.getsAlongWithCats as
+          | "yes"
+          | "no"
+          | "unsure",
         food: values.food,
         medication: values.medication,
-        veterinarianBehavior: values.veterinarianBehavior,
-        vaccinations: Object.entries(values.vaccinations)
+        behaviorAtVet: values.veterinarianBehavior,
+        vaccinationsAndTests: Object.entries(values.vaccinations)
           .filter(([, isSelected]) => isSelected)
-          .map(([vaccineName]) => vaccineName),
+          .map(([vaccineName]) => vaccineMap[vaccineName]),
         photo: values.catPhoto,
+        userId: user?.response?.user?.id || "",
       };
 
-      // Guardar en localStorage
-      const existingCats = JSON.parse(localStorage.getItem("cats") || "[]");
-      localStorage.setItem(
-        "cats",
-        JSON.stringify([...existingCats, formattedData])
-      );
-
-      actions.resetForm();
-      actions.setSubmitting(false);
-      router.push("/dashboard");
+      try {
+        const res = await catRegister(formattedData);
+        if (res.id) {
+          alert("Cat registered successfully!");
+          router.push("/dashboard");
+        } else {
+          alert("Failed to create cat. Please try again.");
+          actions.resetForm();
+          actions.setSubmitting(false);
+        }
+      } catch (error) {
+        console.error("E. Error en el registro:", error);
+        if (error instanceof Error) {
+          alert(error.message);
+        } else {
+          alert("Failed to create cat. Error creating cat. Please try again.");
+        }
+      } finally {
+        actions.setSubmitting(false);
+      }
     },
   });
 

@@ -3,9 +3,19 @@ import { useFormik } from "formik";
 import { registerSchema } from "../../helpers/validations";
 import { userRegister } from "../../services/userServices";
 import { useRouter } from "next/navigation";
+import { googleAuth } from "@/services/authServices";
 
 const RegisterForm = () => {
   const router = useRouter();
+
+  const handleGoogleLogin = async () => {
+    try {
+      await googleAuth();
+    } catch (error) {
+      console.error("Failed to initialize Google login:", error);
+      alert("Failed to connect with Google. Please try again.");
+    }
+  };
 
   const {
     values,
@@ -279,6 +289,24 @@ const RegisterForm = () => {
           className="button_gold w-full"
         >
           {isSubmitting ? "Registering..." : "Register"}
+        </button>
+
+        <div className="w-full flex items-center my-4">
+          <div className="flex-1 border-t border-gray-600"></div>
+          <span className="px-3 text-gray-400">or</span>
+          <div className="flex-1 border-t border-gray-600"></div>
+        </div>
+
+        <button
+          type="button"
+          onClick={handleGoogleLogin}
+          className="w-full flex items-center justify-center gap-2 px-4 py-2 border border-gray-600 rounded-md hover:bg-gray-700 transition-colors"
+          style={{ background: "var(--black-light)" }}
+        >
+          <img src="/google-icon.svg" alt="Google" className="w-5 h-5" />
+          <span style={{ color: "var(--white-ivory)" }}>
+            Continue with Google
+          </span>
         </button>
       </form>
     </div>

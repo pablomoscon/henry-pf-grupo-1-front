@@ -4,25 +4,104 @@ import { UserContext } from "@/contexts/userContext";
 import { useContext, useEffect, useState } from "react";
 import Link from "next/link";
 import { ICat } from "@/interfaces/ICat";
+import EditCatModal from "../EditCatModal/EditCatModal";
+import { updateCat, getCats } from "@/services/catServices";
 
 const ClientProfile = () => {
-  const { user, isLogged } = useContext(UserContext);
+  const { user, isLogged, handleGoogleLogin } = useContext(UserContext);
   const [cats, setCats] = useState<ICat[]>([]);
   const userData = user?.response?.user;
+  const [selectedCat, setSelectedCat] = useState<ICat | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
-    const storedCats = JSON.parse(localStorage.getItem("cats") || "[]");
-    setCats(storedCats);
-  }, []);
+    const checkAuthCookie = async () => {
+      try {
+        const cookieString = document.cookie
+          .split("; ")
+          .find((row) => row.startsWith("auth="));
 
-  console.log("Entire user object:", user);
-  console.log("User data:", user?.response?.user);
+        if (cookieString) {
+          const cookieValue = decodeURIComponent(cookieString.split("=")[1]);
+          const { token, user: cookieUser } = JSON.parse(cookieValue);
+
+          if (!isLogged() && token && cookieUser) {
+            handleGoogleLogin({
+              token,
+              user: {
+                id: cookieUser.id,
+                name: cookieUser.name,
+                email: cookieUser.email,
+                role: cookieUser.role,
+                phone: cookieUser.phone || null,
+                address: cookieUser.address || null,
+                customerId: cookieUser.customerId || null,
+              },
+            });
+          }
+        }
+      } catch (error) {
+        console.error("Error checking auth cookie:", error);
+      }
+    };
+
+    if (!isLogged()) {
+      checkAuthCookie();
+    }
+  }, [isLogged, handleGoogleLogin]);
+
+  useEffect(() => {
+    const fetchCats = async () => {
+      try {
+        const catsData = await getCats();
+        const userId = user?.response?.user?.id;
+
+        if (!userId) {
+          console.warn("No user ID available");
+          return;
+        }
+
+        const userCats = catsData.filter((cat) => {
+          return cat.user?.id === userId;
+        });
+
+        setCats(userCats);
+      } catch (error) {
+        console.error("Error fetching cats:", error);
+        alert("Failed to load cats. Please try again.");
+      }
+    };
+
+    if (user?.response.user.id) {
+      fetchCats();
+    }
+  }, [user?.response.user.id]);
+
+  const handleEditCat = (cat: ICat) => {
+    setSelectedCat(cat);
+    setIsModalOpen(true);
+  };
+
+  const handleSaveCat = async (updatedCat: ICat) => {
+    try {
+      await updateCat(updatedCat);
+      const updatedCats = cats.map((cat) =>
+        cat.id === updatedCat.id ? updatedCat : cat
+      );
+      setCats(updatedCats);
+      setIsModalOpen(false);
+      setSelectedCat(null);
+    } catch (error) {
+      console.error("Error updating cat:", error);
+      alert("Failed to update cat. Please try again.");
+    }
+  };
 
   if (!isLogged()) {
     return (
       <div className="container mx-auto px-4 py-8">
         <h1 className="text-4xl text-center text-gold-soft mb-12">
-          Please log in to view your dashboard
+          Checking authentication...
         </h1>
       </div>
     );
@@ -92,7 +171,10 @@ const ClientProfile = () => {
             </div>
           </div>
           <div className="mt-6 pt-6 border-t border-gold-soft/10">
-            <button className="text-gold-soft/70 text-sm hover:text-gold-soft transition-colors flex items-center gap-2">
+            <Link
+              href="/edit-profile"
+              className="text-gold-soft/70 text-sm hover:text-gold-soft transition-colors flex items-center gap-2"
+            >
               <span>Edit Profile</span>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -108,7 +190,7 @@ const ClientProfile = () => {
                   d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
                 />
               </svg>
-            </button>
+            </Link>
           </div>
         </div>
       </div>
@@ -128,29 +210,51 @@ const ClientProfile = () => {
                     key={cat.id}
                     className="p-4 border border-gray-600 rounded-lg hover:border-gold-soft/50 transition-all duration-300 ease-in-out transform hover:-translate-y-1 hover:shadow-xl"
                   >
-                    <div className="flex items-center gap-4">
-                      {cat.photo ? (
-                        <img
-                          src={cat.photo}
-                          alt={cat.name}
-                          className="w-20 h-20 object-cover rounded-full"
-                        />
-                      ) : (
-                        <div className="w-20 h-20 rounded-full bg-gray-700 flex items-center justify-center">
-                          <span className="text-2xl">🐱</span>
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-4">
+                        {cat.photo ? (
+                          <img
+                            src={cat.photo}
+                            alt={cat.name}
+                            className="w-20 h-20 object-cover rounded-full"
+                          />
+                        ) : (
+                          <div className="w-20 h-20 rounded-full bg-gray-700 flex items-center justify-center">
+                            <span className="text-2xl">🐱</span>
+                          </div>
+                        )}
+                        <div>
+                          <h3 className="text-gold-soft text-lg font-medium">
+                            {cat.name}
+                          </h3>
+                          <p className="text-white-ivory">
+                            Born:{" "}
+                            {new Date(cat.dateOfBirth).toLocaleDateString()}
+                          </p>
+                          <p className="text-white-ivory">
+                            Weight: {cat.weight} kg
+                          </p>
                         </div>
-                      )}
-                      <div>
-                        <h3 className="text-gold-soft text-lg font-medium">
-                          {cat.name}
-                        </h3>
-                        <p className="text-white-ivory">
-                          Born: {new Date(cat.dateOfBirth).toLocaleDateString()}
-                        </p>
-                        <p className="text-white-ivory">
-                          Weight: {cat.weight} kg
-                        </p>
                       </div>
+                      <button
+                        onClick={() => handleEditCat(cat)}
+                        className="text-gold-soft/70 hover:text-gold-soft transition-colors"
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="h-5 w-5"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
+                          />
+                        </svg>
+                      </button>
                     </div>
                   </div>
                 ))}
@@ -200,6 +304,19 @@ const ClientProfile = () => {
           </p>
         </div>
       </div>
+
+      {/* Edit Cat Modal */}
+      {selectedCat && (
+        <EditCatModal
+          cat={selectedCat}
+          isOpen={isModalOpen}
+          onClose={() => {
+            setIsModalOpen(false);
+            setSelectedCat(null);
+          }}
+          onSave={handleSaveCat}
+        />
+      )}
     </div>
   );
 };

@@ -1,4 +1,4 @@
-import { ICat, CatRegister } from "@/interfaces/ICat";
+import { ICat, CatRegisterResponse, CatFormData } from "@/interfaces/ICat";
 
 export const getCats = async (): Promise<ICat[]> => {
   const res = await fetch("http://localhost:3000/cats", {
@@ -16,11 +16,49 @@ export const getCatsId = async (id: string): Promise<ICat | undefined> => {
   return cats.find((cat) => cat.id === id);
 };
 
-export const catRegister = async (data: CatRegister) => {
-  const res = await fetch("http://localhost:3000/cats", {
-    method: "POST",
-    body: JSON.stringify(data),
-    headers: { "content-type": "application/json" },
+export const catRegister = async (formData: CatFormData) => {
+  const { userId, ...catData } = formData;
+  const requestBody: CatRegisterResponse = {
+    ...catData,
+    user: {
+      id: userId,
+    },
+  };
+
+  try {
+    const res = await fetch("http://localhost:3000/cats", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(requestBody),
+    });
+
+    if (!res.ok) {
+      const errorText = await res.text();
+      console.error("4. Error del servidor:", errorText);
+      throw new Error(`Failed to register cat: ${res.statusText}`);
+    }
+
+    const responseData = await res.json();
+    return responseData;
+  } catch (error) {
+    console.error("6. Error en catRegister:", error);
+    throw error;
+  }
+};
+
+export const updateCat = async (catData: ICat) => {
+  const res = await fetch(`http://localhost:3000/cats/id`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(catData),
   });
+  if (!res.ok) {
+    throw new Error("Failed to update cat's profile");
+  }
+
   return res.json();
 };
