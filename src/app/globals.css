@@ -100,3 +100,15 @@ h2 {
 .shadow-lg {
   box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
 }
+
+/* Elimina las flechas para navegadores basados en WebKit */
+input[type="number"].no-arrows::-webkit-inner-spin-button,
+input[type="number"].no-arrows::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Elimina las flechas para Firefox */
+input[type="number"].no-arrows {
+  -moz-appearance: textfield;
+}

@@ -62,17 +62,19 @@ const Home = () => {
         id="our-suites"
         className="relative z-10 container pt-12 -mt-12 bg-black/80 backdrop-blur-sm rounded-lg"
       >
-        <h1 className="mt-6 mb-2 text-gold-soft font-secondary">Our Suites</h1>
-        <div className="bg-dark-soft rounded-lg p-2 mb-2 w-11/12 mx-auto">
+        <h1 className="mt-6 mb-2 text-gold-soft font-secondary text-center">
+          Our Suites
+        </h1>
+
+        {/* Contenedor del Filtro */}
+        <div className="bg-dark-soft rounded-lg p-4 w-full max-w-6xl mx-auto mb-6">
           <Filter onFilter={handleFilter} />
         </div>
 
-        {/* Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 w-11/12 mx-auto my-4">
+        {/* Contenedor de las Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 w-full max-w-6xl mx-auto">
           {rooms.map((room: IRoom) => (
-            <div key={room.id}>
-              <Card room={room} />
-            </div>
+            <Card key={room.id} room={room} />
           ))}
         </div>
       </div>

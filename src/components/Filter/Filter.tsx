@@ -58,7 +58,7 @@ const Filter: React.FC<FilterProps> = ({ onFilter }) => {
           <label className="block text-gold-soft text-sm mb-2">Cats</label>
           <input
             type="number"
-            className="w-full p-2 bg-black rounded border border-gray-ash text-white-ivory"
+            className="w-full p-2 bg-black rounded border border-gray-ash text-white-ivory no-arrows"
             value={numberOfCats}
             onChange={(e) => setNumberOfCats(e.target.value)}
             min="0"
@@ -72,7 +72,7 @@ const Filter: React.FC<FilterProps> = ({ onFilter }) => {
           </label>
           <input
             type="number"
-            className="w-full p-2 bg-black rounded border border-gray-ash text-white-ivory"
+            className="w-full p-2 bg-black rounded border border-gray-ash text-white-ivory no-arrows"
             value={minPrice}
             onChange={(e) => setMinPrice(e.target.value)}
             min="0"
@@ -86,7 +86,7 @@ const Filter: React.FC<FilterProps> = ({ onFilter }) => {
           </label>
           <input
             type="number"
-            className="w-full p-2 bg-black rounded border border-gray-ash text-white-ivory"
+            className="w-full p-2 bg-black rounded border border-gray-ash text-white-ivory no-arrows"
             value={maxPrice}
             onChange={(e) => setMaxPrice(e.target.value)}
             min="0"
