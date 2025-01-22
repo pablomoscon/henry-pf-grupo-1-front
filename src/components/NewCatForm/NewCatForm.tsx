@@ -105,7 +105,16 @@ const NewCatForm = () => {
   }
 
   return (
-    <div className="flex items-center justify-center mt-2">
+    <div className="flex flex-col items-center justify-center mt-2">
+      <div className="w-full max-w-2xl mx-auto mb-6 flex justify-between items-center">
+        <button
+          onClick={() => router.push("/dashboard")}
+          className="px-6 py-2 rounded-lg border border-gold-soft/20 text-gold-soft/70 hover:text-gold-soft hover:border-gold-soft/50 transition-colors"
+        >
+          Back to Dashboard
+        </button>
+      </div>
+
       <form
         onSubmit={handleSubmit}
         autoComplete="off"

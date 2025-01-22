@@ -41,8 +41,6 @@ const ClientProfile = () => {
 
         const userProfile = await response.json();
 
-        console.log("User profile:", userProfile);
-
         handleGoogleLogin({ token, user: userProfile });
       } catch (error) {
         console.error("Error fetching user profile:", error);
