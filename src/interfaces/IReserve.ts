@@ -7,14 +7,26 @@ export interface IReserve {
   catsIds: string[];
 }
 
+interface IRoomInReservation {
+  id: string;
+  name: string;
+  img: string;
+  description: string;
+  price: string;
+  available: boolean;
+  deleted_at: string | null;
+  number_of_cats: number;
+  features: string[];
+}
+
 export interface IReservation {
   id: string;
   checkInDate: string;
   checkOutDate: string;
-  totalAmount: number;
   status: string;
-  room: {
-    id: string;
-    name: string;
-  };
+  createdAt: string;
+  updatedAt: string;
+  deleted_at: string | null;
+  totalAmount: string;
+  room: IRoomInReservation;
 }
