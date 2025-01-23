@@ -64,7 +64,7 @@ export interface CatFormData {
   userId: string;
 }
 
-export interface CatRegisterResponse {
+export interface CatRegisterRequest {
   name: string;
   dateOfBirth: string;
   isNeutered: boolean;
@@ -75,9 +75,7 @@ export interface CatRegisterResponse {
   behaviorAtVet: string;
   vaccinationsAndTests: Array<"rabies" | "tripleFeline" | "FIV/Felv test">;
   photo: string;
-  user: {
-    id: string;
-  };
+  userId: string;
 }
 
 export type VaccineMapType = {
