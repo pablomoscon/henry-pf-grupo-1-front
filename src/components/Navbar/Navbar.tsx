@@ -4,7 +4,7 @@ import UserWidget from "../UserWidget/UserWidget";
 
 const Navbar = () => {
   return (
-    <nav className="w-full bg-white-ivory fixed top-0 z-50 shadow-2xl font-primary h-12">
+    <nav className="w-full bg-gradient-navbar fixed top-0 z-50 font-primary h-24">
       <div className="flex items-center justify-between h-full max-w-7xl mx-auto px-6">
         <Link
           href="/"

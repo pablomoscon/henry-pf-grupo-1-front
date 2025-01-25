@@ -23,7 +23,7 @@ const Filter: React.FC<FilterProps> = ({ onFilter }) => {
   };
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-center">
+    <div className="grid grid-cols-1 md:grid-cols-4 gap-12 items-center">
       <div className="space-y-2">
         <label className="block text-gold-soft text-sm">Check In</label>
         <div className="relative">
@@ -53,7 +53,7 @@ const Filter: React.FC<FilterProps> = ({ onFilter }) => {
           />
         </div>
       </div>
-      <div className="flex items-center">
+      <div className="flex items-center gap-8 ml-4">
         <div>
           <label className="block text-gold-soft text-sm mb-2">Cats</label>
           <input

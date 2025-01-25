@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Merriweather, Roboto } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar/Navbar";
-import Footer from "@/components/Footer/Footer";
+// import Footer from "@/components/Footer/Footer";
 import Contexts from "@/contexts/contexts";
 
 const primaryFont = Merriweather({
@@ -35,9 +35,9 @@ export default function RootLayout({
         >
           <div className="flex flex-col min-h-screen">
             <Navbar />
-            <main className="flex-1 flex flex-col mt-12 mb-9">{children}</main>
+            <main className="bg-black">{children}</main>
 
-            <Footer />
+            {/* <Footer /> */}
           </div>
         </body>
       </html>
