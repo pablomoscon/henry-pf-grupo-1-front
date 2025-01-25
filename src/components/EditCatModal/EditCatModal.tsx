@@ -2,6 +2,7 @@
 
 import { ICat, EditCatModalProps, CatFormData } from "@/interfaces/ICat";
 import { useState, useEffect } from "react";
+import Image from "next/image";
 
 const EditCatModal = ({ cat, isOpen, onClose, onSave }: EditCatModalProps) => {
   const [formData, setFormData] = useState<CatFormData>({
@@ -15,7 +16,7 @@ const EditCatModal = ({ cat, isOpen, onClose, onSave }: EditCatModalProps) => {
     medication: "",
     behaviorAtVet: "",
     vaccinationsAndTests: [],
-    photo: "",
+    photo: new File([], ""),
     userId: "",
   });
 
@@ -245,16 +246,35 @@ const EditCatModal = ({ cat, isOpen, onClose, onSave }: EditCatModalProps) => {
               htmlFor="photo"
               className="text-sm text-gold-soft/70 block mb-1"
             >
-              Photo URL
+              Photo
             </label>
             <input
-              type="text"
+              type="file"
               id="photo"
               name="photo"
-              value={formData.photo}
-              onChange={handleChange}
-              className="w-full bg-black-light text-white-ivory p-3 rounded-lg border border-gold-soft/20 focus:border-gold-soft/50 focus:outline-none"
+              accept="image/*"
+              onChange={(event) => {
+                const file = event.target.files?.[0];
+                if (file) {
+                  setFormData((prev) => ({
+                    ...prev,
+                    photo: file,
+                  }));
+                }
+              }}
+              className="w-full bg-black-light text-white-ivory p-3 rounded-lg border border-gold-soft/20 focus:border-gold-soft/50 focus:outline-none file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-gold-soft file:text-black-dark hover:file:bg-gold-dark"
             />
+            {formData.photo && formData.photo.size > 0 && (
+              <div className="mt-2 relative w-20 h-20">
+                <Image
+                  src={URL.createObjectURL(formData.photo)}
+                  alt="Current cat photo"
+                  fill
+                  sizes="80px"
+                  className="object-cover rounded-lg"
+                />
+              </div>
+            )}
           </div>
 
           <div className="flex gap-4 justify-end pt-6 border-t border-gold-soft/10">

@@ -1,6 +1,6 @@
-import { ICat, CatFormData, CatRegisterRequest } from "@/interfaces/ICat";
+import { ICat, CatFormData, ICatGet } from "@/interfaces/ICat";
 
-export const getCats = async (): Promise<ICat[]> => {
+export const getCats = async (): Promise<ICatGet[]> => {
   const res = await fetch("http://localhost:3000/cats", {
     cache: "no-store",
   })
@@ -8,34 +8,47 @@ export const getCats = async (): Promise<ICat[]> => {
     .catch(() => {
       return [];
     });
-  return res as ICat[];
+  return res as ICatGet[];
 };
 
 export const catRegister = async (formData: CatFormData) => {
-  const { userId, ...catData } = formData;
-  const requestBody: CatRegisterRequest = {
-    ...catData,
-    userId
-  };
+  const { userId, photo, ...catData } = formData;
 
-  
+  const formDataToSend = new FormData();
+
+  formDataToSend.append("photo", photo);
+  formDataToSend.append("userId", userId);
+  formDataToSend.append("name", catData.name);
+  formDataToSend.append("dateOfBirth", catData.dateOfBirth);
+  formDataToSend.append("isNeutered", String(catData.isNeutered));
+  formDataToSend.append("weight", catData.weight);
+  formDataToSend.append("personality", catData.personality);
+  formDataToSend.append(
+    "getsAlongWithOtherCats",
+    catData.getsAlongWithOtherCats
+  );
+  formDataToSend.append("food", catData.food);
+  formDataToSend.append("medication", catData.medication);
+  formDataToSend.append("behaviorAtVet", catData.behaviorAtVet);
+  formDataToSend.append(
+    "vaccinationsAndTests",
+    JSON.stringify(catData.vaccinationsAndTests)
+  );
+
   try {
+    console.log("Sending request with FormData", formDataToSend);
     const res = await fetch("http://localhost:3000/cats", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(requestBody),
+      body: formDataToSend,
     });
 
     if (!res.ok) {
       const errorText = await res.text();
       console.error("4. Error del servidor:", errorText);
-      throw new Error(`Failed to register cat: ${res.statusText}`); 
+      throw new Error(`Failed to register cat: ${res.statusText}`);
     }
 
     const responseData = await res.json();
-    
     return responseData;
   } catch (error) {
     console.error("6. Error en catRegister:", error);
@@ -43,15 +56,13 @@ export const catRegister = async (formData: CatFormData) => {
   }
 };
 
-export const getCatsId = async (id: string): Promise<ICat | undefined> => {
+export const getCatsId = async (id: string): Promise<ICatGet | undefined> => {
   const cats = await getCats();
   return cats.find((cat) => cat.id === id);
 };
 
-
-
 export const updateCat = async (catData: ICat, id: string) => {
-  const res = await fetch(`http://localhost:3000/cats/${id}`, {  
+  const res = await fetch(`http://localhost:3000/cats/${id}`, {
     method: "PATCH",
     headers: {
       "Content-Type": "application/json",
@@ -75,4 +86,3 @@ export const getCatsUser = async (id: string): Promise<ICat[]> => {
     });
   return res as ICat[];
 };
-

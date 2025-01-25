@@ -1,3 +1,5 @@
+import { FormikErrors } from "formik";
+
 export interface IUser {
   id: string;
   name: string;
@@ -11,6 +13,33 @@ export interface IUser {
 }
 
 export interface ICat {
+  id: string;
+  name: string;
+  dateOfBirth: string;
+  isNeutered: boolean;
+  weight: string;
+  personality: string;
+  getsAlongWithOtherCats: string;
+  food: string;
+  medication: string | null;
+  behaviorAtVet: string | null;
+  vaccinationsAndTests: Array<"rabies" | "tripleFeline" | "FIV/Felv test">;
+  photo: File;
+  deleted_at: string | null;
+  user: {
+    id: string;
+    name?: string;
+    email?: string;
+    customerId?: string;
+    phone?: string;
+    deleted_at?: string | null;
+    address?: string;
+    role?: string;
+    status?: string;
+  };
+}
+
+export interface ICatGet {
   id: string;
   name: string;
   dateOfBirth: string;
@@ -60,7 +89,7 @@ export interface CatFormData {
   medication: string;
   behaviorAtVet: string;
   vaccinationsAndTests: Array<"rabies" | "tripleFeline" | "FIV/Felv test">;
-  photo: string;
+  photo: File;
   userId: string;
 }
 
@@ -74,7 +103,7 @@ export interface CatRegisterRequest {
   medication: string;
   behaviorAtVet: string;
   vaccinationsAndTests: Array<"rabies" | "tripleFeline" | "FIV/Felv test">;
-  photo: string;
+  photo: File;
   userId: string;
 }
 
@@ -87,4 +116,11 @@ export interface EditCatModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSave: (updatedCat: ICat) => void;
+}
+
+export interface CustomFileUploadProps {
+  onFileSelect: (file: File) => void;
+  error?: FormikErrors<File>;
+  touched?: boolean;
+  label: string;
 }

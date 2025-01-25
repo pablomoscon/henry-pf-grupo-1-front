@@ -6,6 +6,8 @@ import { catRegister } from "@/services/catServices";
 import { useContext } from "react";
 import { UserContext } from "@/contexts/userContext";
 import { VaccineMapType, CatFormData } from "@/interfaces/ICat";
+import CustomFileUpload from "@/components/CustomFileUpload/CustomFileUpload";
+import Image from "next/image";
 
 const NewCatForm = () => {
   const router = useRouter();
@@ -20,6 +22,7 @@ const NewCatForm = () => {
     handleBlur,
     handleChange,
     handleSubmit,
+    setFieldValue,
   } = useFormik({
     initialValues: {
       catName: "",
@@ -36,12 +39,17 @@ const NewCatForm = () => {
         tripleFeline: false,
         fivFelv: false,
       },
-      catPhoto: "",
+      catPhoto: new File([], ""),
     },
     validationSchema: newCatSchema,
     onSubmit: async (values, actions) => {
       if (!userId) {
         alert("Please log in to register a cat.");
+        return;
+      }
+
+      if (!values.catPhoto || values.catPhoto.size === 0) {
+        alert("Please select a photo for your cat.");
         return;
       }
 
@@ -75,6 +83,7 @@ const NewCatForm = () => {
 
       try {
         const res = await catRegister(formattedData);
+
         if (res.id) {
           alert("Cat registered successfully!");
           router.push("/dashboard");
@@ -84,11 +93,11 @@ const NewCatForm = () => {
           actions.setSubmitting(false);
         }
       } catch (error) {
-        console.error("E. Error en el registro:", error);
+        console.error("Error en el registro:", error);
         if (error instanceof Error) {
           alert(error.message);
         } else {
-          alert("Failed to create cat. Error creating cat. Please try again.");
+          alert("Failed to create cat. Please try again.");
         }
       } finally {
         actions.setSubmitting(false);
@@ -432,34 +441,25 @@ const NewCatForm = () => {
           </div>
 
           <div>
-            <label
-              htmlFor="catPhoto"
-              className="block text-sm font-medium mb-1"
-              style={{ color: "var(--white-ivory)" }}
-            >
-              Upload Photo
-            </label>
-            <input
-              id="catPhoto"
-              type="text"
-              placeholder="Enter image URL"
-              value={values.catPhoto}
-              onChange={handleChange}
-              onBlur={handleBlur}
-              className={`mt-1 block w-full rounded-md border p-2 ${
-                errors.catPhoto && touched.catPhoto
-                  ? "border-red-500"
-                  : "border-gray-600"
-              } focus:outline-none focus:ring-2`}
-              style={{
-                backgroundColor: "var(--black-light)",
-                color: "var(--white-basic)",
-              }}
+            <CustomFileUpload
+              onFileSelect={(file) => setFieldValue("catPhoto", file)}
+              error={errors.catPhoto?.toString()}
+              touched={!!touched.catPhoto}
+              label="Upload Photo"
             />
-            {errors.catPhoto && touched.catPhoto && (
-              <p className="mt-1 text-sm text-red-500">{errors.catPhoto}</p>
-            )}
           </div>
+
+          {values.catPhoto && values.catPhoto.size > 0 && (
+            <div className="mt-2 relative w-20 h-20">
+              <Image
+                src={URL.createObjectURL(values.catPhoto)}
+                alt="Selected cat photo"
+                fill
+                sizes="80px"
+                className="object-cover rounded-lg"
+              />
+            </div>
+          )}
         </div>
 
         <div className="flex justify-center">

@@ -2,6 +2,7 @@
 import { useFormik } from "formik";
 import { suitesSchema } from "../../helpers/validations";
 import { registerRoom } from "@/services/roomService";
+import CustomFileUpload from "../CustomFileUpload/CustomFileUpload";
 
 const SuitesForm = () => {
   const {
@@ -12,6 +13,7 @@ const SuitesForm = () => {
     handleBlur,
     handleChange,
     handleSubmit,
+    setFieldValue,
   } = useFormik({
     initialValues: {
       name: "",
@@ -123,29 +125,12 @@ const SuitesForm = () => {
         </div>
 
         <div>
-          <label
-            htmlFor="image"
-            className="block text-sm font-medium mb-1"
-            style={{ color: "var(--white-ivory)" }}
-          >
-            Image URL
-          </label>
-          <input
-            value={values.image}
-            onChange={handleChange}
-            id="image"
-            type="text"
-            placeholder="Enter image URL"
-            onBlur={handleBlur}
-            className="mt-1 block w-full rounded-md border p-2 border-gray-600 focus:outline-none focus:ring-2"
-            style={{
-              backgroundColor: "var(--black-light)",
-              color: "var(--white-basic)",
-            }}
+          <CustomFileUpload
+            onFileSelect={(file) => setFieldValue("image", file)}
+            error={errors.image}
+            touched={touched.image}
+            label="Upload Image"
           />
-          {errors.image && touched.image && (
-            <p className="mt-1 text-sm text-red-500">{errors.image}</p>
-          )}
         </div>
 
         <div className="space-y-3">
