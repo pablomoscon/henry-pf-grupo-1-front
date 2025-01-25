@@ -77,7 +77,7 @@ const NewCatForm = () => {
         vaccinationsAndTests: Object.entries(values.vaccinations)
           .filter(([, isSelected]) => isSelected)
           .map(([vaccineName]) => vaccineMap[vaccineName]),
-        photo: values.catPhoto,
+        photoFile: values.catPhoto,
         userId: userId,
       };
 
