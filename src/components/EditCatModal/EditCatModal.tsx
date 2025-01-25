@@ -74,7 +74,7 @@ const EditCatModal = ({ cat, isOpen, onClose, onSave }: EditCatModalProps) => {
       medication: formData.medication,
       behaviorAtVet: formData.behaviorAtVet,
       vaccinationsAndTests: formData.vaccinationsAndTests,
-      photo: formData.photo,
+      photoFile: formData.photoFile, 
       deleted_at: null,
       user: {
         id: formData.userId,
@@ -243,31 +243,31 @@ const EditCatModal = ({ cat, isOpen, onClose, onSave }: EditCatModalProps) => {
 
           <div>
             <label
-              htmlFor="photo"
+              htmlFor="photoFile"
               className="text-sm text-gold-soft/70 block mb-1"
             >
               Photo
             </label>
             <input
               type="file"
-              id="photo"
-              name="photo"
+              id="photoFile"
+              name="photoFile"
               accept="image/*"
               onChange={(event) => {
                 const file = event.target.files?.[0];
                 if (file) {
                   setFormData((prev) => ({
                     ...prev,
-                    photo: file,
+                    photoFile: file,
                   }));
                 }
               }}
               className="w-full bg-black-light text-white-ivory p-3 rounded-lg border border-gold-soft/20 focus:border-gold-soft/50 focus:outline-none file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-gold-soft file:text-black-dark hover:file:bg-gold-dark"
             />
-            {formData.photo && formData.photo.size > 0 && (
+            {formData.photoFile && formData.photoFile.size > 0 && (
               <div className="mt-2 relative w-20 h-20">
                 <Image
-                  src={URL.createObjectURL(formData.photo)}
+                  src={URL.createObjectURL(formData.photoFile)}
                   alt="Current cat photo"
                   fill
                   sizes="80px"

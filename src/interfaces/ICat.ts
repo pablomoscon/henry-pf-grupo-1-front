@@ -64,7 +64,7 @@ export interface CatFormData {
   medication: string;
   behaviorAtVet: string;
   vaccinationsAndTests: Array<"rabies" | "tripleFeline" | "FIV/Felv test">;
-  photoFile: File;
+  photoFile?: File;
   userId: string;
 }
 

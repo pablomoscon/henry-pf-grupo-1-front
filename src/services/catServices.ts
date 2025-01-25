@@ -16,7 +16,11 @@ export const catRegister = async (formData: CatFormData) => {
 
   const formDataToSend = new FormData();
 
-  formDataToSend.append("photo", photoFile);
+  if (photoFile && photoFile.size > 0) {
+    formDataToSend.append("photoFile", photoFile);
+  };
+  console.log("photoFile attached", photoFile);
+  
   formDataToSend.append("userId", userId);
   formDataToSend.append("name", catData.name);
   formDataToSend.append("dateOfBirth", catData.dateOfBirth);
@@ -36,7 +40,6 @@ export const catRegister = async (formData: CatFormData) => {
   );
 
   try {
-    console.log("Sending request with FormData", formDataToSend);
     const res = await fetch("http://localhost:3000/cats", {
       method: "POST",
       body: formDataToSend,
