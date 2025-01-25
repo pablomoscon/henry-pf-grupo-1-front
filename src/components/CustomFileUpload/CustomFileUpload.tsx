@@ -41,6 +41,7 @@ const CustomFileUpload: React.FC<CustomFileUploadProps> = ({
           onChange={handleFileChange}
           accept="image/*"
           className="hidden"
+          placeholder="Edit you Cat"
         />
         <button
           type="button"

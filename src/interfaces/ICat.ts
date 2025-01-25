@@ -24,7 +24,8 @@ export interface ICat {
   medication: string | null;
   behaviorAtVet: string | null;
   vaccinationsAndTests: Array<"rabies" | "tripleFeline" | "FIV/Felv test">;
-  photo: File;
+  photo?: string;
+  photoFile?: File;
   deleted_at: string | null;
   user: {
     id: string;
@@ -39,32 +40,6 @@ export interface ICat {
   };
 }
 
-export interface ICatGet {
-  id: string;
-  name: string;
-  dateOfBirth: string;
-  isNeutered: boolean;
-  weight: string;
-  personality: string;
-  getsAlongWithOtherCats: string;
-  food: string;
-  medication: string | null;
-  behaviorAtVet: string | null;
-  vaccinationsAndTests: Array<"rabies" | "tripleFeline" | "FIV/Felv test">;
-  photo: string;
-  deleted_at: string | null;
-  user: {
-    id: string;
-    name?: string;
-    email?: string;
-    customerId?: string;
-    phone?: string;
-    deleted_at?: string | null;
-    address?: string;
-    role?: string;
-    status?: string;
-  };
-}
 
 export interface CatRegister {
   name: string;
@@ -89,7 +64,7 @@ export interface CatFormData {
   medication: string;
   behaviorAtVet: string;
   vaccinationsAndTests: Array<"rabies" | "tripleFeline" | "FIV/Felv test">;
-  photo: File;
+  photoFile?: File;
   userId: string;
 }
 
@@ -103,7 +78,7 @@ export interface CatRegisterRequest {
   medication: string;
   behaviorAtVet: string;
   vaccinationsAndTests: Array<"rabies" | "tripleFeline" | "FIV/Felv test">;
-  photo: File;
+  photoFile: File;
   userId: string;
 }
 
