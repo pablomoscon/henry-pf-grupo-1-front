@@ -4,7 +4,7 @@ import { UserContext } from "@/contexts/userContext";
 import { useContext, useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { ICatGet, ICat } from "@/interfaces/ICat";
+import { ICat } from "@/interfaces/ICat";
 import EditCatModal from "../EditCatModal/EditCatModal";
 import { updateCat, getCats } from "@/services/catServices";
 import { getUserReservations } from "@/services/bookService";
@@ -12,8 +12,7 @@ import { IReservation } from "@/interfaces/IReserve";
 
 const ClientProfile = () => {
   const { user, isLogged, handleGoogleLogin } = useContext(UserContext);
-  const [catsReq, setCatsReq] = useState<ICat[]>([]);
-  const [catsRes, setCatsRes] = useState<ICatGet[]>([]);
+  const [cats, setCats] = useState<ICat[]>([]);
   const userData = user?.response?.user;
   const [selectedCat, setSelectedCat] = useState<ICat | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -66,7 +65,7 @@ const ClientProfile = () => {
 
         const catsData = await getCats();
         const userCats = catsData.filter((cat) => cat.user?.id === userId);
-        setCatsRes(userCats);
+        setCats(userCats);
       } catch (error) {
         console.error("Error fetching cats:", error);
         alert("Failed to load cats. Please try again.");
@@ -108,10 +107,10 @@ const ClientProfile = () => {
   const handleSaveCat = async (updatedCat: ICat) => {
     try {
       await updateCat(updatedCat, updatedCat.id);
-      const updatedCats = catsReq.map((cat) =>
+      const updatedCats = cats.map((cat) =>
         cat.id === updatedCat.id ? updatedCat : cat
       );
-      setCatsReq(updatedCats);
+      setCats(updatedCats);
       setIsModalOpen(false);
       setSelectedCat(null);
     } catch (error) {
@@ -223,52 +222,45 @@ const ClientProfile = () => {
           My Cats
         </h2>
         <div className='bg-black-dark p-8 rounded-xl shadow-lg border border-gold-soft/10 hover:border-gold-soft/30 transition-colors'>
-          {catsRes.length > 0 ? (
+          {cats.length > 0 ? (
             <>
               <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
-                <div>
-                  {catsRes.map((cat) => (
-                    <div
-                      key={cat.id}
-                      className='p-4 border border-gray-600 rounded-lg hover:border-gold-soft/50 transition-all duration-300 ease-in-out transform hover:-translate-y-1 hover:shadow-xl'
-                    >
-                      <div className='flex items-center justify-between'>
-                        <div className='flex items-center gap-4'>
-                          {cat.photo?.length > 0 ? (
-                            <div className='relative w-20 h-20'>
-                              <Image
-                                src={cat.photo}
-                                alt={cat.name}
-                                fill
-                                sizes='80px'
-                                className='object-cover rounded-full'
-                                priority
-                              />
-                            </div>
-                          ) : (
-                            <div className='w-20 h-20 rounded-full bg-gray-700 flex items-center justify-center'>
-                              <span className='text-2xl'>🐱</span>
-                            </div>
-                          )}
-                          <div>
-                            <h3 className='text-gold-soft text-lg font-medium'>
-                              {cat.name}
-                            </h3>
-                            <p className='text-white-ivory'>
-                              Born:{' '}
-                              {new Date(cat.dateOfBirth).toLocaleDateString()}
-                            </p>
-                            <p className='text-white-ivory'>
-                              Weight: {cat.weight} kg
-                            </p>
+                {cats.map((cat) => (
+                  <div
+                    key={cat.id}
+                    className='p-4 border border-gray-600 rounded-lg hover:border-gold-soft/50 transition-all duration-300 ease-in-out transform hover:-translate-y-1 hover:shadow-xl'
+                  >
+                    <div className='flex items-center justify-between'>
+                      <div className='flex items-center gap-4'>
+                        {cat.photo ? (
+                          <div className='relative w-20 h-20'>
+                            <Image
+                              src={cat.photo}
+                              alt={cat.name}
+                              fill
+                              sizes='80px'
+                              className='object-cover rounded-full'
+                              priority
+                            />
                           </div>
+                        ) : (
+                          <div className='w-20 h-20 rounded-full bg-gray-700 flex items-center justify-center'>
+                            <span className='text-2xl'>🐱</span>
+                          </div>
+                        )}
+                        <div>
+                          <h3 className='text-gold-soft text-lg font-medium'>
+                            {cat.name}
+                          </h3>
+                          <p className='text-white-ivory'>
+                            Born:{' '}
+                            {new Date(cat.dateOfBirth).toLocaleDateString()}
+                          </p>
+                          <p className='text-white-ivory'>
+                            Weight: {cat.weight} kg
+                          </p>
                         </div>
                       </div>
-                    </div>
-                  ))}
-
-                  <div>
-                    {catsReq.map((cat) => (
                       <button
                         onClick={() => handleEditCat(cat)}
                         className='text-gold-soft/70 hover:text-gold-soft transition-colors'
@@ -289,9 +281,9 @@ const ClientProfile = () => {
                           />
                         </svg>
                       </button>
-                    ))}
+                    </div>
                   </div>
-                </div>
+                ))}
               </div>
               <div className='mt-6 pt-6 border-t border-gold-soft/10'>
                 <Link

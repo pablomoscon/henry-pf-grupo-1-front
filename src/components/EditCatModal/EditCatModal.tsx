@@ -16,7 +16,7 @@ const EditCatModal = ({ cat, isOpen, onClose, onSave }: EditCatModalProps) => {
     medication: "",
     behaviorAtVet: "",
     vaccinationsAndTests: [],
-    photo: new File([], ""),
+    photoFile: new File([], ""),
     userId: "",
   });
 
@@ -40,7 +40,7 @@ const EditCatModal = ({ cat, isOpen, onClose, onSave }: EditCatModalProps) => {
       medication: cat.medication || "",
       behaviorAtVet: cat.behaviorAtVet || "",
       vaccinationsAndTests: cat.vaccinationsAndTests,
-      photo: cat.photo,
+      photoFile: cat.photoFile,
       userId: cat.user.id,
     };
     setFormData(catFormData);

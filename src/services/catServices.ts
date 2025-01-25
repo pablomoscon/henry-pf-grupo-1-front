@@ -1,6 +1,6 @@
-import { ICat, CatFormData, ICatGet } from "@/interfaces/ICat";
+import { ICat, CatFormData} from "@/interfaces/ICat";
 
-export const getCats = async (): Promise<ICatGet[]> => {
+export const getCats = async (): Promise<ICat[]> => {
   const res = await fetch("http://localhost:3000/cats", {
     cache: "no-store",
   })
@@ -8,15 +8,15 @@ export const getCats = async (): Promise<ICatGet[]> => {
     .catch(() => {
       return [];
     });
-  return res as ICatGet[];
+  return res as ICat[];
 };
 
 export const catRegister = async (formData: CatFormData) => {
-  const { userId, photo, ...catData } = formData;
+  const { userId, photoFile, ...catData } = formData;
 
   const formDataToSend = new FormData();
 
-  formDataToSend.append("photo", photo);
+  formDataToSend.append("photo", photoFile);
   formDataToSend.append("userId", userId);
   formDataToSend.append("name", catData.name);
   formDataToSend.append("dateOfBirth", catData.dateOfBirth);
@@ -56,7 +56,7 @@ export const catRegister = async (formData: CatFormData) => {
   }
 };
 
-export const getCatsId = async (id: string): Promise<ICatGet | undefined> => {
+export const getCatsId = async (id: string): Promise<ICat | undefined> => {
   const cats = await getCats();
   return cats.find((cat) => cat.id === id);
 };
@@ -76,7 +76,7 @@ export const updateCat = async (catData: ICat, id: string) => {
   return res.json();
 };
 
-export const getCatsUser = async (id: string): Promise<ICatGet[]> => {
+export const getCatsUser = async (id: string): Promise<ICat[]> => {
   const res = await fetch(`http://localhost:3000/users/cats/${id}`, {
     cache: "no-store",
   })
@@ -84,5 +84,5 @@ export const getCatsUser = async (id: string): Promise<ICatGet[]> => {
     .catch(() => {
       return [];
     });
-  return res as ICatGet[];
+  return res as ICat[];
 };
