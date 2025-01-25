@@ -16,8 +16,30 @@
   --primary-font: "Merriweather", serif;
   --secondary-font: "Roboto", sans-serif;
 
-  --navbar-height: 48px;
+  --navbar-height: 120px;
   --footer-height: 40px;
+}
+
+.bg-gradient-navbar {
+  background: linear-gradient(
+    to bottom,
+    rgba(253, 246, 227, 1) 0%,
+    rgba(253, 246, 227, 0.9) 50%,
+    rgba(253, 246, 227, 0.8) 60%,
+    rgba(255, 255, 255, 0) 100%
+  );
+}
+
+.bg-gradient-about {
+  background: linear-gradient(
+      to top,
+      rgba(255, 255, 255, 0) 0%,
+      rgba(255, 255, 255, 0.8) 20%,
+      rgba(255, 255, 255, 1) 50%,
+      rgba(255, 255, 255, 0.8) 80%,
+      rgba(255, 255, 255, 0) 100%
+    ),
+    black;
 }
 
 html {
@@ -26,7 +48,6 @@ html {
 
 body {
   font-family: var(--secondary-font);
-  background: var(--black-light);
   color: var(--white-basic);
 }
 
