@@ -39,6 +39,21 @@ const Navbar = () => {
             </li>
             <li>
               <Link
+                href="/suites"
+                className="flex items-center hover:text-gold-dark transition-colors"
+              >
+                <Image
+                  src="/icoSuites.png"
+                  alt="About Us Icon"
+                  width={16}
+                  height={16}
+                  className="mr-2"
+                />
+                Suites
+              </Link>
+            </li>
+            <li>
+              <Link
                 href="#"
                 className="flex items-center hover:text-gold-dark transition-colors"
               >
