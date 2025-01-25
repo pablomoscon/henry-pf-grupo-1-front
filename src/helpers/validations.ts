@@ -95,7 +95,11 @@ export const newCatSchema = yup.object().shape({
     tripleFeline: yup.boolean(),
     fivFelv: yup.boolean(),
   }),
-  catPhoto: yup.string(),
+  catPhoto: yup
+    .mixed<File>()
+    .test("fileRequired", "Please select a photo for your cat", (value) => {
+      return value instanceof File && value.size > 0;
+    }),
 });
 
 export const reservationSchema = yup.object().shape({
