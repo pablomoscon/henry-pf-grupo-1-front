@@ -4,7 +4,7 @@ import { UserContext } from "@/contexts/userContext";
 import { useContext, useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { ICat } from "@/interfaces/ICat";
+import { CatFormData, ICat } from "@/interfaces/ICat";
 import EditCatModal from "../EditCatModal/EditCatModal";
 import { updateCat, getCats } from "@/services/catServices";
 import { getUserReservations } from "@/services/bookService";
@@ -106,18 +106,46 @@ const ClientProfile = () => {
 
   const handleSaveCat = async (updatedCat: ICat) => {
     try {
-      await updateCat(updatedCat, updatedCat.id);
+      const catFormData: CatFormData = {
+        name: updatedCat.name,
+        dateOfBirth: updatedCat.dateOfBirth,
+        isNeutered: updatedCat.isNeutered,
+        weight: updatedCat.weight,
+        personality: updatedCat.personality,
+        getsAlongWithOtherCats:
+          updatedCat.getsAlongWithOtherCats === 'yes' ||
+          updatedCat.getsAlongWithOtherCats === 'no' ||
+          updatedCat.getsAlongWithOtherCats === 'unsure'
+            ? updatedCat.getsAlongWithOtherCats
+            : 'unsure',
+        food: updatedCat.food,
+        medication: updatedCat.medication || '',
+        behaviorAtVet: updatedCat.behaviorAtVet || '',
+        vaccinationsAndTests: updatedCat.vaccinationsAndTests,
+        photoFile: updatedCat.photoFile,
+        userId: updatedCat.user.id,
+      };
+
+      await updateCat(catFormData, updatedCat.id);
+
+      const response = await fetch(
+        `http://localhost:3000/cats/${updatedCat.id}`
+      );
+      const updatedCatFromServer = await response.json();
+
       const updatedCats = cats.map((cat) =>
-        cat.id === updatedCat.id ? updatedCat : cat
+        cat.id === updatedCatFromServer.id ? updatedCatFromServer : cat
       );
       setCats(updatedCats);
+
       setIsModalOpen(false);
       setSelectedCat(null);
     } catch (error) {
-      console.error("Error updating cat:", error);
-      alert("Failed to update cat. Please try again.");
+      console.error('Error updating cat:', error);
+      alert('Failed to update cat. Please try again.');
     }
   };
+
 
   if (!isLogged()) {
     return (
