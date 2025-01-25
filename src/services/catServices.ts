@@ -76,7 +76,7 @@ export const updateCat = async (catData: ICat, id: string) => {
   return res.json();
 };
 
-export const getCatsUser = async (id: string): Promise<ICat[]> => {
+export const getCatsUser = async (id: string): Promise<ICatGet[]> => {
   const res = await fetch(`http://localhost:3000/users/cats/${id}`, {
     cache: "no-store",
   })
@@ -84,5 +84,5 @@ export const getCatsUser = async (id: string): Promise<ICat[]> => {
     .catch(() => {
       return [];
     });
-  return res as ICat[];
+  return res as ICatGet[];
 };
