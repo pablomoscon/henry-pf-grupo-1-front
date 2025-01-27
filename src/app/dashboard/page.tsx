@@ -1,10 +1,13 @@
 import ClientProfile from "../../components/ClientProfile/ClientProfile";
+import ProtectedRoute from "@/components/ProtectedRoute/ProtectedRoute";
 
 const DashboardPage = () => {
   return (
-    <div>
-      <ClientProfile />
-    </div>
+    <ProtectedRoute roles={["admin", "caretaker", "customer"]}>
+      <div>
+        <ClientProfile />
+      </div>
+    </ProtectedRoute>
   );
 };
 

@@ -25,7 +25,6 @@ const Room = async ({ params }: PageProps) => {
       }}
     >
       <div className="absolute inset-0 bg-black/70"></div>
-
       {/* Content */}
       <div className="relative flex items-center justify-center h-full">
         <div className="w-full max-w-5xl p-4">
