@@ -40,7 +40,6 @@ export interface ICat {
   };
 }
 
-
 export interface CatRegister {
   name: string;
   dateOfBirth: string;
@@ -90,7 +89,7 @@ export interface EditCatModalProps {
   cat: ICat;
   isOpen: boolean;
   onClose: () => void;
-  onSave: (updatedCat: ICat) => void;
+  onSave: (updatedCat: ICat, token: string) => void;
 }
 
 export interface CustomFileUploadProps {

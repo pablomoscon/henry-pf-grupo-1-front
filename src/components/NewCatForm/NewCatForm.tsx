@@ -13,6 +13,7 @@ const NewCatForm = () => {
   const router = useRouter();
   const { user } = useContext(UserContext);
   const userId = user?.response?.user?.id;
+  const token = user?.response?.token;
 
   const {
     values,
@@ -43,7 +44,7 @@ const NewCatForm = () => {
     },
     validationSchema: newCatSchema,
     onSubmit: async (values, actions) => {
-      if (!userId) {
+      if (!userId || !token) {
         alert("Please log in to register a cat.");
         return;
       }
@@ -82,7 +83,7 @@ const NewCatForm = () => {
       };
 
       try {
-        const res = await catRegister(formattedData);
+        const res = await catRegister(formattedData, token);
 
         if (res.id) {
           alert("Cat registered successfully!");
