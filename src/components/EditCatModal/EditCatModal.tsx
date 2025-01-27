@@ -1,10 +1,13 @@
 "use client";
 
 import { ICat, EditCatModalProps, CatFormData } from "@/interfaces/ICat";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
+import { UserContext } from "@/contexts/userContext";
 import Image from "next/image";
 
 const EditCatModal = ({ cat, isOpen, onClose, onSave }: EditCatModalProps) => {
+  const { user } = useContext(UserContext);
+  const token = user?.response?.token;
   const [formData, setFormData] = useState<CatFormData>({
     name: "",
     dateOfBirth: "",
@@ -62,6 +65,11 @@ const EditCatModal = ({ cat, isOpen, onClose, onSave }: EditCatModalProps) => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
+    if (!token) {
+      console.error("No authentication token found");
+      return;
+    }
+
     const catData: ICat = {
       id: cat.id,
       name: formData.name,
@@ -74,14 +82,14 @@ const EditCatModal = ({ cat, isOpen, onClose, onSave }: EditCatModalProps) => {
       medication: formData.medication,
       behaviorAtVet: formData.behaviorAtVet,
       vaccinationsAndTests: formData.vaccinationsAndTests,
-      photoFile: formData.photoFile, 
+      photoFile: formData.photoFile,
       deleted_at: null,
       user: {
         id: formData.userId,
       },
     };
 
-    onSave(catData);
+    onSave(catData, token);
     onClose();
   };
 
