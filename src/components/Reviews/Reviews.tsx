@@ -39,21 +39,18 @@ const Reviews = () => {
               key={index}
               className="flex flex-col items-center justify-between w-52 h-40 p-4 text-center"
             >
-              {/* Nombre del usuario */}
               <p className="text-black text-sm font-bold h-6 flex items-center justify-center">
-                {review.nameUser}
+                {review.user.name}
               </p>
 
-              {/* Texto de la reseña */}
               <p className="text-gray-600 text-sm h-16 overflow-hidden">
-                {review.textResenia.length > 80
-                  ? review.textResenia.slice(0, 80) + "..."
-                  : review.textResenia}
+                {review.textBody && review.textBody.length > 80
+                  ? review.textBody.slice(0, 80) + "..."
+                  : review.textBody}
               </p>
 
-              {/* Garritas */}
               <div className="h-3 flex items-center">
-                {renderPaws(review.calification)}
+                {renderPaws(review.rating)}
               </div>
             </div>
           ))}
@@ -66,62 +63,3 @@ const Reviews = () => {
 };
 
 export default Reviews;
-
-/*
-const Reviews2 = () => {
-  const [reviews, setReviews] = useState<IReview[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchReviews = async () => {
-      setLoading(true);
-      try {
-        const data = await getReviews();
-        setReviews(data);
-      } catch (error) {
-        console.error("Error fetching reviews:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchReviews();
-  }, []);
-
-  return (
-    <section className="py-8 px-4 bg-white">
-      <h2 className="text-2xl text-black font-bold text-center mb-6">
-        Customer Reviews
-      </h2>
-      {loading ? (
-        <p className="text-center text-gray-500">Loading reviews...</p>
-      ) : reviews.length > 0 ? (
-        <div className="flex flex-wrap justify-center gap-4">
-          {reviews.map((review, index) => (
-            <div
-              key={index}
-              className="flex flex-col items-center justify-between w-52 h-40 p-4 text-center"
-            >
-              <p className="text-black text-sm font-bold h-6 flex items-center justify-center">
-                {review.nameUser}
-              </p>
-              <p className="text-gray-600 text-sm h-16 overflow-hidden">
-                {review.textResenia.length > 80
-                  ? review.textResenia.slice(0, 80) + "..."
-                  : review.textResenia}
-              </p>
-              <div className="h-3 flex items-center">
-                {renderPaws(review.calification)}
-              </div>
-            </div>
-          ))}
-        </div>
-      ) : (
-        <p className="text-center text-gray-500">No reviews available.</p>
-      )}
-    </section>
-  );
-};
-
-export default Reviews2;
-*/
