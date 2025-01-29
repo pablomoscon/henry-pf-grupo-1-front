@@ -18,6 +18,7 @@ import { bookRegister } from "@/services/bookService";
 import ReservationModal from "../ReservationModal/ReservationModal";
 import { useRouter } from "next/navigation";
 import { ICatUser } from "@/interfaces/IBook";
+import { confirmPayment } from "@/services/paymentServices";
 
 const ReservationForm = () => {
   const [isModalOpen, setModalOpen] = useState(false);
@@ -190,51 +191,54 @@ const ReservationForm = () => {
     setErrors(validationErrors);
   };
 
-  const handleModalConfirm = async () => {
-    closeModal();
-    try {
-      const res = await bookRegister(posData, userData.token);
-      alert("Reservation successful!");
+const handleModalConfirm = async () => {
+  closeModal();
+  try {
+    const res = await bookRegister(posData, userData.token);
+    alert('Reservation successful!');
 
-      if (!res.message) {
-        const reservationId = res.id; // ID devuelto por el POST
-        const token = userData.token;
+    if (!res.message) {
+      const reservationId = res.id;
+      const token = userData.token;
 
-        router.push(
-          `http://localhost:3000/payments/create-checkout-session/${reservationId}?token=${token}`
-        );
+      await confirmPayment(reservationId, userData.token);
 
-        setUserData({
-          checkInDate: "",
-          checkOutDate: "",
-          roomId: "",
-          name: "",
-          price: "0",
-          userId: "",
-          token: "",
-          numCat: 0,
-          fullName: "",
-          customerId: "",
-          totalAmount: 0,
-          catsIds: [],
-        });
-        setPosData({
-          userId: "",
-          roomId: "",
-          checkInDate: "",
-          checkOutDate: "",
-          totalAmount: 0,
-          catsIds: [],
-        });
-      } else {
-        alert(res.message || "Reservation failed.");
-      }
-    } catch (error) {
-      console.error("Error:", error);
-      alert("Connection error. Please try again later.");
+      setUserData({
+        checkInDate: '',
+        checkOutDate: '',
+        roomId: '',
+        name: '',
+        price: '0',
+        userId: '',
+        token: '',
+        numCat: 0,
+        fullName: '',
+        customerId: '',
+        totalAmount: 0,
+        catsIds: [],
+      });
+      setPosData({
+        userId: '',
+        roomId: '',
+        checkInDate: '',
+        checkOutDate: '',
+        totalAmount: 0,
+        catsIds: [],
+      });
+    } else {
+      alert(res.message || 'Reservation failed.');
     }
-  };
+  } catch (error) {
+    console.error('Error during reservation:', error);
 
+    if (error instanceof Error) {
+      alert(error.message || 'Connection error. Please try again later.');
+    } else {
+      alert('An unknown error occurred. Please try again later.');
+    }
+  }
+};
+  
   const handleOnSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
@@ -259,138 +263,138 @@ const ReservationForm = () => {
   };
 
   return (
-    <div className="flex items-center justify-center mt-8">
+    <div className='flex items-center justify-center mt-8'>
       <form
         onSubmit={handleOnSubmit}
-        autoComplete="off"
-        className="w-full max-w-2xl mx-auto p-6 rounded-lg shadow-md space-y-4"
-        style={{ background: "var(--black-dark)" }}
+        autoComplete='off'
+        className='w-full max-w-2xl mx-auto p-6 rounded-lg shadow-md space-y-4'
+        style={{ background: 'var(--black-dark)' }}
       >
-        <h2 style={{ color: "var(--gold-soft)" }}>Book</h2>
-        <div className="space-y-2">
+        <h2 style={{ color: 'var(--gold-soft)' }}>Book</h2>
+        <div className='space-y-2'>
           <h2
-            className="text-xl font-semibold text-left"
-            style={{ color: "var(--green-olive)" }}
+            className='text-xl font-semibold text-left'
+            style={{ color: 'var(--green-olive)' }}
           >
             Selected Suite
             --------------------------------------------------------------
           </h2>
-          <div className="flex justify-between items-center">
-            <span className="text-lg" style={{ color: "var(--white-ivory)" }}>
+          <div className='flex justify-between items-center'>
+            <span className='text-lg' style={{ color: 'var(--white-ivory)' }}>
               {userData.name}
             </span>
-            <span className="text-lg" style={{ color: "var(--white-ivory)" }}>
+            <span className='text-lg' style={{ color: 'var(--white-ivory)' }}>
               {userData.numCat}
             </span>
             <span>
               --------------------------------------------------------------
             </span>
-            <span className="text-lg" style={{ color: "var(--white-ivory)" }}>
+            <span className='text-lg' style={{ color: 'var(--white-ivory)' }}>
               ${userData.price} USD / day
             </span>
           </div>
         </div>
 
         <h2
-          className="text-xl font-semibold text-left"
-          style={{ color: "var(--green-olive)" }}
+          className='text-xl font-semibold text-left'
+          style={{ color: 'var(--green-olive)' }}
         >
           Selected Date
           --------------------------------------------------------------
         </h2>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-10">
+        <div className='grid grid-cols-1 md:grid-cols-2 gap-4 mb-10'>
           <div>
             <label>Check In</label>
-            <div className="relative">
+            <div className='relative'>
               <input
-                type="text"
-                value={userData.checkInDate || ""}
-                name="checkInDate"
-                placeholder="Check In"
+                type='text'
+                value={userData.checkInDate || ''}
+                name='checkInDate'
+                placeholder='Check In'
                 onChange={handleInputChange}
                 className={`mt-1 block w-full rounded-md border p-2
                 focus:outline-none focus:ring-2`}
                 style={{
-                  backgroundColor: "var(--black-light)",
-                  color: "var(--white-basic)",
+                  backgroundColor: 'var(--black-light)',
+                  color: 'var(--white-basic)',
                 }}
                 disabled
               />
               {errors.checkInDate && (
-                <p className="text-red-600">{errors.checkInDate}</p>
+                <p className='text-red-600'>{errors.checkInDate}</p>
               )}
             </div>
-            <div className="relative">
+            <div className='relative'>
               <CheckIn roomId={userData.roomId} token={userData.token} />
             </div>
           </div>
 
           <div>
             <label>Check Out</label>
-            <div className="relative">
+            <div className='relative'>
               <input
-                type="text"
-                value={userData.checkOutDate || ""}
-                name="checkOutDate"
-                placeholder="Check Out"
+                type='text'
+                value={userData.checkOutDate || ''}
+                name='checkOutDate'
+                placeholder='Check Out'
                 onChange={handleInputChange}
                 className={`mt-1 block w-full rounded-md border p-2
                 focus:outline-none focus:ring-2`}
                 style={{
-                  backgroundColor: "var(--black-light)",
-                  color: "var(--white-basic)",
+                  backgroundColor: 'var(--black-light)',
+                  color: 'var(--white-basic)',
                 }}
                 disabled
               />
               {errors.checkOutDate && (
-                <p className="text-red-600">{errors.checkOutDate}</p>
+                <p className='text-red-600'>{errors.checkOutDate}</p>
               )}
-              <div className="relative">
+              <div className='relative'>
                 <CheckOut roomId={userData.roomId} token={userData.token} />
               </div>
             </div>
           </div>
         </div>
 
-        <div className="flex justify-between items-center py-4 border-t border-b border-gray-600">
+        <div className='flex justify-between items-center py-4 border-t border-b border-gray-600'>
           <span
-            className="text-lg font-semibold"
-            style={{ color: "var(--gold-soft)" }}
+            className='text-lg font-semibold'
+            style={{ color: 'var(--gold-soft)' }}
           >
             Reserve Total
           </span>
           <span>
             -----------------------------------------------------------------
           </span>
-          <span className="text-lg" style={{ color: "var(--gold-soft)" }}>
+          <span className='text-lg' style={{ color: 'var(--gold-soft)' }}>
             ${totalAmount} USD
           </span>
         </div>
 
-        <div className="space-y-6">
+        <div className='space-y-6'>
           <h2
-            className="text-xl font-semibold text-left mt-10"
-            style={{ color: "var(--green-olive)" }}
+            className='text-xl font-semibold text-left mt-10'
+            style={{ color: 'var(--green-olive)' }}
           >
             Customer Data
             -------------------------------------------------------------
           </h2>
-          <div className="space-y-4">
+          <div className='space-y-4'>
             <div>
               <label
-                htmlFor="fullName"
-                className="block text-sm font-medium mb-1"
-                style={{ color: "var(--white-ivory)" }}
+                htmlFor='fullName'
+                className='block text-sm font-medium mb-1'
+                style={{ color: 'var(--white-ivory)' }}
               >
                 First and Last Name: {userData.fullName}
               </label>
             </div>
             <div>
               <label
-                htmlFor="customerId"
-                className="block text-sm font-medium mb-1"
-                style={{ color: "var(--white-ivory)" }}
+                htmlFor='customerId'
+                className='block text-sm font-medium mb-1'
+                style={{ color: 'var(--white-ivory)' }}
               >
                 Customer DNI: {userData.customerId}
               </label>
@@ -398,26 +402,28 @@ const ReservationForm = () => {
           </div>
         </div>
 
-        <div className="space-y-4">
+        <div className='space-y-4'>
           <h2
-            className="text-xl font-semibold text-left"
-            style={{ color: "var(--green-olive)" }}
+            className='text-xl font-semibold text-left'
+            style={{ color: 'var(--green-olive)' }}
           >
             Kitty Cats
             -------------------------------------------------------------------
           </h2>
-          <div className="space-y-4">
+          <div className='space-y-4'>
             <label
-              className="block text-sm font-medium mb-1"
-              style={{ color: "var(--white-ivory)" }}
+              className='block text-sm font-medium mb-1'
+              style={{ color: 'var(--white-ivory)' }}
             >
               Kitty Cat Name
             </label>
-            <div className="space-y-4">
-              <label htmlFor="selectCat">Select Kitties:</label>
+            <div className='space-y-4'>
+              <label htmlFor='selectCat'>Select Kitties:</label>
               <select
-                name="catsIds"
+                name='catsIds'
                 multiple
+                title='Select your kitties'
+                aria-label='Select your kitties'
                 value={userData.catsIds} // Array de IDs seleccionados
                 onChange={(e) => {
                   const selectedOptions = Array.from(
@@ -441,9 +447,9 @@ const ReservationForm = () => {
                     });
                   }
                 }}
-                className="block w-full px-4 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring focus:ring-gold-dark bg-black text-white"
+                className='block w-full px-4 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring focus:ring-gold-dark bg-black text-white'
               >
-                <option value="" disabled>
+                <option value='' disabled>
                   Select one or more kitties
                 </option>
                 {cats.map((cat) => (
@@ -454,15 +460,15 @@ const ReservationForm = () => {
               </select>
 
               {errors.catsIds && (
-                <p className="text-red-500">{errors.catsIds}</p>
+                <p className='text-red-500'>{errors.catsIds}</p>
               )}
             </div>
           </div>
         </div>
 
         {/* Centrando el botón */}
-        <div className="flex justify-center pt-5">
-          <button className="button_gold">Book</button>
+        <div className='flex justify-center pt-5'>
+          <button className='button_gold'>Book</button>
         </div>
       </form>
       {/* Renderiza el modal */}
