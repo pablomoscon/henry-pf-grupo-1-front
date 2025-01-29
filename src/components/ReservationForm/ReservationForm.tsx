@@ -14,10 +14,10 @@ import CheckIn from "../CheckIn/CheckIn";
 import CheckOut from "../CheckOut/CheckOut";
 import { useSearchParams } from "next/navigation";
 import { getCatsUser } from "@/services/catServices";
-import { ICat } from "../../interfaces/ICat";
 import { bookRegister } from "@/services/bookService";
 import ReservationModal from "../ReservationModal/ReservationModal";
 import { useRouter } from "next/navigation";
+import { ICatUser } from "@/interfaces/IBook";
 
 const ReservationForm = () => {
   const [isModalOpen, setModalOpen] = useState(false);
@@ -34,9 +34,11 @@ const ReservationForm = () => {
     checkInDate: string;
     checkOutDate: string;
     roomId: string;
+    numCat: number;
     name: string;
     price: string;
     userId: string | undefined;
+    token: string | undefined;
     fullName: string | undefined;
     customerId: string | undefined;
     totalAmount: number;
@@ -45,9 +47,11 @@ const ReservationForm = () => {
     checkInDate: "",
     checkOutDate: "",
     roomId: searchParams.get("roomId") || "",
+    numCat: Number(searchParams.get("numCat") || ""),
     name: searchParams.get("name") || "",
     price: searchParams.get("price") || "0",
     userId: user?.response.user.id,
+    token: user?.response.token,
     fullName: user?.response?.user?.name,
     customerId: user?.response?.user?.customerId,
     totalAmount: 0,
@@ -55,7 +59,7 @@ const ReservationForm = () => {
   });
 
   const [posData, setPosData] = useState<{
-    userId: string;
+    userId: string | undefined;
     roomId: string;
     checkInDate: string;
     checkOutDate: string;
@@ -70,7 +74,7 @@ const ReservationForm = () => {
     catsIds: [], // Inicializamos el array vacío
   });
 
-  const [cats, setCats] = useState<ICat[]>([]);
+  const [cats, setCats] = useState<ICatUser[]>([]);
 
   const [totalAmount, setTotalAmount] = useState(0);
 
@@ -109,7 +113,10 @@ const ReservationForm = () => {
     const fetchCats = async () => {
       if (userData.userId) {
         try {
-          const fetchedCats = await getCatsUser(userData.userId);
+          const fetchedCats = await getCatsUser(
+            userData.userId,
+            userData.token
+          );
           setCats(fetchedCats); // Actualiza el estado con los gatos obtenidos
         } catch (error) {
           console.error("Error al obtener los gatos:", error);
@@ -122,7 +129,7 @@ const ReservationForm = () => {
     };
 
     fetchCats();
-  }, [userData.userId]); // Llama a fetchCats cada vez que cambie el userId
+  }, [userData.userId, userData.token]); // Llama a fetchCats cada vez que cambie el userId
 
   const calculateTotalAmount = useCallback(() => {
     if (!userData.checkInDate || !userData.checkOutDate) {
@@ -157,23 +164,46 @@ const ReservationForm = () => {
     event: ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value } = event.target;
-    setUserData({ ...userData, [name]: value });
-    setErrors(validateBook({ ...userData, [name]: value }));
+
+    // Actualiza el estado de userData
+    const updatedData = { ...userData, [name]: value };
+    setUserData(updatedData);
+
+    // Ejecuta la validación completa después de actualizar el estado de userData
+    const validationErrors = validateBook(updatedData);
+
+    // Elimina los errores de checkInDate y checkOutDate si son válidos
+    if (name === "checkInDate" || name === "checkOutDate") {
+      if (updatedData.checkInDate && updatedData.checkOutDate) {
+        // Verifica si las fechas son correctas
+        if (
+          new Date(updatedData.checkOutDate) > new Date(updatedData.checkInDate)
+        ) {
+          // Solo elimina el error si las fechas son válidas
+          delete validationErrors.checkInDate;
+          delete validationErrors.checkOutDate;
+        }
+      }
+    }
+
+    // Actualiza el estado de errores
+    setErrors(validationErrors);
   };
 
   const handleModalConfirm = async () => {
     closeModal();
     try {
-      console.log(posData);
-      const res = await bookRegister(posData);
+      const res = await bookRegister(posData, userData.token);
       alert("Reservation successful!");
 
       if (!res.message) {
-        const reservationId = res.id; // ID devuelto por el POST *********
-        /* const res1 = await confirmPayment(reservationId); */
+        const reservationId = res.id; // ID devuelto por el POST
+        const token = userData.token;
+
         router.push(
-          `http://localhost:3000/payments/create-checkout-session/${reservationId}`
-        ); // Redirige con el ID *********
+          `http://localhost:3000/payments/create-checkout-session/${reservationId}?token=${token}`
+        );
+
         setUserData({
           checkInDate: "",
           checkOutDate: "",
@@ -181,6 +211,8 @@ const ReservationForm = () => {
           name: "",
           price: "0",
           userId: "",
+          token: "",
+          numCat: 0,
           fullName: "",
           customerId: "",
           totalAmount: 0,
@@ -209,9 +241,11 @@ const ReservationForm = () => {
     const validationErrors = validateBook(userData, true);
 
     if (Object.keys(validationErrors).length > 0) {
+      alert(
+        "There are errors in the entered data. Please review and correct them."
+      );
       setErrors(validationErrors);
     } else {
-      // Configura `posData` antes de mostrar el modal
       setPosData({
         userId: userData.userId,
         roomId: userData.roomId,
@@ -244,6 +278,9 @@ const ReservationForm = () => {
           <div className="flex justify-between items-center">
             <span className="text-lg" style={{ color: "var(--white-ivory)" }}>
               {userData.name}
+            </span>
+            <span className="text-lg" style={{ color: "var(--white-ivory)" }}>
+              {userData.numCat}
             </span>
             <span>
               --------------------------------------------------------------
@@ -285,7 +322,7 @@ const ReservationForm = () => {
               )}
             </div>
             <div className="relative">
-              <CheckIn roomId={userData.roomId} />
+              <CheckIn roomId={userData.roomId} token={userData.token} />
             </div>
           </div>
 
@@ -310,7 +347,7 @@ const ReservationForm = () => {
                 <p className="text-red-600">{errors.checkOutDate}</p>
               )}
               <div className="relative">
-                <CheckOut roomId={userData.roomId} />
+                <CheckOut roomId={userData.roomId} token={userData.token} />
               </div>
             </div>
           </div>
@@ -324,7 +361,7 @@ const ReservationForm = () => {
             Reserve Total
           </span>
           <span>
-            -------------------------------------------------------------------------------------
+            -----------------------------------------------------------------
           </span>
           <span className="text-lg" style={{ color: "var(--gold-soft)" }}>
             ${totalAmount} USD
@@ -355,7 +392,7 @@ const ReservationForm = () => {
                 className="block text-sm font-medium mb-1"
                 style={{ color: "var(--white-ivory)" }}
               >
-                Customer ID: {userData.customerId}
+                Customer DNI: {userData.customerId}
               </label>
             </div>
           </div>
@@ -380,17 +417,29 @@ const ReservationForm = () => {
               <label htmlFor="selectCat">Select Kitties:</label>
               <select
                 name="catsIds"
-                multiple // Permite seleccionar múltiples gatitos
+                multiple
                 value={userData.catsIds} // Array de IDs seleccionados
                 onChange={(e) => {
                   const selectedOptions = Array.from(
                     e.target.selectedOptions,
                     (option) => option.value
                   );
+
                   setUserData({
                     ...userData,
                     catsIds: selectedOptions, // Actualiza el array con los IDs seleccionados
                   });
+
+                  // Eliminar el error si se corrige
+                  if (
+                    selectedOptions.length > 0 &&
+                    selectedOptions.length <= userData.numCat
+                  ) {
+                    setErrors((prevErrors) => {
+                      const { catsIds, ...rest } = prevErrors; // Remover el error específico
+                      return rest;
+                    });
+                  }
                 }}
                 className="block w-full px-4 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring focus:ring-gold-dark bg-black text-white"
               >
@@ -403,6 +452,10 @@ const ReservationForm = () => {
                   </option>
                 ))}
               </select>
+
+              {errors.catsIds && (
+                <p className="text-red-500">{errors.catsIds}</p>
+              )}
             </div>
           </div>
         </div>

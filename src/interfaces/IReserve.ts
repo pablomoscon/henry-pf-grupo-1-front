@@ -1,5 +1,5 @@
 export interface IReserve {
-  userId: string;
+  userId: string | undefined;
   roomId: string;
   checkInDate: string;
   checkOutDate: string;
