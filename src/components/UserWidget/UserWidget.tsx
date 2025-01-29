@@ -49,7 +49,7 @@ const UserWidget = () => {
     } else if (role === "user") {
       return (
         <Link
-          href="/dashboard"
+          href="/profile"
           className="flex items-center hover:text-gold-dark transition-colors"
         >
           <Image
