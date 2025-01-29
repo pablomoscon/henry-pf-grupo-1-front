@@ -24,15 +24,12 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
     rolesForPath &&
     (!user || !rolesForPath.includes(user.response.user.role))
   ) {
-    // Mostrar el alert solo una vez
     if (!alertShown) {
       setAlertShown(true);
       if (typeof window !== "undefined") {
         alert("No tienes permiso para acceder a esta página.");
       }
     }
-
-    // Renderizar la página 404 si no tiene permisos
     return <Page404 />;
   }
 
