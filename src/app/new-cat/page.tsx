@@ -1,11 +1,14 @@
 import EditProfile from "@/components/EditProfile/EditProfile";
+import ProtectedPage from "@/components/ProtectedPage/ProtectedPage";
 
-const EditProfilePage = () => {
+const NewCat = () => {
   return (
-    <div>
-      <EditProfile />
-    </div>
+    <ProtectedPage requiredPage="/new-cat">
+      <div>
+        <EditProfile />
+      </div>
+    </ProtectedPage>
   );
 };
 
-export default EditProfilePage;
+export default NewCat;
