@@ -1,4 +1,5 @@
 import { ICat, CatFormData } from "@/interfaces/ICat";
+import { ICatUser } from "@/interfaces/IBook";
 
 export const getCats = async (token?: string): Promise<ICat[]> => {
   try {
@@ -114,13 +115,18 @@ export const updateCat = async (
   }
 };
 
-export const getCatsUser = async (id: string): Promise<ICat[]> => {
+export const getCatsUser = async (
+  id: string,
+  token: string | undefined
+): Promise<ICatUser[]> => {
   const res = await fetch(`http://localhost:3000/users/cats/${id}`, {
-    cache: "no-store",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
   })
     .then((res) => res.json())
     .catch(() => {
       return [];
     });
-  return res as ICat[];
+  return res as ICatUser[];
 };

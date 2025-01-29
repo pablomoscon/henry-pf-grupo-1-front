@@ -1,14 +1,21 @@
 import dayjs from "dayjs";
 import { IReserve } from "@/interfaces/IReserve";
 
-// Reemplazamos el mock por una llamada al endpoint
-export const getDateReserved = async (roomId: string): Promise<string[]> => {
+export const getDateReserved = async (
+  roomId: string,
+  token: string
+): Promise<string[]> => {
   const blockedDates: string[] = [];
 
   try {
     // Llamamos al endpoint con el roomId
     const response = await fetch(
-      `http://localhost:3000/reservations/unavailable-rooms?roomId=${roomId}`
+      `http://localhost:3000/reservations/unavailable-rooms?roomId=${roomId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
     );
     if (!response.ok) {
       throw new Error("Error al obtener las reservas");
@@ -37,30 +44,38 @@ export const getDateReserved = async (roomId: string): Promise<string[]> => {
   return blockedDates;
 };
 
-export const bookRegister = async (data: IReserve) => {
+export const bookRegister = async (
+  data: IReserve,
+  token: string | undefined
+) => {
   const res = await fetch("http://localhost:3000/reservations/", {
     method: "POST",
     body: JSON.stringify(data),
-    headers: { "content-type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
   });
+
+  if (!res.ok) {
+    throw new Error("Error al registrar la reserva");
+  }
+
   return res.json();
 };
 
-export const getUserReservations = async (userId: string) => {
+export const getUserReservations = async (userId: string, token?: string) => {
   try {
     const response = await fetch(
       `http://localhost:3000/reservations/users-reservations?userId=${userId}`,
       {
         cache: "no-store",
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
       }
     );
 
-    if (!response.ok) {
-      throw new Error("Error al obtener las reservas del usuario");
-    }
-
-    const reservations = await response.json();
-    return reservations;
+    if (!response.ok) return [];
+    return await response.json();
   } catch (error) {
     console.error("Error al obtener las reservas:", error);
     return [];

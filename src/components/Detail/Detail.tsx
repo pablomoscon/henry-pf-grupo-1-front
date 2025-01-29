@@ -13,7 +13,7 @@ const Detail = ({ room }: { room: IRoom }) => {
   const handleBook = () => {
     if (user) {
       router.push(
-        `/reserve?roomId=${room.id}&name=${room.name}&price=${room.price}`
+        `/reserve?roomId=${room.id}&name=${room.name}&price=${room.price}&numCat=${room.number_of_cats}`
       );
     } else {
       alert("Please log in first!");
