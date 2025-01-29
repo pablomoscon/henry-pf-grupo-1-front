@@ -49,7 +49,7 @@ const UserWidget = () => {
     } else if (role === "user") {
       return (
         <Link
-          href="/dashuser"
+          href="/dashboard"
           className="flex items-center hover:text-gold-dark transition-colors"
         >
           <Image
