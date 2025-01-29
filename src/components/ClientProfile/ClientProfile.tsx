@@ -9,6 +9,7 @@ import EditCatModal from "../EditCatModal/EditCatModal";
 import { updateCat, getCats } from "@/services/catServices";
 import { getUserReservations } from "@/services/bookService";
 import { IReservation } from "@/interfaces/IReserve";
+import { useNavigationGuard } from "@/contexts/navigationGuardContext";
 
 const ClientProfile = () => {
   const { user, isLogged, handleGoogleLogin } = useContext(UserContext);
@@ -18,6 +19,12 @@ const ClientProfile = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [reservations, setReservations] = useState<IReservation[]>([]);
   const token = user?.response?.token;
+  const { allowAccessToPage } = useNavigationGuard();
+
+  const handleGoToProtectedPage = () => {
+    allowAccessToPage("/edit-profile");
+    window.location.href = "/edit-profile";
+  };
 
   useEffect(() => {
     const fetchUserProfile = async () => {
@@ -209,6 +216,7 @@ const ClientProfile = () => {
           </div>
           <div className="mt-6 pt-6 border-t border-gold-soft/10">
             <Link
+              onClick={handleGoToProtectedPage}
               href="/edit-profile"
               className="text-gold-soft/70 text-sm hover:text-gold-soft transition-colors flex items-center gap-2"
             >
@@ -304,6 +312,7 @@ const ClientProfile = () => {
               </div>
               <div className="mt-6 pt-6 border-t border-gold-soft/10">
                 <Link
+                  onClick={handleGoToProtectedPage}
                   href="/new-cat"
                   className="text-gold-soft/70 text-sm hover:text-gold-soft transition-colors flex items-center gap-2"
                 >

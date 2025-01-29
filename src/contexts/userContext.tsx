@@ -1,6 +1,6 @@
-'use client';
-import { LoginResponse, UserData } from '@/interfaces/IUser';
-import { useState, createContext, useEffect } from 'react';
+"use client";
+import { LoginResponse, UserData } from "@/interfaces/IUser";
+import { useState, createContext, useEffect } from "react";
 
 interface UserContextProps {
   user: LoginResponse | null;
@@ -9,6 +9,7 @@ interface UserContextProps {
   logOut: () => void;
   updateUser: (userData: Partial<UserData>) => void;
   handleGoogleLogin: (googleData: { token: string; user: UserData }) => void;
+  loading: boolean; // Nuevo: indica si el contexto está cargando
 }
 
 export const UserContext = createContext<UserContextProps>({
@@ -18,20 +19,24 @@ export const UserContext = createContext<UserContextProps>({
   logOut: () => {},
   updateUser: () => {},
   handleGoogleLogin: () => {},
+  loading: true, // Nuevo: valor inicial
 });
 
 const UserProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<LoginResponse | null>(null);
+  const [loading, setLoading] = useState(true); // Nuevo: estado para el loading
 
   useEffect(() => {
     if (user) {
-      localStorage.setItem('user', JSON.stringify(user));
+      localStorage.setItem("user", JSON.stringify(user));
     }
   }, [user]);
 
   useEffect(() => {
-    const localUser = localStorage.getItem('user');
+    // Cargar usuario desde localStorage
+    const localUser = localStorage.getItem("user");
     setUser(localUser ? JSON.parse(localUser) : null);
+    setLoading(false); // Actualiza el estado de loading después de cargar
   }, []);
 
   const isLogged = () => {
@@ -40,9 +45,9 @@ const UserProvider = ({ children }: { children: React.ReactNode }) => {
 
   const logOut = () => {
     setUser(null);
-    localStorage.removeItem('user');
-    alert('You have logged out.');
-    window.location.href = '/';
+    localStorage.removeItem("user");
+    alert("You have logged out.");
+    window.location.href = "/";
   };
 
   const updateUser = (userData: Partial<UserData>) => {
@@ -63,7 +68,7 @@ const UserProvider = ({ children }: { children: React.ReactNode }) => {
 
   const handleGoogleLogin = (googleData: { token: string; user: UserData }) => {
     const formattedResponse: LoginResponse = {
-      success: 'success',
+      success: "success",
       response: {
         token: googleData.token,
         user: googleData.user,
@@ -75,7 +80,15 @@ const UserProvider = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <UserContext.Provider
-      value={{ user, setUser, isLogged, logOut, updateUser, handleGoogleLogin }}
+      value={{
+        user,
+        setUser,
+        isLogged,
+        logOut,
+        updateUser,
+        handleGoogleLogin,
+        loading, // Nuevo: se expone loading en el contexto
+      }}
     >
       {children}
     </UserContext.Provider>
