@@ -1,13 +1,10 @@
-import LoadingPage from "@/components/LoadingPage/LoadingPage";
-
+import LoadingPage from '@/components/LoadingPage/LoadingPage';
 
 const Loading = () => {
   return (
-    
-      <div>
-        <LoadingPage/>
-      </div>
-    
+    <div>
+      <LoadingPage />
+    </div>
   );
 };
 

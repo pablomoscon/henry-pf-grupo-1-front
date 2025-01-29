@@ -20,22 +20,13 @@ const LoadingPage = () => {
         const { token, user } = JSON.parse(
           decodeURIComponent(authCookie.split('=')[1])
         );
+
         if (!token || !user?.id) return;
 
-        const response = await fetch(`http://localhost:3000/users/${user.id}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-
-        if (!response.ok) {
-          throw new Error(`Error fetching user: ${response.statusText}`);
-        }
-
-        const userProfile = await response.json();
-
-        handleGoogleLogin({ token, user: userProfile });
-        router.push('/dashboard');
+        handleGoogleLogin({ token, user });
+        router.push('/profile');
       } catch (error) {
-        console.error('Error durante el proceso de carga', error);
+        console.error('Error during authentication process:', error);
       }
     };
 
@@ -46,10 +37,7 @@ const LoadingPage = () => {
     }
   }, [isLogged, handleGoogleLogin, router]);
 
-  return (
-    <div className='container'>
-    </div>
-  );
+  return <div className='container'></div>;
 };
 
 export default LoadingPage;
