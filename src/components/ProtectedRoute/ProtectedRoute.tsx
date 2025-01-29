@@ -1,32 +1,40 @@
 "use client";
 
-import { ReactNode, useContext, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import React, { useContext, useState } from "react";
+import { usePathname } from "next/navigation";
 import { UserContext } from "@/contexts/userContext";
+import { protectedPaths } from "@/helpers/protectedPaths";
+import Page404 from "../Page404/Page404";
 
 interface ProtectedRouteProps {
-  children: ReactNode;
-  roles?: string[]; // Define los roles que pueden acceder a esta ruta
+  children: React.ReactNode;
 }
 
-const ProtectedRoute = ({ children, roles }: ProtectedRouteProps) => {
-  const { user, isLogged } = useContext(UserContext);
-  const router = useRouter();
+const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
+  const { user } = useContext(UserContext);
+  const pathname = usePathname();
+  const [alertShown, setAlertShown] = useState(false);
 
-  useEffect(() => {
-    // Verificar si el usuario está logueado
-    if (!isLogged()) {
-      router.push("/login");
-      return;
+  console.log("User:", user?.response.user);
+  console.log("Pathname:", pathname);
+
+  const rolesForPath = protectedPaths[pathname];
+
+  if (
+    rolesForPath &&
+    (!user || !rolesForPath.includes(user.response.user.role))
+  ) {
+    // Mostrar el alert solo una vez
+    if (!alertShown) {
+      setAlertShown(true);
+      if (typeof window !== "undefined") {
+        alert("No tienes permiso para acceder a esta página.");
+      }
     }
 
-    // Verificar si el rol del usuario está permitido
-    const userRole = user?.response.user.role; // Accedemos al rol correctamente
-    if (roles && !roles.includes(userRole!)) {
-      alert("No tienes permisos para acceder a esta página.");
-      router.push("/");
-    }
-  }, [isLogged, roles, router, user]);
+    // Renderizar la página 404 si no tiene permisos
+    return <Page404 />;
+  }
 
   return <>{children}</>;
 };

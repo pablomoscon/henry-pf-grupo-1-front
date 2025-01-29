@@ -1,5 +1,10 @@
 export interface IReview {
-  nameUser: string;
-  textResenia: string;
-  calification: number;
+  id: string;
+  textBody: string;
+  rating: number;
+  deleted_at: string | null;
+  user: {
+    id: string;
+    name: string;
+  };
 }

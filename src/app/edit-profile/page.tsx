@@ -3,7 +3,7 @@ import ProtectedRoute from "@/components/ProtectedRoute/ProtectedRoute";
 
 const EditProfilePage = () => {
   return (
-    <ProtectedRoute roles={["admin", "caretaker", "customer"]}>
+    <ProtectedRoute>
       <div>
         <EditProfile />
       </div>
