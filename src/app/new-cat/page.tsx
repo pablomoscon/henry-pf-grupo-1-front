@@ -1,14 +1,14 @@
-import NewCatForm from "../../components/NewCatForm/NewCatForm";
-import ProtectedRoute from "@/components/ProtectedRoute/ProtectedRoute";
+import EditProfile from "@/components/EditProfile/EditProfile";
+import ProtectedPage from "@/components/ProtectedPage/ProtectedPage";
 
-const NewCatPage = () => {
+const NewCat = () => {
   return (
-    <ProtectedRoute roles={["customer"]}>
+    <ProtectedPage requiredPage="/new-cat">
       <div>
-        <NewCatForm />
+        <EditProfile />
       </div>
-    </ProtectedRoute>
+    </ProtectedPage>
   );
 };
 
-export default NewCatPage;
+export default NewCat;
