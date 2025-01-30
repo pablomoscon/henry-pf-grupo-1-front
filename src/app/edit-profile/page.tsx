@@ -1,13 +1,13 @@
 import EditProfile from "@/components/EditProfile/EditProfile";
-import ProtectedPage from "@/components/ProtectedPage/ProtectedPage";
+import ProtectedRoute from "@/components/ProtectedRoute/ProtectedRoute";
 
 const EditProfilePage = () => {
   return (
-    <ProtectedPage requiredPage="/edit-profile">
+    <ProtectedRoute>
       <div>
         <EditProfile />
       </div>
-    </ProtectedPage>
+    </ProtectedRoute>
   );
 };
 

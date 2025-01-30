@@ -1,28 +1,30 @@
 "use client";
 
+import { useAccess } from "@/contexts/accessContext";
+import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import { useNavigationGuard } from "@/contexts/navigationGuardContext";
-import Page404 from "../Page404/Page404";
 
-interface ProtectedPageProps {
-  children: React.ReactNode;
-  requiredPage: string;
-}
+export const withAccess = (WrappedComponent: React.FC) => {
+  const ProtectedComponent = () => {
+    const { hasAccess } = useAccess();
+    const router = useRouter();
+    const [canRender, setCanRender] = useState(false);
 
-const ProtectedPage = ({ children, requiredPage }: ProtectedPageProps) => {
-  const { isAccessAllowed } = useNavigationGuard();
-  const [isAllowed, setIsAllowed] = useState<boolean | null>(null);
+    useEffect(() => {
+      const path = router.pathname;
 
-  useEffect(() => {
-    const access = isAccessAllowed(requiredPage);
-    setIsAllowed(access);
-  }, [isAccessAllowed, requiredPage]);
+      if (!hasAccess(path)) {
+        router.replace("/"); // Redirige si no tienes acceso
+      } else {
+        setCanRender(true); // Permite renderizar el componente
+      }
+    }, [hasAccess, router]);
 
-  if (isAllowed === null) {
-    return <div>Loading...</div>;
-  }
+    // Mientras verifica el acceso, puedes mostrar un estado de carga o simplemente null
+    if (!canRender) return null;
 
-  return isAllowed ? children : <Page404 />;
+    return <WrappedComponent />;
+  };
+
+  return ProtectedComponent;
 };
-
-export default ProtectedPage;

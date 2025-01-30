@@ -2,69 +2,27 @@
 
 import { UserContext } from "@/contexts/userContext";
 import { useContext, useEffect, useState } from "react";
-import Link from "next/link";
-import Image from "next/image";
 import { CatFormData, ICat } from "@/interfaces/ICat";
 import EditCatModal from "../EditCatModal/EditCatModal";
 import { updateCat, getCats } from "@/services/catServices";
 import { getUserReservations } from "@/services/bookService";
 import { IReservation } from "@/interfaces/IReserve";
-import { useNavigationGuard } from "@/contexts/navigationGuardContext";
+import Link from "next/link";
+import Image from "next/image";
 
 const ClientProfile = () => {
-  const { user, isLogged, handleGoogleLogin } = useContext(UserContext);
+  const { user } = useContext(UserContext);
   const [cats, setCats] = useState<ICat[]>([]);
-  const userData = user?.response?.user;
   const [selectedCat, setSelectedCat] = useState<ICat | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [reservations, setReservations] = useState<IReservation[]>([]);
   const token = user?.response?.token;
-  const { allowAccessToPage } = useNavigationGuard();
-
-  const handleGoToProtectedPage = () => {
-    allowAccessToPage("/edit-profile");
-    window.location.href = "/edit-profile";
-  };
-
-  useEffect(() => {
-    const fetchUserProfile = async () => {
-      try {
-        const authCookie = document.cookie
-          .split("; ")
-          .find((row) => row.startsWith("auth="));
-
-        if (!authCookie) return;
-
-        const { token, user } = JSON.parse(
-          decodeURIComponent(authCookie.split("=")[1])
-        );
-
-        if (!token || !user?.id) return;
-
-        const response = await fetch(`http://localhost:3000/users/${user.id}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-
-        if (!response.ok)
-          throw new Error(`Error fetching user: ${response.statusText}`);
-
-        const userProfile = await response.json();
-
-        handleGoogleLogin({ token, user: userProfile });
-      } catch (error) {
-        console.error("Error fetching user profile:", error);
-      }
-    };
-
-    if (!isLogged()) {
-      fetchUserProfile();
-    }
-  }, [isLogged, handleGoogleLogin]);
+  const userData = user?.response?.user;
 
   useEffect(() => {
     const fetchCats = async () => {
       try {
-        const userId = user?.response?.user?.id;
+        const userId = userData?.id;
         if (!userId) return;
 
         const catsData = await getCats(token);
@@ -75,15 +33,9 @@ const ClientProfile = () => {
       }
     };
 
-    if (user?.response?.user?.id) {
-      fetchCats();
-    }
-  }, [user?.response?.user?.id, token]);
-
-  useEffect(() => {
     const fetchReservations = async () => {
       try {
-        const userId = user?.response?.user?.id;
+        const userId = userData?.id;
         if (!userId) return;
 
         const userReservations = await getUserReservations(userId, token);
@@ -93,10 +45,11 @@ const ClientProfile = () => {
       }
     };
 
-    if (user?.response?.user?.id) {
+    if (userData?.id) {
+      fetchCats();
       fetchReservations();
     }
-  }, [user?.response?.user?.id, token]);
+  }, [user, token]);
 
   const handleEditCat = (cat: ICat) => {
     setSelectedCat(cat);
@@ -142,16 +95,6 @@ const ClientProfile = () => {
       alert("Failed to update cat. Please try again.");
     }
   };
-
-  if (!isLogged()) {
-    return (
-      <div className="container mx-auto px-4 py-8">
-        <h1 className="text-4xl text-center text-gold-soft mb-12">
-          Checking authentication...
-        </h1>
-      </div>
-    );
-  }
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -216,7 +159,6 @@ const ClientProfile = () => {
           </div>
           <div className="mt-6 pt-6 border-t border-gold-soft/10">
             <Link
-              onClick={handleGoToProtectedPage}
               href="/edit-profile"
               className="text-gold-soft/70 text-sm hover:text-gold-soft transition-colors flex items-center gap-2"
             >
@@ -312,7 +254,6 @@ const ClientProfile = () => {
               </div>
               <div className="mt-6 pt-6 border-t border-gold-soft/10">
                 <Link
-                  onClick={handleGoToProtectedPage}
                   href="/new-cat"
                   className="text-gold-soft/70 text-sm hover:text-gold-soft transition-colors flex items-center gap-2"
                 >

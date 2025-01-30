@@ -4,13 +4,11 @@ import { IRoom } from "@/interfaces/IRoom";
 import { useContext } from "react";
 import { UserContext } from "@/contexts/userContext";
 import { useRouter, usePathname } from "next/navigation";
-import { useNavigationGuard } from "@/contexts/navigationGuardContext";
 
 const Detail = ({ room }: { room: IRoom }) => {
   const { user } = useContext(UserContext);
   const router = useRouter();
   const pathname = usePathname();
-  const { allowAccessToPage } = useNavigationGuard();
 
   const handleBook = () => {
     if (user) {
@@ -21,17 +19,6 @@ const Detail = ({ room }: { room: IRoom }) => {
       alert("Please log in first!");
       router.push(`/login?redirect=${pathname}`);
     }
-  };
-
-  const handleGoToProtectedPage = () => {
-    allowAccessToPage("/edit-profile");
-    window.location.href = "/edit-profile";
-  };
-
-  const handleClick = () => {
-    // Aquí combinamos ambas funciones (handleBook + handleGoToProtectedPage)
-    handleBook(); // Función para reservar
-    handleGoToProtectedPage(); // Función para la protección de la página
   };
 
   return (
@@ -80,7 +67,7 @@ const Detail = ({ room }: { room: IRoom }) => {
               ${room.price} USD / day
             </h3>
 
-            <button className="px-5 py-2 button_green" onClick={handleClick}>
+            <button className="px-5 py-2 button_green" onClick={handleBook}>
               Book
             </button>
           </div>

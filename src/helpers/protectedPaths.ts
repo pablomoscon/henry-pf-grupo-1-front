@@ -4,5 +4,6 @@ export const protectedPaths: { [key: string]: string[] } = {
   "/dashcaretaker": ["caretaker", "admin"],
   "/reserve": ["user", "admin"],
   "/edit-profile": ["user", "admin"],
+  "/new-cat": ["admin", "user"],
   // aca van mas rutas protegidas
 };
