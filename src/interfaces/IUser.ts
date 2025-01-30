@@ -75,3 +75,13 @@ export interface GoogleCallbackResponse {
   token: string;
   user: UserData;
 }
+
+export interface ChangePasswordData {
+  newPassword: string;
+  confirmPassword: string;
+}
+
+export interface ChangePasswordResponse {
+  success: boolean;
+  message?: string;
+}

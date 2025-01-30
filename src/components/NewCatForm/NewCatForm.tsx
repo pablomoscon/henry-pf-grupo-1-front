@@ -87,7 +87,7 @@ const NewCatForm = () => {
 
         if (res.id) {
           alert("Cat registered successfully!");
-          router.push("/dashboard");
+          router.push("/profile");
         } else {
           alert("Failed to create cat. Please try again.");
           actions.resetForm();

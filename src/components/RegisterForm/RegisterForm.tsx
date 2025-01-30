@@ -67,23 +67,25 @@ const RegisterForm = () => {
   });
 
   return (
-    <div className="flex items-center justify-center mt-2">
+    <div className="min-h-screen pt-24 pb-16 px-4 flex items-center justify-center bg-black-dark">
       <form
         onSubmit={handleSubmit}
         autoComplete="off"
-        className="w-full max-w-2xl mx-auto p-6 rounded-lg shadow-md space-y-4"
+        className="w-full max-w-2xl mx-auto p-6 rounded-lg shadow-md space-y-3"
         style={{ background: "var(--black-dark)" }}
       >
-        <h2 style={{ color: "var(--gold-soft)" }}>Customer Data</h2>
+        <h2 className="text-2xl mb-4" style={{ color: "var(--gold-soft)" }}>
+          Customer Data
+        </h2>
 
-        <div className="space-y-4">
+        <div className="space-y-3">
           <div>
             <label
               htmlFor="customerId"
               className="block text-sm font-medium mb-1"
               style={{ color: "var(--white-ivory)" }}
             >
-              Customer ID
+              DNI
             </label>
             <input
               id="customerId"
@@ -283,31 +285,33 @@ const RegisterForm = () => {
           </div>
         </div>
 
-        <button
-          type="submit"
-          disabled={isSubmitting}
-          className="button_gold w-full"
-        >
-          {isSubmitting ? "Registering..." : "Register"}
-        </button>
+        <div className="flex flex-col items-center gap-3 mt-4">
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className="button_gold w-full py-2.5 text-lg"
+          >
+            {isSubmitting ? "Registering..." : "Register"}
+          </button>
 
-        <div className="w-full flex items-center my-4">
-          <div className="flex-1 border-t border-gray-600"></div>
-          <span className="px-3 text-gray-400">or</span>
-          <div className="flex-1 border-t border-gray-600"></div>
+          <div className="w-full flex items-center my-3">
+            <div className="flex-1 border-t border-gray-600"></div>
+            <span className="px-3 text-gray-400">or</span>
+            <div className="flex-1 border-t border-gray-600"></div>
+          </div>
+
+          <button
+            type="button"
+            onClick={handleGoogleLogin}
+            className="w-full flex items-center justify-center gap-2 px-4 py-2.5 border border-gray-600 rounded-md hover:bg-gray-700 transition-colors"
+            style={{ background: "var(--black-light)" }}
+          >
+            <img src="/google-icon.svg" alt="Google" className="w-5 h-5" />
+            <span style={{ color: "var(--white-ivory)" }}>
+              Continue with Google
+            </span>
+          </button>
         </div>
-
-        <button
-          type="button"
-          onClick={handleGoogleLogin}
-          className="w-full flex items-center justify-center gap-2 px-4 py-2 border border-gray-600 rounded-md hover:bg-gray-700 transition-colors"
-          style={{ background: "var(--black-light)" }}
-        >
-          <img src="/google-icon.svg" alt="Google" className="w-5 h-5" />
-          <span style={{ color: "var(--white-ivory)" }}>
-            Continue with Google
-          </span>
-        </button>
       </form>
     </div>
   );

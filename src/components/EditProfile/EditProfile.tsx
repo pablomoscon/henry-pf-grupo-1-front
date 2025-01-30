@@ -9,6 +9,7 @@ const EditProfile = () => {
   const { user, updateUser } = useContext(UserContext);
   const router = useRouter();
   const userData = user?.response?.user;
+  const token = user?.response?.token;
 
   const [formData, setFormData] = useState({
     name: "",
@@ -38,19 +39,20 @@ const EditProfile = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!userData) {
+    if (!userData || !token) {
       alert("User data not found. Please try again.");
       return;
     }
 
     try {
-      await updateUserProfile(formData, userData.id);
+      const updatedUser = await updateUserProfile(formData, userData.id, token);
+
       await updateUser({
         ...userData,
-        ...formData,
+        ...updatedUser,
       });
 
-      router.push("/dashboard");
+      router.push("/profile");
     } catch (error) {
       console.error("Error updating profile:", error);
       alert("Failed to update profile. Please try again.");
@@ -58,19 +60,20 @@ const EditProfile = () => {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-4xl text-center text-gold-soft mb-12">
-        Edit Profile
-      </h1>
+    <div className="min-h-screen pt-24 pb-16 px-4 flex items-center justify-center bg-black-dark">
+      <div className="w-full max-w-2xl mx-auto">
+        <h1 className="text-2xl text-center text-gold-soft mb-4">
+          Edit Profile
+        </h1>
 
-      <div className="max-w-2xl mx-auto">
-        <div className="bg-black-dark p-8 rounded-xl shadow-lg border border-gold-soft/10">
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="space-y-4">
+        <div className="bg-black-dark p-6 rounded-lg shadow-lg border border-gold-soft/10">
+          <form onSubmit={handleSubmit} className="space-y-3">
+            <div className="space-y-3">
               <div>
                 <label
                   htmlFor="name"
-                  className="text-sm text-gold-soft/70 block mb-1"
+                  className="block text-sm font-medium mb-1"
+                  style={{ color: "var(--white-ivory)" }}
                 >
                   Full Name
                 </label>
@@ -80,14 +83,15 @@ const EditProfile = () => {
                   name="name"
                   value={formData.name}
                   onChange={handleChange}
-                  className="w-full bg-black-light text-white-ivory p-3 rounded-lg border border-gold-soft/20 focus:border-gold-soft/50 focus:outline-none"
+                  className="w-full bg-black-light text-white-ivory p-2 rounded-md border border-gold-soft/20 focus:border-gold-soft/50 focus:outline-none"
                 />
               </div>
 
               <div>
                 <label
                   htmlFor="email"
-                  className="text-sm text-gold-soft/70 block mb-1"
+                  className="block text-sm font-medium mb-1"
+                  style={{ color: "var(--white-ivory)" }}
                 >
                   Email
                 </label>
@@ -97,14 +101,15 @@ const EditProfile = () => {
                   name="email"
                   value={formData.email}
                   onChange={handleChange}
-                  className="w-full bg-black-light text-white-ivory p-3 rounded-lg border border-gold-soft/20 focus:border-gold-soft/50 focus:outline-none"
+                  className="w-full bg-black-light text-white-ivory p-2 rounded-md border border-gold-soft/20 focus:border-gold-soft/50 focus:outline-none"
                 />
               </div>
 
               <div>
                 <label
                   htmlFor="phone"
-                  className="text-sm text-gold-soft/70 block mb-1"
+                  className="block text-sm font-medium mb-1"
+                  style={{ color: "var(--white-ivory)" }}
                 >
                   Phone Number
                 </label>
@@ -114,14 +119,15 @@ const EditProfile = () => {
                   name="phone"
                   value={formData.phone}
                   onChange={handleChange}
-                  className="w-full bg-black-light text-white-ivory p-3 rounded-lg border border-gold-soft/20 focus:border-gold-soft/50 focus:outline-none"
+                  className="w-full bg-black-light text-white-ivory p-2 rounded-md border border-gold-soft/20 focus:border-gold-soft/50 focus:outline-none"
                 />
               </div>
 
               <div>
                 <label
                   htmlFor="address"
-                  className="text-sm text-gold-soft/70 block mb-1"
+                  className="block text-sm font-medium mb-1"
+                  style={{ color: "var(--white-ivory)" }}
                 >
                   Address
                 </label>
@@ -131,12 +137,12 @@ const EditProfile = () => {
                   name="address"
                   value={formData.address}
                   onChange={handleChange}
-                  className="w-full bg-black-light text-white-ivory p-3 rounded-lg border border-gold-soft/20 focus:border-gold-soft/50 focus:outline-none"
+                  className="w-full bg-black-light text-white-ivory p-2 rounded-md border border-gold-soft/20 focus:border-gold-soft/50 focus:outline-none"
                 />
               </div>
             </div>
 
-            <div className="flex gap-4 justify-end pt-6 border-t border-gold-soft/10">
+            <div className="flex gap-4 justify-end pt-4 border-t border-gold-soft/10">
               <button
                 type="button"
                 onClick={() => router.back()}
