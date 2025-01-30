@@ -17,13 +17,18 @@ const LoadingPage = () => {
 
         if (!authCookie) return;
 
-        const { token, user } = JSON.parse(
-          decodeURIComponent(authCookie.split('=')[1])
-        );
+      const cookieValue = decodeURIComponent(authCookie.split('=')[1]);
+      const { token, user } = JSON.parse(cookieValue);
 
-        if (!token || !user?.id) return;
+      if (!token || !user) {
+        console.error('Token or user data missing.');
+        return;
+      }
+      handleGoogleLogin({
+        token,
+        user,
+      });
 
-        handleGoogleLogin({ token, user });
         router.push('/profile');
       } catch (error) {
         console.error('Error during authentication process:', error);
