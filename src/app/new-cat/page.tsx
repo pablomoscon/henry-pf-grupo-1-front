@@ -1,13 +1,13 @@
 import NewCatForm from "@/components/NewCatForm/NewCatForm";
-import ProtectedRoute from "@/components/ProtectedRoute/ProtectedRoute";
+import AuthGuard from "@/components/AuthGuard/AuthGuard";
 
 const NewCat = () => {
   return (
-    <ProtectedRoute>
+    <AuthGuard>
       <div>
         <NewCatForm />
       </div>
-    </ProtectedRoute>
+    </AuthGuard>
   );
 };
 
