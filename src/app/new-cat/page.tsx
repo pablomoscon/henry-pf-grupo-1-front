@@ -1,13 +1,13 @@
-import EditProfile from "@/components/EditProfile/EditProfile";
-import ProtectedPage from "@/components/ProtectedPage/ProtectedPage";
+import NewCatForm from "@/components/NewCatForm/NewCatForm";
+import ProtectedRoute from "@/components/ProtectedRoute/ProtectedRoute";
 
 const NewCat = () => {
   return (
-    <ProtectedPage requiredPage="/new-cat">
+    <ProtectedRoute>
       <div>
-        <EditProfile />
+        <NewCatForm />
       </div>
-    </ProtectedPage>
+    </ProtectedRoute>
   );
 };
 
