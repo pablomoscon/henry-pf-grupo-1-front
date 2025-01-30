@@ -1,9 +1,11 @@
 import ProtectedRoute from "@/components/ProtectedRoute/ProtectedRoute";
-
+import SuitesForm from "@/components/SuitesForm/SuitesForm";
 const DashAdmin = () => {
   return (
     <ProtectedRoute>
-      <div className="mt-36 mb-36">Este es el Dashboard de Admin</div>
+      <div>
+        <SuitesForm />
+      </div>
     </ProtectedRoute>
   );
 };

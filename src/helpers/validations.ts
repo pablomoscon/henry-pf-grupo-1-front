@@ -122,3 +122,18 @@ export const reservationSchema = yup.object().shape({
     })
   ),
 });
+
+export const changePasswordSchema = yup.object().shape({
+  newPassword: yup
+    .string()
+    .min(5)
+    .matches(passwordRules, {
+      message:
+        "Please enter at least 5 characters, 1 upper case letter, 1 lower case letter and 1 number",
+    })
+    .required("New password is required"),
+  confirmNewPassword: yup
+    .string()
+    .oneOf([yup.ref("newPassword")], "Passwords must match")
+    .required("Password confirmation is required"),
+});

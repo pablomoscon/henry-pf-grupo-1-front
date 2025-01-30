@@ -3,6 +3,8 @@ import {
   UserRegister,
   LoginResponse,
   UserData,
+  ChangePasswordData,
+  ChangePasswordResponse,
 } from "@/interfaces/IUser";
 
 export const userRegister = async (data: UserRegister) => {
@@ -25,12 +27,14 @@ export const userLogin = async (data: UserLogin): Promise<LoginResponse> => {
 
 export const updateUserProfile = async (
   userData: Partial<UserData>,
-  id: string
+  id: string,
+  token: string
 ) => {
   const res = await fetch(`http://localhost:3000/users/${id}`, {
     method: "PATCH",
     headers: {
       "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify(userData),
   });
@@ -40,4 +44,30 @@ export const updateUserProfile = async (
   }
 
   return res.json();
+};
+
+export const changePassword = async (
+  data: ChangePasswordData,
+  userId: string,
+  token: string
+): Promise<ChangePasswordResponse> => {
+  const res = await fetch(
+    `http://localhost:3000/credentials/${userId}?token=${token}`,
+    {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    }
+  );
+
+  const responseData = await res.json();
+  console.log("Server response:", responseData);
+
+  if (!res.ok) {
+    throw new Error("Failed to change password");
+  }
+
+  return responseData;
 };
