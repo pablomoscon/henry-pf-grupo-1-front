@@ -14,23 +14,35 @@ export const fetchPaymentStatus = async (
   return response.text();
 };
 
-export const confirmPayment = async (reservation: IBook) => {
+export const confirmPayment = async (reservationId: string, token?: string) => {
   try {
-    const reservationId = reservation.id;
-
-    const res = await fetch(
+    console.log('token', token);
+    
+    const response = await fetch(
       `http://localhost:3000/payments/create-checkout-session/${reservationId}`,
       {
-        method: "POST",
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
         },
+        body: JSON.stringify({ token }), // Aquí estamos enviando el token en el cuerpo de la solicitud
       }
     );
-    const data = await res.json();
-    console.log(data);
-    window.location.href = data.url;
+
+    if (!response.ok) {
+      throw new Error('Error al crear la sesión de pago');
+    }
+
+    const data = await response.json();
+
+    if (data.sessionUrl) {
+      window.location.href = data.sessionUrl; // Redirige a la URL de Stripe
+    } else {
+      throw new Error('Error: No session URL received.');
+    }
   } catch (error) {
-    console.error("Error during payment simulation:", error);
+    console.error('Error during payment process:', error);
+    alert('Payment process failed. Please try again.');
   }
 };

@@ -30,40 +30,58 @@ const UserWidget = () => {
   };
 
   const renderRoleBasedLink = () => {
-    if (role === "admin") {
-      return (
-        <Link
-          href="/dashadmin"
-          className="flex items-center hover:text-gold-dark transition-colors"
-        >
-          <Image
-            src="/PerfilIcono.png"
-            alt="Dashboard Icon"
-            width={16}
-            height={16}
-            className="mr-2"
-          />
-          Dashboard
-        </Link>
-      );
-    } else if (role === "user") {
-      return (
-        <Link
-          href="/profile"
-          className="flex items-center hover:text-gold-dark transition-colors"
-        >
-          <Image
-            src="/PerfilIcono.png"
-            alt="Profile Icon"
-            width={16}
-            height={16}
-            className="mr-2"
-          />
-          Profile
-        </Link>
-      );
+    switch (role) {
+      case "admin":
+        return (
+          <Link
+            href="/dashadmin"
+            className="flex items-center hover:text-gold-dark transition-colors"
+          >
+            <Image
+              src="/PerfilIcono.png"
+              alt="Dashboard Icon"
+              width={16}
+              height={16}
+              className="mr-2"
+            />
+            Dashboard
+          </Link>
+        );
+      case "caretaker":
+        return (
+          <Link
+            href="/dashcaretaker"
+            className="flex items-center hover:text-gold-dark transition-colors"
+          >
+            <Image
+              src="/PerfilIcono.png"
+              alt="Dashboard Icon"
+              width={16}
+              height={16}
+              className="mr-2"
+            />
+            Dashboard
+          </Link>
+        );
+      case "user":
+        return (
+          <Link
+            href="/profile"
+            className="flex items-center hover:text-gold-dark transition-colors"
+          >
+            <Image
+              src="/PerfilIcono.png"
+              alt="Profile Icon"
+              width={16}
+              height={16}
+              className="mr-2"
+            />
+            Profile
+          </Link>
+        );
+      default:
+        return null;
     }
-    return null; // Por si el rol no está definido
   };
 
   return (

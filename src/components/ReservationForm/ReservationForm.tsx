@@ -18,6 +18,7 @@ import { bookRegister } from "@/services/bookService";
 import ReservationModal from "../ReservationModal/ReservationModal";
 import { useRouter } from "next/navigation";
 import { ICatUser } from "@/interfaces/IBook";
+import { confirmPayment } from "@/services/paymentServices";
 
 const ReservationForm = () => {
   const [isModalOpen, setModalOpen] = useState(false);
@@ -200,12 +201,10 @@ const ReservationForm = () => {
       alert("Reservation successful!");
 
       if (!res.message) {
-        const reservationId = res.id; // ID devuelto por el POST
+        const reservationId = res.id;
         const token = userData.token;
 
-        router.push(
-          `http://localhost:3000/payments/create-checkout-session/${reservationId}?token=${token}`
-        );
+        await confirmPayment(reservationId, userData.token);
 
         setUserData({
           checkInDate: "",
@@ -233,8 +232,13 @@ const ReservationForm = () => {
         alert(res.message || "Reservation failed.");
       }
     } catch (error) {
-      console.error("Error:", error);
-      alert("Connection error. Please try again later.");
+      console.error("Error during reservation:", error);
+
+      if (error instanceof Error) {
+        alert(error.message || "Connection error. Please try again later.");
+      } else {
+        alert("An unknown error occurred. Please try again later.");
+      }
     }
   };
 
@@ -427,6 +431,9 @@ const ReservationForm = () => {
               <select
                 name="catsIds"
                 multiple
+                title="Select your kitties"
+                aria-label="Select your kitties"
+                value={userData.catsIds} // Array de IDs seleccionados
                 value={userData.catsIds}
                 onChange={(e) => {
                   const selectedOptions = Array.from(

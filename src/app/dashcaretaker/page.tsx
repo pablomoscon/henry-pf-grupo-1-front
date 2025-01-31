@@ -1,6 +1,6 @@
 import ProtectedRoute from "@/components/ProtectedRoute/ProtectedRoute";
 
-const DashUser = () => {
+const DashCaretaker = () => {
   return (
     <ProtectedRoute>
       <div className="mt-36 mb-36">Este es el Dashboard de Caretaker</div>
@@ -8,4 +8,4 @@ const DashUser = () => {
   );
 };
 
-export default DashUser;
+export default DashCaretaker;

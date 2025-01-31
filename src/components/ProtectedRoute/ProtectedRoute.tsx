@@ -27,7 +27,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
     if (!alertShown) {
       setAlertShown(true);
       if (typeof window !== "undefined") {
-        alert("No tienes permiso para acceder a esta página.");
+        alert("You don't have permission to be here.");
       }
     }
     return <Page404 />;
