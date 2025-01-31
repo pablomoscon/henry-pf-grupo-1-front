@@ -57,12 +57,16 @@ export const bookRegister = async (
     },
   });
 
+
   if (!res.ok) {
-    throw new Error("Error al registrar la reserva");
+    const errorData = await res.json();  
+    const errorMessage = JSON.parse(errorData.message).message;  
+    throw new Error(errorMessage);  
   }
 
   return res.json();
 };
+
 
 export const getUserReservations = async (userId: string, token?: string) => {
   try {
