@@ -11,12 +11,15 @@ export const caretakerService = {
     return response.json();
   },
 
-  async createCaretaker(caretaker: Omit<UserRegister, "role">): Promise<void> {
+  async createCaretaker(
+    caretaker: Omit<UserRegister, "role" | "confirmPassword">
+  ): Promise<void> {
     await userRegister({
       ...caretaker,
       role: "caretaker",
       status: "active",
       isVerified: true,
+      confirmPassword: caretaker.password,
     } as UserRegister);
   },
 

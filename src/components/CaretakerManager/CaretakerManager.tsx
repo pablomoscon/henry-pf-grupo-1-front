@@ -68,14 +68,27 @@ const CaretakerManager = () => {
           currentCaretaker.id,
           user?.response.token || ""
         );
+        alert("Caretaker updated successfully!");
       } else {
+        if (!currentCaretaker.password || !currentCaretaker.confirmPassword) {
+          alert("Please fill in all required fields");
+          return;
+        }
+
+        if (currentCaretaker.password !== currentCaretaker.confirmPassword) {
+          alert("Passwords do not match");
+          return;
+        }
+
         await caretakerService.createCaretaker(currentCaretaker);
+        alert("Caretaker created successfully!");
       }
+
       await loadCaretakers();
       cleanForm();
-    } catch (error) {
+    } catch (error: Error | unknown) {
       console.error("Error:", error);
-      alert("Error saving caretaker");
+      alert(error instanceof Error ? error.message : "Error saving caretaker");
     }
   };
 
