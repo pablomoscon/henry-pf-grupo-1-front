@@ -1,12 +1,15 @@
 import ReservationForm from "@/components/ReservationForm/ReservationForm";
-import AuthGuard from "@/components/AuthGuard/AuthGuard";
+import NavigationGuard from "@/components/NavigationGuard/NavigationGuard";
+import ProtectedRoute from "@/components/ProtectedRoute/ProtectedRoute";
 
 export default function ReservePage() {
   return (
-    <AuthGuard>
-      <div>
-        <ReservationForm />
-      </div>
-    </AuthGuard>
+    <NavigationGuard originPath="/suites">
+      <ProtectedRoute>
+        <div>
+          <ReservationForm />
+        </div>
+      </ProtectedRoute>
+    </NavigationGuard>
   );
 }
