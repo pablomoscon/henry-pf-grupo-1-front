@@ -434,7 +434,6 @@ const ReservationForm = () => {
                 title="Select your kitties"
                 aria-label="Select your kitties"
                 value={userData.catsIds} // Array de IDs seleccionados
-                value={userData.catsIds}
                 onChange={(e) => {
                   const selectedOptions = Array.from(
                     e.target.selectedOptions,
