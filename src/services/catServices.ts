@@ -74,7 +74,11 @@ export const updateCat = async (
   const { photoFile, ...catData } = formData;
   const formDataToSend = new FormData();
 
-  if (photoFile && photoFile.size > 0) {
+  if (
+    photoFile instanceof File &&
+    photoFile.size > 0 &&
+    photoFile.name !== ""
+  ) {
     formDataToSend.append("photoFile", photoFile);
   }
 

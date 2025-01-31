@@ -188,57 +188,60 @@ const ReservationForm = () => {
     }
 
     // Actualiza el estado de errores
-    setErrors(validationErrors);
+    setErrors((prevErrors) => {
+      delete prevErrors.catsIds;
+      return { ...prevErrors };
+    });
   };
 
-const handleModalConfirm = async () => {
-  closeModal();
-  try {
-    const res = await bookRegister(posData, userData.token);
-    alert('Reservation successful!');
+  const handleModalConfirm = async () => {
+    closeModal();
+    try {
+      const res = await bookRegister(posData, userData.token);
+      alert("Reservation successful!");
 
-    if (!res.message) {
-      const reservationId = res.id;
-      const token = userData.token;
+      if (!res.message) {
+        const reservationId = res.id;
+        const token = userData.token;
 
-      await confirmPayment(reservationId, userData.token);
+        await confirmPayment(reservationId, userData.token);
 
-      setUserData({
-        checkInDate: '',
-        checkOutDate: '',
-        roomId: '',
-        name: '',
-        price: '0',
-        userId: '',
-        token: '',
-        numCat: 0,
-        fullName: '',
-        customerId: '',
-        totalAmount: 0,
-        catsIds: [],
-      });
-      setPosData({
-        userId: '',
-        roomId: '',
-        checkInDate: '',
-        checkOutDate: '',
-        totalAmount: 0,
-        catsIds: [],
-      });
-    } else {
-      alert(res.message || 'Reservation failed.');
+        setUserData({
+          checkInDate: "",
+          checkOutDate: "",
+          roomId: "",
+          name: "",
+          price: "0",
+          userId: "",
+          token: "",
+          numCat: 0,
+          fullName: "",
+          customerId: "",
+          totalAmount: 0,
+          catsIds: [],
+        });
+        setPosData({
+          userId: "",
+          roomId: "",
+          checkInDate: "",
+          checkOutDate: "",
+          totalAmount: 0,
+          catsIds: [],
+        });
+      } else {
+        alert(res.message || "Reservation failed.");
+      }
+    } catch (error) {
+      console.error("Error during reservation:", error);
+
+      if (error instanceof Error) {
+        alert(error.message || "Connection error. Please try again later.");
+      } else {
+        alert("An unknown error occurred. Please try again later.");
+      }
     }
-  } catch (error) {
-    console.error('Error during reservation:', error);
+  };
 
-    if (error instanceof Error) {
-      alert(error.message || 'Connection error. Please try again later.');
-    } else {
-      alert('An unknown error occurred. Please try again later.');
-    }
-  }
-};
-  
   const handleOnSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
@@ -263,168 +266,175 @@ const handleModalConfirm = async () => {
   };
 
   return (
-    <div className='flex items-center justify-center mt-8'>
+    <div className="min-h-screen pt-24 pb-16 px-4 flex items-center justify-center bg-black-dark">
       <form
         onSubmit={handleOnSubmit}
-        autoComplete='off'
-        className='w-full max-w-2xl mx-auto p-6 rounded-lg shadow-md space-y-4'
-        style={{ background: 'var(--black-dark)' }}
+        autoComplete="off"
+        className="w-full max-w-2xl mx-auto p-6 rounded-lg shadow-md space-y-3"
+        style={{ background: "var(--black-dark)" }}
       >
-        <h2 style={{ color: 'var(--gold-soft)' }}>Book</h2>
-        <div className='space-y-2'>
-          <h2
-            className='text-xl font-semibold text-left'
-            style={{ color: 'var(--green-olive)' }}
-          >
-            Selected Suite
-            --------------------------------------------------------------
-          </h2>
-          <div className='flex justify-between items-center'>
-            <span className='text-lg' style={{ color: 'var(--white-ivory)' }}>
-              {userData.name}
-            </span>
-            <span className='text-lg' style={{ color: 'var(--white-ivory)' }}>
-              {userData.numCat}
-            </span>
-            <span>
-              --------------------------------------------------------------
-            </span>
-            <span className='text-lg' style={{ color: 'var(--white-ivory)' }}>
-              ${userData.price} USD / day
-            </span>
-          </div>
-        </div>
-
-        <h2
-          className='text-xl font-semibold text-left'
-          style={{ color: 'var(--green-olive)' }}
-        >
-          Selected Date
-          --------------------------------------------------------------
+        <h2 className="text-2xl mb-4" style={{ color: "var(--gold-soft)" }}>
+          Book
         </h2>
 
-        <div className='grid grid-cols-1 md:grid-cols-2 gap-4 mb-10'>
+        <div className="space-y-3">
           <div>
-            <label>Check In</label>
-            <div className='relative'>
-              <input
-                type='text'
-                value={userData.checkInDate || ''}
-                name='checkInDate'
-                placeholder='Check In'
-                onChange={handleInputChange}
-                className={`mt-1 block w-full rounded-md border p-2
-                focus:outline-none focus:ring-2`}
-                style={{
-                  backgroundColor: 'var(--black-light)',
-                  color: 'var(--white-basic)',
-                }}
-                disabled
-              />
-              {errors.checkInDate && (
-                <p className='text-red-600'>{errors.checkInDate}</p>
-              )}
-            </div>
-            <div className='relative'>
-              <CheckIn roomId={userData.roomId} token={userData.token} />
+            <h2
+              className="text-xl font-semibold"
+              style={{ color: "var(--green-olive)" }}
+            >
+              Selected Suite
+            </h2>
+            <div
+              className="flex justify-between items-center mt-2 p-2 rounded"
+              style={{ background: "var(--black-light)" }}
+            >
+              <span className="text-lg" style={{ color: "var(--white-ivory)" }}>
+                {userData.name}
+              </span>
+              <span className="text-lg" style={{ color: "var(--white-ivory)" }}>
+                {userData.numCat} cats
+              </span>
+              <span className="text-lg" style={{ color: "var(--white-ivory)" }}>
+                ${userData.price} USD / day
+              </span>
             </div>
           </div>
 
-          <div>
-            <label>Check Out</label>
-            <div className='relative'>
-              <input
-                type='text'
-                value={userData.checkOutDate || ''}
-                name='checkOutDate'
-                placeholder='Check Out'
-                onChange={handleInputChange}
-                className={`mt-1 block w-full rounded-md border p-2
-                focus:outline-none focus:ring-2`}
-                style={{
-                  backgroundColor: 'var(--black-light)',
-                  color: 'var(--white-basic)',
-                }}
-                disabled
-              />
-              {errors.checkOutDate && (
-                <p className='text-red-600'>{errors.checkOutDate}</p>
-              )}
-              <div className='relative'>
-                <CheckOut roomId={userData.roomId} token={userData.token} />
+          <div className="mt-6">
+            <h2
+              className="text-xl font-semibold mb-3"
+              style={{ color: "var(--green-olive)" }}
+            >
+              Selected Date
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <label
+                  className="block text-sm font-medium"
+                  style={{ color: "var(--white-ivory)" }}
+                >
+                  Check In
+                </label>
+                <div className="relative">
+                  <input
+                    type="text"
+                    value={userData.checkInDate || ""}
+                    name="checkInDate"
+                    placeholder="Check In"
+                    onChange={handleInputChange}
+                    className={`mt-1 block w-full rounded-md border p-2
+                    focus:outline-none focus:ring-2`}
+                    style={{
+                      backgroundColor: "var(--black-light)",
+                      color: "var(--white-basic)",
+                    }}
+                    disabled
+                  />
+                  {errors.checkInDate && (
+                    <p className="text-red-600">{errors.checkInDate}</p>
+                  )}
+                </div>
+                <div className="relative">
+                  <CheckIn roomId={userData.roomId} token={userData.token} />
+                </div>
+              </div>
+              <div className="space-y-2">
+                <label
+                  className="block text-sm font-medium"
+                  style={{ color: "var(--white-ivory)" }}
+                >
+                  Check Out
+                </label>
+                <div className="relative">
+                  <input
+                    type="text"
+                    value={userData.checkOutDate || ""}
+                    name="checkOutDate"
+                    placeholder="Check Out"
+                    onChange={handleInputChange}
+                    className={`mt-1 block w-full rounded-md border p-2
+                    focus:outline-none focus:ring-2`}
+                    style={{
+                      backgroundColor: "var(--black-light)",
+                      color: "var(--white-basic)",
+                    }}
+                    disabled
+                  />
+                  {errors.checkOutDate && (
+                    <p className="text-red-600">{errors.checkOutDate}</p>
+                  )}
+                  <div className="relative">
+                    <CheckOut roomId={userData.roomId} token={userData.token} />
+                  </div>
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
-        <div className='flex justify-between items-center py-4 border-t border-b border-gray-600'>
-          <span
-            className='text-lg font-semibold'
-            style={{ color: 'var(--gold-soft)' }}
-          >
-            Reserve Total
-          </span>
-          <span>
-            -----------------------------------------------------------------
-          </span>
-          <span className='text-lg' style={{ color: 'var(--gold-soft)' }}>
-            ${totalAmount} USD
-          </span>
-        </div>
+          <div className="flex justify-between items-center py-4 my-6 border-t border-b border-gray-600">
+            <span
+              className="text-lg font-semibold"
+              style={{ color: "var(--gold-soft)" }}
+            >
+              Reserve Total
+            </span>
+            <span className="text-lg" style={{ color: "var(--gold-soft)" }}>
+              ${totalAmount} USD
+            </span>
+          </div>
 
-        <div className='space-y-6'>
-          <h2
-            className='text-xl font-semibold text-left mt-10'
-            style={{ color: 'var(--green-olive)' }}
-          >
-            Customer Data
-            -------------------------------------------------------------
-          </h2>
-          <div className='space-y-4'>
-            <div>
-              <label
-                htmlFor='fullName'
-                className='block text-sm font-medium mb-1'
-                style={{ color: 'var(--white-ivory)' }}
-              >
-                First and Last Name: {userData.fullName}
-              </label>
-            </div>
-            <div>
-              <label
-                htmlFor='customerId'
-                className='block text-sm font-medium mb-1'
-                style={{ color: 'var(--white-ivory)' }}
-              >
-                Customer DNI: {userData.customerId}
-              </label>
+          <div className="space-y-3">
+            <h2
+              className="text-xl font-semibold"
+              style={{ color: "var(--green-olive)" }}
+            >
+              Customer Data
+            </h2>
+            <div
+              className="p-2 rounded"
+              style={{ background: "var(--black-light)" }}
+            >
+              <div className="mb-2">
+                <label
+                  className="block text-sm font-medium"
+                  style={{ color: "var(--white-ivory)" }}
+                >
+                  First and Last Name: {userData.fullName}
+                </label>
+              </div>
+              <div>
+                <label
+                  className="block text-sm font-medium"
+                  style={{ color: "var(--white-ivory)" }}
+                >
+                  Customer DNI: {userData.customerId}
+                </label>
+              </div>
             </div>
           </div>
-        </div>
 
-        <div className='space-y-4'>
-          <h2
-            className='text-xl font-semibold text-left'
-            style={{ color: 'var(--green-olive)' }}
-          >
-            Kitty Cats
-            -------------------------------------------------------------------
-          </h2>
-          <div className='space-y-4'>
-            <label
-              className='block text-sm font-medium mb-1'
-              style={{ color: 'var(--white-ivory)' }}
+          <div className="space-y-3">
+            <h2
+              className="text-xl font-semibold"
+              style={{ color: "var(--green-olive)" }}
             >
-              Kitty Cat Name
-            </label>
-            <div className='space-y-4'>
-              <label htmlFor='selectCat'>Select Kitties:</label>
+              Kitty Cats
+            </h2>
+            <div>
+              <label
+                className="block text-sm font-medium mb-2"
+                style={{ color: "var(--white-ivory)" }}
+              >
+                Select Kitties:
+              </label>
               <select
-                name='catsIds'
+                name="catsIds"
                 multiple
-                title='Select your kitties'
-                aria-label='Select your kitties'
+                title="Select your kitties"
+                aria-label="Select your kitties"
                 value={userData.catsIds} // Array de IDs seleccionados
+                value={userData.catsIds}
                 onChange={(e) => {
                   const selectedOptions = Array.from(
                     e.target.selectedOptions,
@@ -442,14 +452,18 @@ const handleModalConfirm = async () => {
                     selectedOptions.length <= userData.numCat
                   ) {
                     setErrors((prevErrors) => {
-                      const { catsIds, ...rest } = prevErrors; // Remover el error específico
-                      return rest;
+                      delete prevErrors.catsIds;
+                      return { ...prevErrors };
                     });
                   }
                 }}
-                className='block w-full px-4 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring focus:ring-gold-dark bg-black text-white'
+                className="block w-full px-4 py-2 rounded-md border border-gray-600 focus:outline-none focus:ring-2"
+                style={{
+                  backgroundColor: "var(--black-light)",
+                  color: "var(--white-basic)",
+                }}
               >
-                <option value='' disabled>
+                <option value="" disabled>
                   Select one or more kitties
                 </option>
                 {cats.map((cat) => (
@@ -458,20 +472,19 @@ const handleModalConfirm = async () => {
                   </option>
                 ))}
               </select>
-
               {errors.catsIds && (
-                <p className='text-red-500'>{errors.catsIds}</p>
+                <p className="mt-1 text-sm text-red-500">{errors.catsIds}</p>
               )}
             </div>
           </div>
-        </div>
 
-        {/* Centrando el botón */}
-        <div className='flex justify-center pt-5'>
-          <button className='button_gold'>Book</button>
+          <div className="flex justify-center pt-6">
+            <button type="submit" className="button_gold w-full py-2.5 text-lg">
+              Book
+            </button>
+          </div>
         </div>
       </form>
-      {/* Renderiza el modal */}
       <ReservationModal
         isOpen={isModalOpen}
         onClose={closeModal}

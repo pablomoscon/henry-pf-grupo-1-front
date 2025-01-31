@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import UserWidget from "../UserWidget/UserWidget";
+import NotificationBellContainer from "../NotificationBellContainer/NotificationBellContainer";
 
 const Navbar = () => {
   return (
@@ -68,6 +69,7 @@ const Navbar = () => {
               </Link>
             </li>
           </ul>
+          <NotificationBellContainer />
           <UserWidget />
         </div>
       </div>

@@ -3,8 +3,15 @@ import { useFormik } from "formik";
 import { suitesSchema } from "../../helpers/validations";
 import { registerRoom } from "@/services/roomService";
 import CustomFileUpload from "../CustomFileUpload/CustomFileUpload";
+import Image from "next/image";
+import { useContext } from "react";
+import { UserContext } from "@/contexts/userContext";
+import { IRoom } from "@/interfaces/IRoom";
 
 const SuitesForm = () => {
+  const { user } = useContext(UserContext);
+  const token = user?.response?.token;
+
   const {
     values,
     errors,
@@ -17,7 +24,7 @@ const SuitesForm = () => {
   } = useFormik({
     initialValues: {
       name: "",
-      image: "",
+      image: null,
       description: "",
       features: {
         hidingPlace: false,
@@ -30,15 +37,24 @@ const SuitesForm = () => {
     },
     validationSchema: suitesSchema,
     onSubmit: async (values, actions) => {
+      if (!token) {
+        alert("Please log in to create a suite.");
+        return;
+      }
+
+      if (!values.image || !("size" in values.image)) {
+        alert("Please select an image for the suite");
+        return;
+      }
+
       console.log("Form submitted with values:", values);
       actions.setSubmitting(true);
-      await new Promise((resolve) => setTimeout(resolve, 1000));
 
       const selectedFeatures = Object.entries(values.features)
         .filter(([, isSelected]) => isSelected)
         .map(([feature]) => feature);
 
-      const formattedData = {
+      const formattedData: IRoom = {
         name: values.name,
         description: values.description,
         img: values.image,
@@ -47,16 +63,20 @@ const SuitesForm = () => {
         price: Number(values.price),
       };
 
-      console.log("Suite created successfully:", formattedData);
-
-      const res = await registerRoom(formattedData);
-      if (!res.message) {
-        alert("Registered!");
-      } else {
-        alert(res.message);
+      try {
+        const res = await registerRoom(formattedData, token);
+        if (!res.message) {
+          alert("Suite registered successfully!");
+          actions.resetForm();
+        } else {
+          alert(res.message);
+        }
+      } catch (error) {
+        console.error("Error creating suite:", error);
+        alert("Failed to create suite. Please try again.");
+      } finally {
+        actions.setSubmitting(false);
       }
-      actions.resetForm();
-      actions.setSubmitting(false);
     },
   });
 
@@ -136,6 +156,17 @@ const SuitesForm = () => {
               touched={touched.image}
               label="Upload Image"
             />
+            {values.image && "size" in values.image && (
+              <div className="mt-2 relative w-20 h-20">
+                <Image
+                  src={URL.createObjectURL(values.image as File)}
+                  alt="Selected suite photo"
+                  fill
+                  sizes="80px"
+                  className="object-cover rounded-lg"
+                />
+              </div>
+            )}
           </div>
 
           <div className="space-y-2">

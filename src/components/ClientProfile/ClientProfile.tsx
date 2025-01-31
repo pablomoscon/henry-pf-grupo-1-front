@@ -83,6 +83,10 @@ const ClientProfile = () => {
         userId: updatedCat.user.id,
       };
 
+      if (updatedCat.photoFile instanceof File) {
+        catFormData.photoFile = updatedCat.photoFile;
+      }
+
       await updateCat(catFormData, updatedCat.id, token);
       const updatedCats = await getCats(token);
       setCats(

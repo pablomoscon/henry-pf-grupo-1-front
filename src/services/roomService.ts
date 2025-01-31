@@ -19,14 +19,31 @@ export const getRoomById = async (id: string): Promise<IRoom | undefined> => {
 
 // Registrar nueva habitación
 
-export const registerRoom = async (room: IRoom) => {
-  const res = await fetch("http://localhost:3000/rooms", {
-    method: "POST",
-    body: JSON.stringify(room),
-    headers: { "Content-Type": "application/json" },
-  });
+export const registerRoom = async (roomData: IRoom, token: string) => {
+  const formData = new FormData();
 
-  return res.json();
+  formData.append("name", roomData.name);
+  formData.append("description", roomData.description);
+  formData.append("img", roomData.img);
+  formData.append("features", JSON.stringify(roomData.features));
+  formData.append("number_of_cats", roomData.number_of_cats.toString());
+  formData.append("price", roomData.price.toString());
+
+  try {
+    const response = await fetch(`http://localhost:3000/rooms`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: formData,
+    });
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error in registerRoom:", error);
+    throw error;
+  }
 };
 
 // Filtrar habitaciones
