@@ -2,8 +2,8 @@
 import { useState, useEffect, useContext, useRef, useCallback } from "react";
 import { UserContext } from "@/contexts/userContext";
 import {
-  getUnreadNotifications,
   markNotificationAsRead,
+  getAllNotifications,
 } from "@/services/notificationServices";
 import { INotification } from "@/interfaces/INotification";
 import { FaBell } from "react-icons/fa";
@@ -17,18 +17,20 @@ const NotificationBell = () => {
   const fetchNotifications = useCallback(async () => {
     if (user?.response?.user?.id && user?.response?.token) {
       console.log("Fetching notifications...");
-      const unreadNotifications = await getUnreadNotifications(
+      const allNotifications = await getAllNotifications(
         user.response.user.id,
-        user.response.token
+        user.response.token,
+        1,
+        5
       );
-      console.log("Unread notifications:", unreadNotifications);
-      setNotifications(unreadNotifications);
+      console.log("All notifications:", allNotifications);
+      setNotifications(allNotifications.notifications || []);
     }
   }, [user]);
 
   useEffect(() => {
     fetchNotifications();
-    const interval = setInterval(fetchNotifications, 30000);
+    const interval = setInterval(fetchNotifications, 10000);
     return () => clearInterval(interval);
   }, [fetchNotifications]);
 
@@ -81,11 +83,16 @@ const NotificationBell = () => {
         onMouseLeave={(e) => (e.currentTarget.style.color = "var(--gold-soft)")}
       >
         <FaBell className="text-xl" />
-        {notifications.length > 0 && (
-          <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-            {notifications.length}
-          </span>
-        )}
+        {Array.isArray(notifications) &&
+          notifications.filter((notification) => !notification.isRead).length >
+            0 && (
+            <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+              {
+                notifications.filter((notification) => !notification.isRead)
+                  .length
+              }
+            </span>
+          )}
       </button>
 
       {isOpen && notifications.length > 0 && (
@@ -97,21 +104,38 @@ const NotificationBell = () => {
           }}
         >
           <div className="max-h-96 overflow-y-auto">
-            {notifications.map((notification) => (
-              <div
-                key={notification.id}
-                onClick={() => handleNotificationClick(notification)}
-                className="p-4 border-b hover:bg-gray-700 cursor-pointer transition-colors"
-                style={{ borderColor: "var(--gray-600)" }}
-              >
-                <p style={{ color: "var(--white-ivory)" }}>
-                  {notification.message}
-                </p>
-                <span className="text-xs text-gray-400">
-                  {new Date(notification.createdAt).toLocaleDateString()}
-                </span>
-              </div>
-            ))}
+            {notifications
+              .sort((a, b) => (a.isRead === b.isRead ? 0 : a.isRead ? 1 : -1))
+              .map((notification) => (
+                <div
+                  key={notification.id}
+                  onClick={() => handleNotificationClick(notification)}
+                  className={`p-4 border-b cursor-pointer transition-colors ${
+                    notification.isRead
+                      ? "bg-gray-200 text-gray-800"
+                      : "bg-transparent text-white"
+                  }`}
+                  style={{ borderColor: "var(--gray-600)" }}
+                >
+                  <div className="flex justify-between items-center">
+                    <p
+                      style={{
+                        color: notification.isRead
+                          ? "var(--gray-800)"
+                          : "var(--white-ivory)",
+                      }}
+                    >
+                      {notification.message}
+                    </p>
+                    {!notification.isRead && (
+                      <span className="text-gold-soft text-xs ml-2">new!</span>
+                    )}
+                  </div>
+                  <span className="text-xs text-gray-400">
+                    {new Date(notification.createdAt).toLocaleDateString()}
+                  </span>
+                </div>
+              ))}
           </div>
         </div>
       )}
