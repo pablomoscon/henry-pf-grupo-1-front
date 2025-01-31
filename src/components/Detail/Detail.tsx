@@ -22,54 +22,84 @@ const Detail = ({ room }: { room: IRoom }) => {
   };
 
   return (
-    <div className="flex justify-center px-4 py-6 bg-dark-soft">
-      <div className="flex flex-col md:flex-row items-start gap-6 max-w-4xl mx-auto bg-black rounded-lg shadow-lg overflow-hidden">
-        <div className="w-full md:w-[300px] h-full relative">
-          <Image
-            src={room.img}
-            alt={room.name}
-            layout="fill"
-            objectFit="cover"
-            className="rounded-l-lg"
-          />
-        </div>
-
-        <div className="flex flex-col justify-between w-full p-6 md:w-[380px] h-full">
-          <div>
-            <h2 className="text-2xl text-gold-soft font-secondary font-semibold mb-3">
-              {room.name}
-            </h2>
-            <p className="text-gray-ash text-justify text-base leading-relaxed mb-4">
-              {room.description}
-            </p>
+    <div className="min-h-screen pt-20 pb-16 px-4 flex items-center justify-center bg-black-dark">
+      <div
+        className="w-full max-w-xl mx-auto p-6 rounded-lg shadow-md space-y-6"
+        style={{ background: "var(--black-light)" }}
+      >
+        <div className="flex flex-col md:flex-row gap-6">
+          <div className="w-full md:w-[250px] h-[250px] relative rounded-lg overflow-hidden">
+            <Image
+              src={room.img}
+              alt={room.name}
+              layout="fill"
+              objectFit="cover"
+              className="rounded-lg"
+            />
           </div>
 
-          <div>
-            <p className="text-base text-gray-basic mb-3">
-              <span className="text-gold-soft font-medium">Cats:</span>{" "}
-              {room.number_of_cats}
-            </p>
+          <div className="flex flex-col justify-between w-full space-y-4">
+            <div className="space-y-4">
+              <h2
+                className="text-2xl font-secondary font-semibold"
+                style={{ color: "var(--gold-soft)" }}
+              >
+                {room.name}
+              </h2>
 
-            <div className="mb-4">
-              <h4 className="text-lg text-gold-soft font-semibold mb-2">
-                Features
-              </h4>
-              <ul className="list-disc pl-6 space-y-1">
-                {room.features.map((feature, index) => (
-                  <li key={index} className="text-gray-ash text-sm">
-                    {feature}
-                  </li>
-                ))}
-              </ul>
+              <p
+                className="text-justify text-base leading-relaxed"
+                style={{ color: "var(--gray-ash)" }}
+              >
+                {room.description}
+              </p>
             </div>
 
-            <h3 className="text-xl font-bold text-gold-soft mb-4">
-              ${room.price} USD / day
-            </h3>
+            <div className="space-y-4">
+              <p className="text-base" style={{ color: "var(--gray-basic)" }}>
+                <span
+                  style={{ color: "var(--gold-soft)" }}
+                  className="font-medium"
+                >
+                  Cats:
+                </span>{" "}
+                {room.number_of_cats}
+              </p>
 
-            <button className="px-5 py-2 button_green" onClick={handleBook}>
-              Book
-            </button>
+              <div>
+                <h4
+                  className="text-lg font-semibold mb-2"
+                  style={{ color: "var(--gold-soft)" }}
+                >
+                  Features
+                </h4>
+                <ul className="list-disc pl-6 space-y-1">
+                  {room.features.map((feature, index) => (
+                    <li
+                      key={index}
+                      style={{ color: "var(--gray-ash)" }}
+                      className="text-sm"
+                    >
+                      {feature}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              <h3
+                className="text-xl font-bold"
+                style={{ color: "var(--gold-soft)" }}
+              >
+                ${room.price} USD / day
+              </h3>
+
+              <button
+                className="button_green w-full py-2.5 text-lg"
+                onClick={handleBook}
+              >
+                Book
+              </button>
+            </div>
           </div>
         </div>
       </div>
