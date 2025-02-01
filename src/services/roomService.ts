@@ -29,7 +29,7 @@ export const registerRoom = async (roomData: IRoom, token: string) => {
   formData.append("name", roomData.name);
   formData.append("description", roomData.description);
   formData.append("img", roomData.img);
-  formData.append("features", JSON.stringify(roomData.features));
+  roomData.features.forEach((feature) => formData.append("features", feature)); 
   formData.append("number_of_cats", roomData.number_of_cats.toString());
   formData.append("price", roomData.price.toString());
 
