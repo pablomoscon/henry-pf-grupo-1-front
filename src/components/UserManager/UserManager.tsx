@@ -6,25 +6,10 @@ import { UserData, UserRegister } from "@/interfaces/IUser";
 import { userManagerService } from "@/services/userManagerServices";
 import { UserForm } from "../UserForm/UserForm";
 import { UsersTable } from "../UsersTable/UsersTable";
-import { DeleteModal } from "../DeleteModal/DeleteModal";
 
 const UserManager = () => {
   const { user } = useContext(UserContext);
   const [users, setUsers] = useState<UserData[]>([]);
-  const [currentUser, setCurrentUser] = useState<
-    UserRegister & { id?: string }
-  >({
-    email: "",
-    password: "",
-    confirmPassword: "",
-    name: "",
-    phone: "",
-    address: "",
-    customerId: "",
-  });
-  const [editionMode, setEditionMode] = useState(false);
-  const [showModal, setShowModal] = useState(false);
-  const [userToDelete, setUserToDelete] = useState<string>("");
 
   const loadUsers = useCallback(async () => {
     try {
@@ -46,96 +31,47 @@ const UserManager = () => {
     loadUsers();
   }, [loadUsers, user?.response.user.role]);
 
-  const validateForm = () => {
-    if (!editionMode && currentUser.password !== currentUser.confirmPassword) {
-      alert("Passwords do not match");
-      return false;
+  const handleSubmit = async (formData: UserRegister) => {
+    try {
+      const { ...userData } = formData;
+      console.log("Datos a enviar:", userData);
+      await userManagerService.createUser(userData);
+      await loadUsers();
+      alert("Usuario creado exitosamente!");
+    } catch (error: unknown) {
+      console.error("Error al crear usuario:", error);
+      alert(error instanceof Error ? error.message : "Error al crear usuario");
     }
-    return true;
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!validateForm()) return;
-
+  const editUser = async (updatedUser: UserData) => {
     try {
-      if (editionMode && currentUser.id) {
-        await userManagerService.updateUser(
-          currentUser,
-          currentUser.id,
-          user?.response.token || ""
-        );
-        alert("User updated successfully!");
-      } else {
-        if (!currentUser.password || !currentUser.confirmPassword) {
-          alert("Please fill in all required fields");
-          return;
-        }
-
-        if (currentUser.password !== currentUser.confirmPassword) {
-          alert("Passwords do not match");
-          return;
-        }
-
-        await userManagerService.createUser(currentUser);
-        alert("User created successfully!");
-      }
+      await userManagerService.updateUser(
+        updatedUser,
+        updatedUser.id,
+        user?.response.token || ""
+      );
 
       await loadUsers();
-      cleanForm();
-    } catch (error: Error | unknown) {
-      console.error("Error:", error);
-      alert(error instanceof Error ? error.message : "Error saving user");
+      alert("User updated successfully!");
+    } catch (error) {
+      console.error("Error updating user:", error);
+      alert("Error updating user");
     }
   };
 
-  const editUser = (userData: UserData) => {
-    setCurrentUser({
-      id: userData.id,
-      email: userData.email,
-      password: "",
-      confirmPassword: "",
-      name: userData.name,
-      phone: userData.phone,
-      address: userData.address,
-      customerId: userData.customerId,
-    });
-    setEditionMode(true);
-  };
-
-  const deleteUser = async () => {
+  const handleDelete = async (userToDelete: UserData) => {
     try {
       await userManagerService.deleteUser(
-        userToDelete,
+        userToDelete.id,
         user?.response.token || ""
       );
       await loadUsers();
-      setShowModal(false);
-      setUserToDelete("");
+      alert("User deleted successfully!");
     } catch (error) {
-      console.error("Error:", error);
+      console.error("Error deleting user:", error);
       alert("Error deleting user");
     }
-  };
-
-  const cleanForm = () => {
-    setCurrentUser({
-      email: "",
-      password: "",
-      confirmPassword: "",
-      name: "",
-      phone: "",
-      address: "",
-      customerId: "",
-    });
-    setEditionMode(false);
-  };
-
-  const handleUserChange = (field: string, value: string) => {
-    setCurrentUser((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
   };
 
   return (
@@ -145,29 +81,12 @@ const UserManager = () => {
           User Management
         </h2>
 
-        <UserForm
-          currentUser={currentUser}
-          editionMode={editionMode}
-          onSubmit={handleSubmit}
-          onCancel={cleanForm}
-          onChange={handleUserChange}
-        />
+        <UserForm onSubmit={handleSubmit} />
 
         <UsersTable
           users={users}
-          onEdit={editUser}
-          onDelete={(id) => {
-            setUserToDelete(id);
-            setShowModal(true);
-          }}
-        />
-
-        <DeleteModal
-          isOpen={showModal}
-          onClose={() => setShowModal(false)}
-          onConfirm={deleteUser}
-          title="Confirm deletion"
-          message="Are you sure you want to delete this user?"
+          updateUser={editUser}
+          onDelete={handleDelete}
         />
       </div>
     </div>

@@ -1,15 +1,15 @@
 import ProtectedRoute from "@/components/ProtectedRoute/ProtectedRoute";
-import SuitesForm from "@/components/SuitesForm/SuitesForm";
 import CaretakerManager from "@/components/CaretakerManager/CaretakerManager";
-//import UserManager from "@/components/UserManager/UserManager";
+import UserManager from "@/components/UserManager/UserManager";
+import SuitesManager from "@/components/SuitesManager/SuitesManager";
 
 const DashAdmin = () => {
   return (
     <ProtectedRoute>
       <div>
-        {/* <UserManager /> */}
+        <UserManager />
         <CaretakerManager />
-        <SuitesForm />
+        <SuitesManager />
       </div>
     </ProtectedRoute>
   );

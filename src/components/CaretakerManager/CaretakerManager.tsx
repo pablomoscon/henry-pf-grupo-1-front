@@ -4,27 +4,15 @@ import { useState, useContext, useEffect, useCallback } from "react";
 import { UserContext } from "@/contexts/userContext";
 import { UserData, UserRegister } from "@/interfaces/IUser";
 import { caretakerService } from "@/services/caretakerServices";
-import { CaretakerForm } from "../CaretakerForm/CaretakerForm";
+import {
+  CaretakerForm,
+  CaretakerFormData,
+} from "../CaretakerForm/CaretakerForm";
 import { CaretakersTable } from "../CaretakersTable/CaretakersTable";
-import { DeleteModal } from "../DeleteModal/DeleteModal";
 
 const CaretakerManager = () => {
   const { user } = useContext(UserContext);
   const [caretakers, setCaretakers] = useState<UserData[]>([]);
-  const [currentCaretaker, setCurrentCaretaker] = useState<
-    UserRegister & { id?: string }
-  >({
-    email: "",
-    password: "",
-    confirmPassword: "",
-    name: "",
-    phone: "",
-    address: "",
-    customerId: "",
-  });
-  const [editionMode, setEditionMode] = useState(false);
-  const [showModal, setShowModal] = useState(false);
-  const [caretakerToDelete, setCaretakerToDelete] = useState<string>("");
 
   const loadCaretakers = useCallback(async () => {
     try {
@@ -46,99 +34,55 @@ const CaretakerManager = () => {
     loadCaretakers();
   }, [loadCaretakers, user?.response.user.role]);
 
-  const validateForm = () => {
-    if (
-      !editionMode &&
-      currentCaretaker.password !== currentCaretaker.confirmPassword
-    ) {
-      alert("Passwords do not match");
-      return false;
+  const handleSubmit = async (formData: CaretakerFormData) => {
+    try {
+      const userData: UserRegister = {
+        ...formData,
+        confirmPassword: formData.confirmPassword || "",
+      };
+      await caretakerService.createCaretaker(userData);
+      await loadCaretakers();
+      alert("Caretaker created successfully!");
+    } catch (error: unknown) {
+      const errorMessage =
+        error instanceof Error
+          ? error.message.includes("already exists")
+            ? "The email is already registered. Please use another email."
+            : error.message
+          : "Error creating caretaker";
+
+      alert(errorMessage);
     }
-    return true;
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!validateForm()) return;
-
+  const editCaretaker = async (updatedCaretaker: UserData) => {
     try {
-      if (editionMode && currentCaretaker.id) {
-        await caretakerService.updateCaretaker(
-          currentCaretaker,
-          currentCaretaker.id,
-          user?.response.token || ""
-        );
-        alert("Caretaker updated successfully!");
-      } else {
-        if (!currentCaretaker.password || !currentCaretaker.confirmPassword) {
-          alert("Please fill in all required fields");
-          return;
-        }
-
-        if (currentCaretaker.password !== currentCaretaker.confirmPassword) {
-          alert("Passwords do not match");
-          return;
-        }
-
-        await caretakerService.createCaretaker(currentCaretaker);
-        alert("Caretaker created successfully!");
-      }
+      await caretakerService.updateCaretaker(
+        updatedCaretaker,
+        updatedCaretaker.id,
+        user?.response.token || ""
+      );
 
       await loadCaretakers();
-      cleanForm();
-    } catch (error: Error | unknown) {
-      console.error("Error:", error);
-      alert(error instanceof Error ? error.message : "Error saving caretaker");
+      alert("Caretaker updated successfully!");
+    } catch (error) {
+      console.error("Error updating caretaker:", error);
+      alert("Error updating caretaker");
     }
   };
 
-  const editCaretaker = (caretaker: UserData) => {
-    setCurrentCaretaker({
-      id: caretaker.id,
-      email: caretaker.email,
-      password: "",
-      confirmPassword: "",
-      name: caretaker.name,
-      phone: caretaker.phone,
-      address: caretaker.address,
-      customerId: caretaker.customerId,
-    });
-    setEditionMode(true);
-  };
-
-  const deleteCaretaker = async () => {
+  const handleDelete = async (caretakerToDelete: UserData) => {
     try {
       await caretakerService.deleteCaretaker(
-        caretakerToDelete,
+        caretakerToDelete.id,
         user?.response.token || ""
       );
       await loadCaretakers();
-      setShowModal(false);
-      setCaretakerToDelete("");
+      alert("Caretaker deleted successfully!");
     } catch (error) {
-      console.error("Error:", error);
+      console.error("Error deleting caretaker:", error);
       alert("Error deleting caretaker");
     }
-  };
-
-  const cleanForm = () => {
-    setCurrentCaretaker({
-      email: "",
-      password: "",
-      confirmPassword: "",
-      name: "",
-      phone: "",
-      address: "",
-      customerId: "",
-    });
-    setEditionMode(false);
-  };
-
-  const handleCaretakerChange = (field: string, value: string) => {
-    setCurrentCaretaker((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
   };
 
   return (
@@ -148,29 +92,12 @@ const CaretakerManager = () => {
           Caretaker Management
         </h2>
 
-        <CaretakerForm
-          currentCaretaker={currentCaretaker}
-          editionMode={editionMode}
-          onSubmit={handleSubmit}
-          onCancel={cleanForm}
-          onChange={handleCaretakerChange}
-        />
+        <CaretakerForm onSubmit={handleSubmit} />
 
         <CaretakersTable
           caretakers={caretakers}
-          onEdit={editCaretaker}
-          onDelete={(id) => {
-            setCaretakerToDelete(id);
-            setShowModal(true);
-          }}
-        />
-
-        <DeleteModal
-          isOpen={showModal}
-          onClose={() => setShowModal(false)}
-          onConfirm={deleteCaretaker}
-          title="Confirm deletion"
-          message="Are you sure you want to delete this caretaker?"
+          updateCaretaker={editCaretaker}
+          onDelete={handleDelete}
         />
       </div>
     </div>
