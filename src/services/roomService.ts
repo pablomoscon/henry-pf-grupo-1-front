@@ -13,8 +13,12 @@ export const getRooms = async (): Promise<IRoom[]> => {
 };
 
 export const getRoomById = async (id: string): Promise<IRoom | undefined> => {
-  const rooms = await getRooms();
-  return rooms.find((room) => room.id === id);
+  const res = await fetch(`http://localhost:3000/rooms/${id}`, {
+    cache: "no-store",
+  }).catch(() => null);
+
+  if (!res || !res.ok) return undefined;
+  return (await res.json()) as IRoom;
 };
 
 // Registrar nueva habitación
