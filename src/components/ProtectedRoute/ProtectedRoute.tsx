@@ -15,9 +15,6 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   const pathname = usePathname();
   const [alertShown, setAlertShown] = useState(false);
 
-  console.log("User:", user?.response.user);
-  console.log("Pathname:", pathname);
-
   const rolesForPath = protectedPaths[pathname];
 
   if (

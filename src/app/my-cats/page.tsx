@@ -1,15 +1,15 @@
-import ClientProfile from "../../components/ClientProfile/ClientProfile";
 import ProtectedRoute from "@/components/ProtectedRoute/ProtectedRoute";
 import ClientLayout from "@/components/ClientLayout/ClientLayout";
+import { MyCatsSection } from "@/components/MyCatsSection/MyCatsSection";
 
-const DashboardPage = () => {
+const MyCatsPage = () => {
   return (
     <ProtectedRoute>
       <ClientLayout>
-        <ClientProfile />
+        <MyCatsSection />
       </ClientLayout>
     </ProtectedRoute>
   );
 };
 
-export default DashboardPage;
+export default MyCatsPage;
