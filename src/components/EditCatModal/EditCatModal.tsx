@@ -47,7 +47,7 @@ const EditCatModal = ({ cat, isOpen, onClose, onSave }: EditCatModalProps) => {
       userId: cat.user.id,
     };
     setFormData(catFormData);
-  }, [cat]);
+  }, [cat, token]);
 
   const handleChange = (
     e: React.ChangeEvent<

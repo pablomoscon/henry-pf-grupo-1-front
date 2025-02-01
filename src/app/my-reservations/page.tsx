@@ -1,15 +1,15 @@
-import ClientProfile from "../../components/ClientProfile/ClientProfile";
 import ProtectedRoute from "@/components/ProtectedRoute/ProtectedRoute";
 import ClientLayout from "@/components/ClientLayout/ClientLayout";
+import { MyReservationsSection } from "@/components/MyReservationsSection/MyReservationsSection";
 
-const DashboardPage = () => {
+const MyReservationsPage = () => {
   return (
     <ProtectedRoute>
       <ClientLayout>
-        <ClientProfile />
+        <MyReservationsSection />
       </ClientLayout>
     </ProtectedRoute>
   );
 };
 
-export default DashboardPage;
+export default MyReservationsPage;
