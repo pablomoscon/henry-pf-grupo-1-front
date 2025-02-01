@@ -16,7 +16,6 @@ import { useSearchParams } from "next/navigation";
 import { getCatsUser } from "@/services/catServices";
 import { bookRegister } from "@/services/bookService";
 import ReservationModal from "../ReservationModal/ReservationModal";
-import { useRouter } from "next/navigation";
 import { ICatUser } from "@/interfaces/IBook";
 import { confirmPayment } from "@/services/paymentServices";
 
@@ -24,7 +23,6 @@ const ReservationForm = () => {
   const [isModalOpen, setModalOpen] = useState(false);
   const openModal = () => setModalOpen(true);
   const closeModal = () => setModalOpen(false);
-  const router = useRouter();
 
   const searchParams = useSearchParams();
   const { checkInDate } = useDateContext();
@@ -202,10 +200,7 @@ const ReservationForm = () => {
 
       if (!res.message) {
         const reservationId = res.id;
-        const token = userData.token;
-
         await confirmPayment(reservationId, userData.token);
-
         setUserData({
           checkInDate: "",
           checkOutDate: "",
