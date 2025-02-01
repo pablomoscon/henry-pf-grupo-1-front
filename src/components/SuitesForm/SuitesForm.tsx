@@ -8,7 +8,7 @@ import { useContext } from "react";
 import { UserContext } from "@/contexts/userContext";
 import { IRoom } from "@/interfaces/IRoom";
 
-const SuitesForm = () => {
+const SuitesForm = ({ onSuccess }: { onSuccess: () => void }) => {
   const { user } = useContext(UserContext);
   const token = user?.response?.token;
 
@@ -64,10 +64,12 @@ const SuitesForm = () => {
       };
 
       try {
+        console.log("Formatted data before submit:", formattedData);
         const res = await registerRoom(formattedData, token);
         if (!res.message) {
           alert("Suite registered successfully!");
           actions.resetForm();
+          onSuccess();
         } else {
           alert(res.message);
         }
@@ -81,18 +83,18 @@ const SuitesForm = () => {
   });
 
   return (
-    <div className="min-h-screen pt-24 pb-16 px-4 flex items-center justify-center bg-black-dark">
+    <div className="min-h-screen py-12 px-4 flex items-center justify-center bg-black-dark">
       <form
         onSubmit={handleSubmit}
         autoComplete="off"
-        className="w-full max-w-2xl mx-auto p-6 rounded-lg shadow-md space-y-3"
+        className="w-full max-w-xl mx-auto p-5 rounded-lg shadow-md space-y-2"
         style={{ background: "var(--black-dark)" }}
       >
-        <h2 className="text-2xl mb-4" style={{ color: "var(--gold-soft)" }}>
+        <h2 className="text-xl mb-3" style={{ color: "var(--gold-soft)" }}>
           Create Suite
         </h2>
 
-        <div className="space-y-3">
+        <div className="grid grid-cols-2 gap-3">
           <div>
             <label
               htmlFor="name"
@@ -106,20 +108,20 @@ const SuitesForm = () => {
               onChange={handleChange}
               id="name"
               type="text"
-              placeholder="Enter the name of the suite"
+              placeholder="Enter suite name"
               onBlur={handleBlur}
-              className={`mt-1 block w-full rounded-md border p-2 ${
+              className={`w-full rounded-md border p-1.5 ${
                 errors.name && touched.name
                   ? "border-red-500"
                   : "border-gray-600"
-              } focus:outline-none focus:ring-2`}
+              } focus:outline-none focus:ring-1`}
               style={{
                 backgroundColor: "var(--black-light)",
                 color: "var(--white-basic)",
               }}
             />
             {errors.name && touched.name && (
-              <p className="mt-1 text-sm text-red-500">{errors.name}</p>
+              <p className="text-xs text-red-500 mt-1">{errors.name}</p>
             )}
           </div>
 
@@ -136,20 +138,20 @@ const SuitesForm = () => {
               onChange={handleChange}
               id="description"
               type="text"
-              placeholder="Enter the description"
+              placeholder="Enter description"
               onBlur={handleBlur}
-              className="mt-1 block w-full rounded-md border p-2 border-gray-600 focus:outline-none focus:ring-2"
+              className="w-full rounded-md border p-1.5 border-gray-600 focus:outline-none focus:ring-1"
               style={{
                 backgroundColor: "var(--black-light)",
                 color: "var(--white-basic)",
               }}
             />
             {errors.description && touched.description && (
-              <p className="mt-1 text-sm text-red-500">{errors.description}</p>
+              <p className="text-xs text-red-500 mt-1">{errors.description}</p>
             )}
           </div>
 
-          <div>
+          <div className="col-span-2">
             <CustomFileUpload
               onFileSelect={(file) => setFieldValue("image", file)}
               error={errors.image}
@@ -157,26 +159,26 @@ const SuitesForm = () => {
               label="Upload Image"
             />
             {values.image && "size" in values.image && (
-              <div className="mt-2 relative w-20 h-20">
+              <div className="mt-2 relative w-16 h-16">
                 <Image
                   src={URL.createObjectURL(values.image as File)}
                   alt="Selected suite photo"
                   fill
-                  sizes="80px"
+                  sizes="64px"
                   className="object-cover rounded-lg"
                 />
               </div>
             )}
           </div>
 
-          <div className="space-y-2">
+          <div className="col-span-2">
             <label
               className="block text-sm font-medium mb-1"
               style={{ color: "var(--white-ivory)" }}
             >
               Suite Features
             </label>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-2 gap-2">
               {[
                 { id: "hidingPlace", label: "Hiding Place", icon: "🏠" },
                 { id: "hammocks", label: "Hammocks", icon: "🌅" },
@@ -187,42 +189,32 @@ const SuitesForm = () => {
                   icon: "🌉",
                 },
               ].map(({ id, label, icon }) => (
-                <div key={id} className="relative flex items-start">
-                  <div className="flex items-center h-6">
-                    <input
-                      type="checkbox"
-                      id={id}
-                      name={`features.${id}`}
-                      checked={
-                        values.features[id as keyof typeof values.features]
-                      }
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                      className="w-4 h-4 mr-2"
-                    />
-                    <label
-                      htmlFor={id}
-                      className={`flex items-center space-x-3 p-2 rounded-lg
-                        cursor-pointer select-none transition-all duration-200 w-full
-                        ${
-                          values.features[id as keyof typeof values.features]
-                            ? "bg-gold-soft/10 text-gold-soft"
-                            : "hover:bg-black-light"
-                        }`}
-                      style={{ color: "var(--white-ivory)" }}
-                    >
-                      <span className="text-xl">{icon}</span>
-                      <span className="text-sm">{label}</span>
-                    </label>
-                  </div>
-                </div>
+                <label
+                  key={id}
+                  htmlFor={id}
+                  className={`flex items-center p-1.5 rounded-lg cursor-pointer select-none transition-all duration-200
+                    ${
+                      values.features[id as keyof typeof values.features]
+                        ? "bg-gold-soft/10 text-gold-soft ring-1 ring-gold-soft/30"
+                        : "text-white-ivory hover:bg-black-light/50"
+                    }`}
+                >
+                  <input
+                    type="checkbox"
+                    id={id}
+                    name={`features.${id}`}
+                    checked={
+                      values.features[id as keyof typeof values.features]
+                    }
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    className="w-4 h-4 mr-2"
+                  />
+                  <span className="text-base mr-2">{icon}</span>
+                  <span className="text-sm">{label}</span>
+                </label>
               ))}
             </div>
-            {errors.features && touched.features && (
-              <p className="mt-1 text-sm text-red-500">
-                {errors.features as string}
-              </p>
-            )}
           </div>
 
           <div>
@@ -238,16 +230,16 @@ const SuitesForm = () => {
               onChange={handleChange}
               id="numberOfCats"
               type="number"
-              placeholder="Enter the number of cat guests"
+              placeholder="Enter number"
               onBlur={handleBlur}
-              className="mt-1 block w-full rounded-md border p-2 border-gray-600 focus:outline-none focus:ring-2 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+              className="w-full rounded-md border p-1.5 border-gray-600 focus:outline-none focus:ring-1 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
               style={{
                 backgroundColor: "var(--black-light)",
                 color: "var(--white-basic)",
               }}
             />
             {errors.numberOfCats && touched.numberOfCats && (
-              <p className="mt-1 text-sm text-red-500">{errors.numberOfCats}</p>
+              <p className="text-xs text-red-500 mt-1">{errors.numberOfCats}</p>
             )}
           </div>
 
@@ -271,9 +263,9 @@ const SuitesForm = () => {
                 onChange={handleChange}
                 id="price"
                 type="number"
-                placeholder="Enter the price of the suite"
+                placeholder="Enter price"
                 onBlur={handleBlur}
-                className="mt-1 block w-full rounded-md border p-2 pl-6 border-gray-600 focus:outline-none focus:ring-2 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                className="w-full rounded-md border p-1.5 pl-6 border-gray-600 focus:outline-none focus:ring-1 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                 style={{
                   backgroundColor: "var(--black-light)",
                   color: "var(--white-basic)",
@@ -281,14 +273,14 @@ const SuitesForm = () => {
               />
             </div>
             {errors.price && touched.price && (
-              <p className="mt-1 text-sm text-red-500">{errors.price}</p>
+              <p className="text-xs text-red-500 mt-1">{errors.price}</p>
             )}
           </div>
         </div>
 
         <button
           type="submit"
-          className="button_gold w-full py-2.5 text-lg mt-4"
+          className="button_gold w-full py-2 text-base mt-3"
           disabled={isSubmitting}
         >
           {isSubmitting ? "Creating..." : "Create Suite"}

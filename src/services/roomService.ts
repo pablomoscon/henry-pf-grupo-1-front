@@ -1,8 +1,7 @@
 import { IRoom } from "@/interfaces/IRoom";
-/* import { IRegisterRoomResponse } from "@/interfaces/IRoom"; */
 
 export const getRooms = async (): Promise<IRoom[]> => {
-  const res = await fetch("http://localhost:3000/rooms?page=1&limit=15", {
+  const res = await fetch("http://localhost:3000/rooms?page=1&limit=100", {
     cache: "no-store",
   })
     .then((res) => res.json())
@@ -21,19 +20,44 @@ export const getRoomById = async (id: string): Promise<IRoom | undefined> => {
   return (await res.json()) as IRoom;
 };
 
-// Registrar nueva habitación
+interface RoomDataToRegister {
+  name: string;
+  description: string;
+  price: number;
+  number_of_cats: number;
+  img?: File;
+  features?: string[];
+}
 
-export const registerRoom = async (roomData: IRoom, token: string) => {
-  const formData = new FormData();
-
-  formData.append("name", roomData.name);
-  formData.append("description", roomData.description);
-  formData.append("img", roomData.img);
-  roomData.features.forEach((feature) => formData.append("features", feature)); 
-  formData.append("number_of_cats", roomData.number_of_cats.toString());
-  formData.append("price", roomData.price.toString());
-
+export const registerRoom = async (
+  roomData: RoomDataToRegister,
+  token: string
+) => {
   try {
+    const formData = new FormData();
+
+    // Agregar logs para debug
+    console.log("Token:", token);
+    console.log("Room data:", roomData);
+
+    // Asegurarse de que todos los campos requeridos estén presentes
+    formData.append("name", roomData.name);
+    formData.append("description", roomData.description);
+    formData.append("price", roomData.price.toString());
+    formData.append("number_of_cats", roomData.number_of_cats.toString());
+    if (roomData.img) {
+      formData.append("img", roomData.img);
+    }
+
+    // Cambiar cómo se envían los features
+    if (roomData.features && roomData.features.length > 0) {
+      roomData.features.forEach((feature, index) => {
+        formData.append(`features[${index}]`, feature);
+      });
+    } else {
+      formData.append("features", "[]");
+    }
+
     const response = await fetch(`http://localhost:3000/rooms`, {
       method: "POST",
       headers: {
@@ -42,10 +66,15 @@ export const registerRoom = async (roomData: IRoom, token: string) => {
       body: formData,
     });
 
-    const data = await response.json();
-    return data;
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error("Error response:", errorData);
+      throw new Error(errorData.message || "Error al crear la suite");
+    }
+
+    return await response.json();
   } catch (error) {
-    console.error("Error in registerRoom:", error);
+    console.error("Error en registerRoom:", error);
     throw error;
   }
 };
@@ -73,4 +102,81 @@ export const filterRooms = async (
   } catch {
     return [];
   }
+};
+
+export const updateRoom = async (
+  id: string,
+  roomData: RoomDataToRegister,
+  token: string
+) => {
+  try {
+    const formData = new FormData();
+
+    formData.append("name", roomData.name);
+    formData.append("description", roomData.description);
+    formData.append("price", roomData.price.toString());
+    formData.append("number_of_cats", roomData.number_of_cats.toString());
+
+    // Manejar la imagen solo si hay una nueva
+    if (roomData.img instanceof File) {
+      formData.append("img", roomData.img);
+    }
+
+    // Manejar features de la misma manera que en registerRoom
+    if (roomData.features && roomData.features.length > 0) {
+      roomData.features.forEach((feature, index) => {
+        formData.append(`features[${index}]`, feature);
+      });
+    } else {
+      formData.append("features", "[]");
+    }
+
+    const response = await fetch(`http://localhost:3000/rooms/${id}`, {
+      method: "PATCH",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: formData,
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(JSON.stringify(errorData));
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error en updateRoom:", error);
+    throw error;
+  }
+};
+
+export const roomService = {
+  async updateRoom(data: FormData, id: string, token: string): Promise<IRoom> {
+    const response = await fetch(`http://localhost:3000/rooms/${id}`, {
+      method: "PATCH",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: data,
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message || "Failed to update room");
+    }
+
+    return response.json();
+  },
+
+  async deleteRoom(id: string, token: string): Promise<void> {
+    const response = await fetch(`http://localhost:3000/rooms/${id}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) throw new Error("Error deleting suite");
+  },
 };
