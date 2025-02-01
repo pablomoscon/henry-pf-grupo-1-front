@@ -1,6 +1,6 @@
 'use client';
 import { useEffect } from 'react';
-import { useRouter } from 'next/navigation'; // Si estás utilizando App Router
+import { useRouter } from 'next/navigation'; 
 import { UserContext } from '@/contexts/userContext';
 import { useContext } from 'react';
 
