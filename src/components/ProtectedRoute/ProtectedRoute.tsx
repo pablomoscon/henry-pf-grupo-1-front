@@ -1,23 +1,25 @@
-"use client";
+'use client';
 
-import React, { useContext, useState } from "react";
-import { usePathname } from "next/navigation";
-import { UserContext } from "@/contexts/userContext";
-import { protectedPaths } from "@/helpers/protectedPaths";
-import Page404 from "../Page404/Page404";
+import React, { useContext, useState } from 'react';
+import { usePathname } from 'next/navigation';
+import { UserContext } from '@/contexts/userContext';
+import { protectedPaths } from '@/helpers/protectedPaths';
+import Page404 from '../Page404/Page404';
+import LoadingSpinner from '../LoadingSpinner/LoadingSpinner';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
 }
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
-  const { user } = useContext(UserContext);
+  const { user, loading } = useContext(UserContext);
   const pathname = usePathname();
   const [alertShown, setAlertShown] = useState(false);
 
-  console.log("User:", user?.response.user);
-  console.log("Pathname:", pathname);
-
+  if (loading) {
+    return <LoadingSpinner />;
+  }
+  
   const rolesForPath = protectedPaths[pathname];
 
   if (
@@ -26,7 +28,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   ) {
     if (!alertShown) {
       setAlertShown(true);
-      if (typeof window !== "undefined") {
+      if (typeof window !== 'undefined') {
         alert("You don't have permission to be here.");
       }
     }

@@ -17,17 +17,17 @@ const LoadingPage = () => {
 
         if (!authCookie) return;
 
-      const cookieValue = decodeURIComponent(authCookie.split('=')[1]);
-      const { token, user } = JSON.parse(cookieValue);
+        const cookieValue = decodeURIComponent(authCookie.split('=')[1]);
+        const { token, user } = JSON.parse(cookieValue);
 
-      if (!token || !user) {
-        console.error('Token or user data missing.');
-        return;
-      }
-      handleGoogleLogin({
-        token,
-        user,
-      });
+        if (!token || !user) {
+          console.error('Token or user data missing.');
+          return;
+        }
+        handleGoogleLogin({
+          token,
+          user,
+        });
 
         router.push('/profile');
       } catch (error) {
@@ -42,7 +42,17 @@ const LoadingPage = () => {
     }
   }, [isLogged, handleGoogleLogin, router]);
 
-  return <div className='container'></div>;
+  return (
+    <div className='flex justify-center items-center h-screen'>
+      <div
+        role='status'
+        aria-label='Loading'
+        className='animate-spin rounded-full h-32 w-32 border-8 border-t-4 border-t-yellow-500 border-gray-200'
+      >
+        <span className='sr-only'>Loading...</span>
+      </div>
+    </div>
+  );
 };
 
 export default LoadingPage;
