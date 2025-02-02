@@ -5,5 +5,6 @@ export const protectedPaths: { [key: string]: string[] } = {
   "/reserve": ["user", "admin"],
   "/edit-profile": ["user", "admin"],
   "/new-cat": ["admin", "user"],
+  "/review": ["user", "admin"],
   // aca van mas rutas protegidas
 };

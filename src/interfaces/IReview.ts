@@ -8,3 +8,8 @@ export interface IReview {
     name: string;
   };
 }
+
+export interface IReviewCreate {
+  textBody: string;
+  rating: number;
+}
