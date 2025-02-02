@@ -129,18 +129,32 @@ export const CaretakerForm = ({ onSubmit }: CaretakerFormProps) => {
               >
                 {label}
               </label>
-              <input
-                id={id}
-                type={type}
-                value={currentCaretaker[id as keyof typeof currentCaretaker]}
-                onChange={(e) => handleChange(id, e.target.value)}
-                required={required}
-                className='w-full rounded-md border p-1.5 border-gray-600 focus:outline-none focus:ring-1'
-                style={{
-                  backgroundColor: 'var(--black-light)',
-                  color: 'var(--white-basic)',
-                }}
-              />
+              {type === 'textarea' ? (
+                <textarea
+                  id={id}
+                  value={currentCaretaker[id as keyof typeof currentCaretaker]}
+                  onChange={(e) => handleChange(id, e.target.value)}
+                  required={required}
+                  className='w-full rounded-md border p-1.5 border-gray-600 focus:outline-none focus:ring-1'
+                  style={{
+                    backgroundColor: 'var(--black-light)',
+                    color: 'var(--white-basic)',
+                  }}
+                />
+              ) : (
+                <input
+                  id={id}
+                  type={type}
+                  value={currentCaretaker[id as keyof typeof currentCaretaker]}
+                  onChange={(e) => handleChange(id, e.target.value)}
+                  required={required}
+                  className='w-full rounded-md border p-1.5 border-gray-600 focus:outline-none focus:ring-1'
+                  style={{
+                    backgroundColor: 'var(--black-light)',
+                    color: 'var(--white-basic)',
+                  }}
+                />
+              )}
             </div>
           ))}
         </div>
