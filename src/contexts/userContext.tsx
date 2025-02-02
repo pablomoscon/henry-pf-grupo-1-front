@@ -43,13 +43,14 @@ const UserProvider = ({ children }: { children: React.ReactNode }) => {
     return user !== null && user.response.token !== undefined;
   };
 
-  const logOut = () => {
-    setUser(null);
-    localStorage.removeItem("user");
-    alert("You have logged out.");
-    window.location.href = "/";
-  };
-
+const logOut = () => {
+  localStorage.removeItem('user');
+  alert('You have logged out.');
+  setUser(null); 
+  setLoading(true);
+  window.location.href = '/'; 
+};
+  
   const updateUser = (userData: Partial<UserData>) => {
     if (user) {
       const updatedUser = {
