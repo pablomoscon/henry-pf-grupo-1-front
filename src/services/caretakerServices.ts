@@ -13,7 +13,7 @@ export const caretakerService = {
   async createCaretaker(
     caretaker: Omit<UserRegister, "role" | "confirmPassword">
   ): Promise<void> {
-    const response = await fetch("http://localhost:3000/auth/signup", {
+    const response = await fetch("http://localhost:3000/auth/caretaker-signup", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
