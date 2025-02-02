@@ -9,9 +9,10 @@ interface FilterProps {
     minPrice: string,
     maxPrice: string
   ) => void;
+  onReset: () => void;
 }
 
-const Filter: React.FC<FilterProps> = ({ onFilter }) => {
+const Filter: React.FC<FilterProps> = ({ onFilter, onReset }) => {
   const [checkInDate, setCheckInDate] = useState("");
   const [checkOutDate, setCheckOutDate] = useState("");
   const [numberOfCats, setNumberOfCats] = useState("");
@@ -20,6 +21,15 @@ const Filter: React.FC<FilterProps> = ({ onFilter }) => {
 
   const handleSearch = () => {
     onFilter(checkInDate, checkOutDate, numberOfCats, minPrice, maxPrice);
+  };
+
+  const handleReset = () => {
+    setCheckInDate("");
+    setCheckOutDate("");
+    setNumberOfCats("");
+    setMinPrice("");
+    setMaxPrice("");
+    onReset();
   };
 
   return (
@@ -95,12 +105,18 @@ const Filter: React.FC<FilterProps> = ({ onFilter }) => {
           />
         </div>
       </div>
-      <div className="col-span-full md:col-span-1 ">
+      <div className="col-span-full md:col-span-1 flex gap-2">
         <button
-          className="w-full p-2 mt-5 bg-gold-soft text-black font-semibold rounded hover:bg-gold-hard"
+          className="flex-[3] p-2 mt-5 bg-gold-soft text-black font-semibold rounded hover:bg-gold-hard"
           onClick={handleSearch}
         >
           Search
+        </button>
+        <button
+          className="flex-1 p-2 mt-5 bg-gold-soft text-black font-semibold rounded hover:bg-gold-hard"
+          onClick={handleReset}
+        >
+          Reset
         </button>
       </div>
     </div>
