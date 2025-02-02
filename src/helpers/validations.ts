@@ -137,3 +137,15 @@ export const changePasswordSchema = yup.object().shape({
     .oneOf([yup.ref("newPassword")], "Passwords must match")
     .required("Password confirmation is required"),
 });
+
+export const reviewSchema = yup.object({
+  textBody: yup
+    .string()
+    .min(10, "Review must be at least 10 characters")
+    .required("Please share your experience"),
+  rating: yup
+    .number()
+    .min(1, "Please provide a rating")
+    .max(5, "Maximum rating is 5")
+    .required("Rating is required"),
+});
