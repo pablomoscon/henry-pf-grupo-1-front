@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 import { useRouter } from 'next/navigation'; 
 import { UserContext } from '@/contexts/userContext';
 import { useContext } from 'react';
+import LoadingSpinner from '../LoadingSpinner/LoadingSpinner';
 
 const LoadingPage = () => {
   const { isLogged, handleGoogleLogin } = useContext(UserContext);
@@ -44,13 +45,7 @@ const LoadingPage = () => {
 
   return (
     <div className='flex justify-center items-center h-screen'>
-      <div
-        role='status'
-        aria-label='Loading'
-        className='animate-spin rounded-full h-32 w-32 border-8 border-t-4 border-t-yellow-500 border-gray-200'
-      >
-        <span className='sr-only'>Loading...</span>
-      </div>
+    <LoadingSpinner/>
     </div>
   );
 };
