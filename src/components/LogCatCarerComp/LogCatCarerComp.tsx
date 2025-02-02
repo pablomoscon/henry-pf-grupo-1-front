@@ -57,10 +57,8 @@ const LogCatCareComp = () => {
     try {
       const newPost = await registerPost(formData, token);
 
-      // Insertar el nuevo post al inicio de la lista
       setPosts((prevPosts) => [newPost, ...prevPosts]);
 
-      // Limpiar inputs
       setPostText("");
       setMedia(null);
       setFileName("");
@@ -73,7 +71,7 @@ const LogCatCareComp = () => {
   };
 
   return (
-    <div className="flex justify-center pt-24 pb-16 px-4">
+    <div className="flex justify-center pt-24 pb-20 mb-24 px-4">
       <div className="bg-black-dark border border-white-basic rounded-lg p-6 w-full max-w-2xl">
         <h2 className="text-center text-gold-soft text-3xl mb-4">Pucho</h2>
 
@@ -115,7 +113,7 @@ const LogCatCareComp = () => {
           posts.map((post) => <CardLog key={post.id} post={post} />)
         ) : (
           <p className="text-white-basic text-center mt-4">
-            No hay posteos aún.
+            There are no posts yet.
           </p>
         )}
       </div>
