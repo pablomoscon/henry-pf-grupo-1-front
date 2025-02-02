@@ -17,7 +17,7 @@ export const ReservationsTable = ({ reservations }: ReservationsTableProps) => {
     if (filterType === "dates") {
       const checkInDate = new Date(reservation.checkInDate);
       const fromDate = dateFrom ? new Date(dateFrom) : null;
-      const toDate = dateTo ? new Date(dateTo) : null;
+      const toDate = dateTo ? new Date(dateTo + "T23:59:59") : null;
       return (
         (!fromDate || checkInDate >= fromDate) &&
         (!toDate || checkInDate <= toDate)
@@ -39,49 +39,55 @@ export const ReservationsTable = ({ reservations }: ReservationsTableProps) => {
 
   return (
     <div className="w-full rounded-lg border border-gray-700 bg-black-dark">
-      <div className="p-4 space-y-4">
-        <select
-          value={filterType}
-          onChange={(e) => {
-            setFilterType(
-              e.target.value as "dates" | "id" | "suite" | "status"
-            );
-            setSearchTerm("");
-            setDateFrom("");
-            setDateTo("");
-          }}
-          className="w-full p-2 rounded bg-white text-black border border-gray-700 focus:outline-none focus:border-gold-soft"
-        >
-          <option value="dates">Search by dates</option>
-          <option value="id">Search by ID</option>
-          <option value="suite">Search by Suite</option>
-          <option value="status">Search by Status</option>
-        </select>
-
-        {filterType === "dates" ? (
-          <div className="grid grid-cols-2 gap-4">
-            <input
-              type="date"
-              value={dateFrom}
-              onChange={(e) => setDateFrom(e.target.value)}
-              className="p-2 rounded bg-white text-black placeholder-gray-500 border border-gray-700 focus:outline-none focus:border-gold-soft"
-            />
-            <input
-              type="date"
-              value={dateTo}
-              onChange={(e) => setDateTo(e.target.value)}
-              className="p-2 rounded bg-white text-black placeholder-gray-500 border border-gray-700 focus:outline-none focus:border-gold-soft"
-            />
+      <div className="p-4">
+        <div className="flex gap-4 items-center w-full">
+          <div className="w-1/3">
+            <select
+              value={filterType}
+              onChange={(e) => {
+                setFilterType(
+                  e.target.value as "dates" | "id" | "suite" | "status"
+                );
+                setSearchTerm("");
+                setDateFrom("");
+                setDateTo("");
+              }}
+              className="w-full p-2 rounded bg-white text-black border border-gray-700 focus:outline-none focus:border-gold-soft"
+            >
+              <option value="dates">Search by dates</option>
+              <option value="id">Search by ID</option>
+              <option value="suite">Search by Suite</option>
+              <option value="status">Search by Status</option>
+            </select>
           </div>
-        ) : (
-          <input
-            type="text"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder={`Buscar por ${filterType}...`}
-            className="w-full p-2 rounded bg-white text-black placeholder-gray-500 border border-gray-700 focus:outline-none focus:border-gold-soft"
-          />
-        )}
+
+          {filterType === "dates" ? (
+            <div className="flex gap-4 w-2/3">
+              <input
+                type="date"
+                value={dateFrom}
+                onChange={(e) => setDateFrom(e.target.value)}
+                className="w-1/2 p-2 rounded bg-white text-black placeholder-gray-500 border border-gray-700 focus:outline-none focus:border-gold-soft"
+              />
+              <input
+                type="date"
+                value={dateTo}
+                onChange={(e) => setDateTo(e.target.value)}
+                className="w-1/2 p-2 rounded bg-white text-black placeholder-gray-500 border border-gray-700 focus:outline-none focus:border-gold-soft"
+              />
+            </div>
+          ) : (
+            <div className="w-2/3">
+              <input
+                type="text"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                placeholder={`Search by ${filterType}...`}
+                className="w-full p-2 rounded bg-white text-black placeholder-gray-500 border border-gray-700 focus:outline-none focus:border-gold-soft"
+              />
+            </div>
+          )}
+        </div>
       </div>
       <table className="w-full table-fixed">
         <thead>
