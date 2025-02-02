@@ -1,11 +1,8 @@
-import ProtectedRoute from "@/components/ProtectedRoute/ProtectedRoute";
+/* import ProtectedRoute from "@/components/ProtectedRoute/ProtectedRoute"; */
+import CaretakerDash from "@/components/CaretakerDash/CaretakerDash";
 
 const DashCaretaker = () => {
-  return (
-    <ProtectedRoute>
-      <div className="mt-36 mb-36">Este es el Dashboard de Caretaker</div>
-    </ProtectedRoute>
-  );
+  return <CaretakerDash />;
 };
 
 export default DashCaretaker;
