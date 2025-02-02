@@ -1,5 +1,4 @@
 import { UserData, UserRegister } from "@/interfaces/IUser";
-import { userRegister } from "./userServices";
 
 export const caretakerService = {
   async getCaretakers(token: string): Promise<UserData[]> {
@@ -14,13 +13,24 @@ export const caretakerService = {
   async createCaretaker(
     caretaker: Omit<UserRegister, "role" | "confirmPassword">
   ): Promise<void> {
-    await userRegister({
-      ...caretaker,
-      role: "caretaker",
-      status: "active",
-      isVerified: true,
-      confirmPassword: caretaker.password,
-    } as UserRegister);
+    const response = await fetch("http://localhost:3000/auth/signup", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        ...caretaker,
+        role: "caretaker",
+        status: "active",
+        isVerified: true,
+        confirmPassword: caretaker.password,
+      }),
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message || "Error al crear caretaker");
+    }
   },
 
   async updateCaretaker(

@@ -16,14 +16,12 @@ const NotificationBell = () => {
 
   const fetchNotifications = useCallback(async () => {
     if (user?.response?.user?.id && user?.response?.token) {
-      console.log("Fetching notifications...");
       const allNotifications = await getAllNotifications(
         user.response.user.id,
         user.response.token,
         1,
         5
       );
-      console.log("All notifications:", allNotifications);
       setNotifications(allNotifications.notifications || []);
     }
   }, [user]);

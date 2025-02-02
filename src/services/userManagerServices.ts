@@ -3,7 +3,7 @@ import { userRegister } from "./userServices";
 
 export const userManagerService = {
   async getUsers(token: string): Promise<UserData[]> {
-    const response = await fetch("http://localhost:3000/users/users", {
+    const response = await fetch("http://localhost:3000/users/user-role", {
       headers: {
         Authorization: `Bearer ${token}`,
       },

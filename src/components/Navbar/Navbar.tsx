@@ -55,7 +55,7 @@ const Navbar = () => {
             </li>
             <li>
               <Link
-                href="#"
+                href="/about-us"
                 className="flex items-center hover:text-gold-dark transition-colors"
               >
                 <Image
