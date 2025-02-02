@@ -2,7 +2,7 @@ import { UserData, UserRegister } from "@/interfaces/IUser";
 import { userRegister } from "./userServices";
 
 export const userManagerService = {
-  async getUsers(token: string): Promise<UserData[]> {
+  async getUsers(token: string | undefined): Promise<UserData[]> {
     const response = await fetch("http://localhost:3000/users/user-role", {
       headers: {
         Authorization: `Bearer ${token}`,
