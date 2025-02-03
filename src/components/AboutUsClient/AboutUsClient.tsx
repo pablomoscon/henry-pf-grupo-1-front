@@ -40,25 +40,25 @@ const AboutUsClient = () => {
   return (
     <div className="min-h-screen bg-black text-white-ivory">
       {/* Team Section */}
-      <div className="bg-black py-12 px-6">
+      <div className="bg-black py-4 px-6">
         <div className="max-w-6xl mx-auto">
-          <h2 className="text-gold-soft font-primary text-5xl text-center mb-16">
+          <h2 className="text-gold-soft font-primary text-5xl text-center mb-20">
             Meet Our Team
           </h2>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 justify-items-center">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 justify-items-center">
             {teamMembers.map((member) => (
               <div key={member.name} className="flex flex-col items-center">
-                <div className="w-48 h-48 rounded-full overflow-hidden border-4 border-gold-soft mb-4">
+                <div className="w-40 h-40 rounded-full overflow-hidden border-4 border-gold-soft mb-2">
                   <Image
                     src={member.image}
                     alt={member.name}
-                    width={192}
-                    height={192}
+                    width={160}
+                    height={160}
                     className="object-cover w-full h-full"
                   />
                 </div>
-                <h3 className="text-xl text-gold-soft mb-3">{member.name}</h3>
+                <h3 className="text-xl text-gold-soft mb-2">{member.name}</h3>
                 <div className="flex gap-4">
                   <Link
                     href={member.github}
@@ -96,9 +96,9 @@ const AboutUsClient = () => {
       </div>
 
       {/* Project Description Section */}
-      <div className="bg-black-dark relative w-full py-20 px-6">
+      <div className="bg-black-dark relative w-full py-24 px-6">
         <div className="max-w-4xl mx-auto text-center">
-          <h1 className="text-gold-soft font-primary text-4xl mb-8">
+          <h1 className="text-gold-soft font-primary text-5xl mb-8">
             About Us
           </h1>
           <p className="text-gray-300 text-lg mb-12">

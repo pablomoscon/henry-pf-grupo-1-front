@@ -1,18 +1,53 @@
 "use client";
 
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
 import { ChatContext } from "@/contexts/chatContext";
+import { useChat } from "@/hooks/useChat";
+import { UserContext } from "@/contexts/userContext";
+import { useParams } from "next/navigation";
 
 const ClientChat = () => {
-  const { messages, addMessage } = useContext(ChatContext);
+  const { messages, addMessage, currentChatId, setCurrentChatId } =
+    useContext(ChatContext);
+  const { user } = useContext(UserContext);
   const [newMessage, setNewMessage] = useState("");
+  const params = useParams();
+
+  // Obtener chatId de los parámetros de la URL
+  useEffect(() => {
+    if (params.chatId) {
+      console.log("ChatID from URL:", params.chatId);
+      setCurrentChatId(params.chatId as string);
+    }
+  }, [params.chatId, setCurrentChatId]);
+
+  // Log para verificar la información del usuario
+  useEffect(() => {
+    console.log("Current user:", user?.response?.user);
+  }, [user]);
+
+  // Inicializar el chat con Socket.IO
+  const { sendMessage } = useChat(
+    currentChatId || "",
+    user?.response?.user?.id || ""
+  );
 
   const handleSend = () => {
     if (!newMessage.trim()) return;
 
+    console.log("Sending message:", {
+      body: newMessage,
+      sender: user?.response?.user?.name,
+      chatId: currentChatId,
+    });
+
+    // Enviar mensaje a través de Socket.IO
+    sendMessage(newMessage);
+
+    // Agregar mensaje al estado local
     addMessage({
       body: newMessage,
-      sender: "Cliente",
+      sender: user?.response?.user?.name || "Cliente",
       isCurrentUser: true,
     });
 
