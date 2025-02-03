@@ -57,16 +57,14 @@ export const bookRegister = async (
     },
   });
 
-
   if (!res.ok) {
-    const errorData = await res.json();  
-    const errorMessage = JSON.parse(errorData.message).message;  
-    throw new Error(errorMessage);  
+    const errorData = await res.json();
+    const errorMessage = JSON.parse(errorData.message).message;
+    throw new Error(errorMessage);
   }
 
   return res.json();
 };
-
 
 export const getUserReservations = async (userId: string, token?: string) => {
   try {
@@ -77,6 +75,21 @@ export const getUserReservations = async (userId: string, token?: string) => {
         headers: token ? { Authorization: `Bearer ${token}` } : {},
       }
     );
+
+    if (!response.ok) return [];
+    return await response.json();
+  } catch (error) {
+    console.error("Error al obtener las reservas:", error);
+    return [];
+  }
+};
+
+export const getUserBooks = async (userId: string, token?: string) => {
+  try {
+    const response = await fetch(`http://localhost:3000/users/${userId}`, {
+      cache: "no-store",
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+    });
 
     if (!response.ok) return [];
     return await response.json();

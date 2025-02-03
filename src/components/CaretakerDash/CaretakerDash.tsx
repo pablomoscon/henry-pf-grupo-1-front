@@ -1,29 +1,27 @@
 "use client";
 
+import { useState, useEffect, useContext } from "react";
 import { UserContext } from "@/contexts/userContext";
-import { useContext } from "react";
+import { getUserBooks } from "@/services/bookService";
 import CardBook from "../CardBook/CardBook";
+import { IBookCaretaker } from "@/interfaces/IBook";
 
 const CaretakerDash = () => {
   const { user } = useContext(UserContext);
   const userData = user?.response?.user;
+  const token = user?.response.token;
 
-  const books = [
-    {
-      Customer: "Carlos Benitez",
-      Cats: "Michi, Pucho",
-      Suite: "5 Star Suite",
-      Desde: "15/03/2025",
-      Hasta: "18/03/2025",
-    },
-    {
-      Customer: "Ana López",
-      Cats: "Luna",
-      Suite: "Luxury Suite",
-      Desde: "20/03/2025",
-      Hasta: "25/03/2025",
-    },
-  ];
+  const [books, setBooks] = useState<IBookCaretaker[]>([]);
+
+  useEffect(() => {
+    const fetchBooks = async () => {
+      if (!userData?.id) return;
+      const reservations = await getUserBooks(userData.id, token);
+      setBooks(reservations);
+    };
+
+    fetchBooks();
+  }, [userData, token]);
 
   return (
     <div className="flex flex-col items-center min-h-screen pt-24 pb-12 px-4">
@@ -35,7 +33,7 @@ const CaretakerDash = () => {
         <h2 className="text-2xl text-gold-soft mb-4">My Guests</h2>
 
         {books.length > 0 ? (
-          books.map((book, index) => <CardBook key={index} book={book} />)
+          books.map((book) => <CardBook key={book.userId} book={book} />)
         ) : (
           <p className="text-white-basic text-center">No reservations yet.</p>
         )}
