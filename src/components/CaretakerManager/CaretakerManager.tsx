@@ -86,8 +86,8 @@ const CaretakerManager = () => {
   };
 
   return (
-    <div className="min-h-screen pt-24 pb-16 px-4 flex items-center justify-center bg-black-dark">
-      <div className="w-full max-w-2xl mx-auto p-6 rounded-lg shadow-md space-y-3">
+    <div className="min-h-screen px-4 bg-black-dark">
+      <div className="w-full max-w-5xl mx-auto pt-2 p-6 rounded-lg shadow-md space-y-3">
         <h2 className="text-2xl mb-4" style={{ color: "var(--gold-soft)" }}>
           Caretaker Management
         </h2>

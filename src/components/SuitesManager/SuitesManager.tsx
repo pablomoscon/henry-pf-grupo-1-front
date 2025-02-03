@@ -63,10 +63,12 @@ const SuitesManager = () => {
   };
 
   return (
-    <div className="p-6">
-      <h1 className="text-3xl text-gold-soft mb-6">Suites Management</h1>
+    <div className="min-h-screen px-4 bg-black-dark">
+      <div className="w-full max-w-5xl mx-auto pt-2 p-6 rounded-lg shadow-md space-y-3">
+        <h1 className="text-2xl mb-4" style={{ color: "var(--gold-soft)" }}>
+          Suites Management
+        </h1>
 
-      <div className="space-y-6">
         <SuitesForm onSuccess={loadSuites} />
 
         <SuitesTable
