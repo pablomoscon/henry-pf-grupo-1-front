@@ -10,3 +10,12 @@ export interface ICatUser {
   id: string;
   name: string;
 }
+
+export interface IBookCaretaker {
+  userId: string;
+  userName: string;
+  catsNames: string[];
+  roomName: string;
+  checkInDate: string;
+  checkOutDate: string;
+}

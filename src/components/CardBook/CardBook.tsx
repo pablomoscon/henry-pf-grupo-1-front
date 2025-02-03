@@ -1,45 +1,36 @@
-import React from "react";
+import { IBookCaretaker } from "@/interfaces/IBook";
 
-interface IBookCaretaker {
-  Customer: string;
-  Cats: string;
-  Suite: string;
-  Desde: string;
-  Hasta: string;
-}
-
-// Tipar las props del componente
-const CardBook: React.FC<{ book: IBookCaretaker }> = ({ book }) => {
+const CardBook = ({ book }: { book: IBookCaretaker }) => {
   return (
     <div className="bg-black-dark border border-white-basic rounded-lg p-4 mb-4 flex justify-between items-center">
       <div className="text-white-basic space-y-1">
         <p>
           <span className="text-gold-soft font-semibold">Customer: </span>
-          {book.Customer}
+          {book.userName}
         </p>
         <p>
           <span className="text-gold-soft font-semibold">Cats: </span>
-          {book.Cats}
+          {book.catsNames.join(", ")}
         </p>
         <p>
           <span className="text-gold-soft font-semibold">Suite: </span>
-          {book.Suite}
+          {book.roomName}
         </p>
         <p>
           <span className="text-gold-soft font-semibold">Desde: </span>
-          {book.Desde}
+          {book.checkInDate}
         </p>
         <p>
           <span className="text-gold-soft font-semibold">Hasta: </span>
-          {book.Hasta}
+          {book.checkOutDate}
         </p>
       </div>
 
       <div className="flex flex-col space-y-2">
-        <button className="bg-green-olive text-white px-6 py-2 rounded-lg transition-colors duration-300 hover:bg-green-olive/80">
+        <button className="bg-green-olive hover:bg-green-700 text-white px-6 py-2 rounded-lg">
           Feed
         </button>
-        <button className="bg-gold-dark text-white px-6 py-2 rounded-lg transition-colors duration-300 hover:bg-gold-dark/80">
+        <button className="bg-gold-dark hover:bg-yellow-700 text-white px-6 py-2 rounded-lg">
           Chat
         </button>
       </div>
