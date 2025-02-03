@@ -86,13 +86,24 @@ export const getUserReservations = async (userId: string, token?: string) => {
 
 export const getUserBooks = async (userId: string, token?: string) => {
   try {
-    const response = await fetch(`http://localhost:3000/users/${userId}`, {
-      cache: "no-store",
-      headers: token ? { Authorization: `Bearer ${token}` } : {},
-    });
+    const response = await fetch(
+      `http://localhost:3000/users/${userId}/caretaker-reservations`,
+      {
+        cache: "no-store",
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+      }
+    );
 
-    if (!response.ok) return [];
-    return await response.json();
+    if (!response.ok) {
+      console.error(
+        `Error en la respuesta: ${response.status} - ${response.statusText}`
+      );
+      return [];
+    }
+
+    const data = await response.json();
+
+    return data;
   } catch (error) {
     console.error("Error al obtener las reservas:", error);
     return [];
