@@ -4,6 +4,7 @@ import ClientChat from "@/components/ClientChat/ClientChat";
 import { ChatProvider } from "@/contexts/chatContext";
 
 const ClientChatPage = () => {
+  
   return (
     <ProtectedRoute>
       <ClientLayout>
