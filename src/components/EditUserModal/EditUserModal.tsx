@@ -39,8 +39,8 @@ export const EditUserModal = ({
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-black-dark rounded-lg shadow-lg max-w-2xl w-full mx-4">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-start justify-center overflow-y-auto p-4 mt-24">
+      <div className="bg-black-dark p-4 rounded-lg w-full max-w-2xl my-4">
         <div className="p-4 border-b border-gray-700">
           <h2 className="text-xl text-gold-soft">Edit User</h2>
         </div>

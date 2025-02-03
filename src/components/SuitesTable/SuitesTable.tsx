@@ -45,9 +45,9 @@ export const SuitesTable = ({
               }
               className="p-2 rounded bg-black-light text-white-ivory border border-gray-700 focus:outline-none focus:border-gold-soft"
             >
-              <option value="name">Nombre</option>
-              <option value="price">Precio</option>
-              <option value="cats">Cantidad de gatos</option>
+              <option value="name">Name</option>
+              <option value="price">Price</option>
+              <option value="cats">Number of cats</option>
             </select>
             <input
               type="text"

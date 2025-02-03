@@ -122,9 +122,9 @@ export const EditSuiteForm = ({
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center overflow-y-auto p-4">
-      <div className="bg-black-dark p-6 rounded-lg w-full max-w-3xl my-4">
-        <div className="flex justify-between items-center mb-4">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-start justify-center overflow-y-auto p-4 mt-24">
+      <div className="bg-black-dark p-4 rounded-lg w-full max-w-2xl my-4">
+        <div className="flex justify-between items-center mb-3">
           <h2 className="text-xl text-gold-soft">Edit Suite</h2>
           <button
             onClick={onClose}
@@ -136,7 +136,7 @@ export const EditSuiteForm = ({
 
         <form
           onSubmit={handleSubmit}
-          className="grid grid-cols-1 md:grid-cols-2 gap-6"
+          className="grid grid-cols-1 md:grid-cols-2 gap-4"
         >
           {/* Columna Izquierda */}
           <div className="flex flex-col space-y-4">
@@ -276,7 +276,7 @@ export const EditSuiteForm = ({
           </div>
 
           {/* Botones */}
-          <div className="md:col-span-2 flex justify-center gap-4 mt-6 pt-4 border-t border-gray-700">
+          <div className="md:col-span-2 flex justify-center gap-4 mt-2 pt-2 border-t border-gray-700">
             <button
               type="button"
               onClick={onClose}
