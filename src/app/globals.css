@@ -136,3 +136,18 @@ input[type="number"].no-arrows::-webkit-outer-spin-button {
 input[type="number"].no-arrows {
   -moz-appearance: textfield;
 }
+
+.Toastify__progress-bar {
+  background: var(--gold-soft) !important;
+}
+
+.Toastify__toast {
+  min-height: 48px !important;
+  padding: 8px !important;
+  font-size: 14px !important;
+  margin-bottom: 0.5rem !important;
+}
+
+.Toastify__toast-container {
+  width: 280px !important;
+}

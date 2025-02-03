@@ -4,6 +4,7 @@ import "./globals.css";
 import Navbar from "@/components/Navbar/Navbar";
 import Footer from "@/components/Footer/Footer";
 import Contexts from "@/contexts/contexts";
+import ToastifyClient from "@/components/ToastifyClient/ToastifyClient";
 
 const primaryFont = Merriweather({
   subsets: ["latin"],
@@ -39,6 +40,7 @@ export default function RootLayout({
 
             <Footer />
           </div>
+          <ToastifyClient />
         </body>
       </html>
     </Contexts>
