@@ -10,6 +10,7 @@ import { UsersTable } from "../UsersTable/UsersTable";
 const UserManager = () => {
   const { user } = useContext(UserContext);
   const [users, setUsers] = useState<UserData[]>([]);
+  const [showCreateForm, setShowCreateForm] = useState(false);
 
   const loadUsers = useCallback(async () => {
     try {
@@ -34,9 +35,9 @@ const UserManager = () => {
   const handleSubmit = async (formData: UserRegister) => {
     try {
       const { ...userData } = formData;
-      console.log("Datos a enviar:", userData);
       await userManagerService.createUser(userData);
       await loadUsers();
+      setShowCreateForm(false);
       alert("Usuario creado exitosamente!");
     } catch (error: unknown) {
       console.error("Error al crear usuario:", error);
@@ -51,7 +52,6 @@ const UserManager = () => {
         updatedUser.id,
         user?.response.token || ""
       );
-
       await loadUsers();
       alert("User updated successfully!");
     } catch (error) {
@@ -76,18 +76,32 @@ const UserManager = () => {
 
   return (
     <div className="min-h-screen px-4 bg-black-dark">
-      <div className="w-full max-w-5xl mx-auto pt-2 p-6 rounded-lg shadow-md space-y-3">
-        <h2 className="text-2xl mb-4" style={{ color: "var(--gold-soft)" }}>
-          User Management
-        </h2>
+      <div className="w-full max-w-5xl mx-auto pt-2 p-6 rounded-lg shadow-md">
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-2xl" style={{ color: "var(--gold-soft)" }}>
+            User Management
+          </h2>
+          <button
+            onClick={() => setShowCreateForm(!showCreateForm)}
+            className="bg-gold-soft text-black-dark px-4 py-2 rounded hover:bg-gold-hover"
+          >
+            {showCreateForm ? "Back to List" : "Create New User"}
+          </button>
+        </div>
 
-        <UserForm onSubmit={handleSubmit} />
-
-        <UsersTable
-          users={users}
-          updateUser={editUser}
-          onDelete={handleDelete}
-        />
+        {showCreateForm ? (
+          <div>
+            <UserForm onSubmit={handleSubmit} />
+          </div>
+        ) : (
+          <div className="mt-6">
+            <UsersTable
+              users={users}
+              updateUser={editUser}
+              onDelete={handleDelete}
+            />
+          </div>
+        )}
       </div>
     </div>
   );

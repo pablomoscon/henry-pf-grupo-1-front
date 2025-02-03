@@ -13,6 +13,7 @@ import { CaretakersTable } from "../CaretakersTable/CaretakersTable";
 const CaretakerManager = () => {
   const { user } = useContext(UserContext);
   const [caretakers, setCaretakers] = useState<UserData[]>([]);
+  const [showCreateForm, setShowCreateForm] = useState(false);
 
   const loadCaretakers = useCallback(async () => {
     try {
@@ -42,6 +43,7 @@ const CaretakerManager = () => {
       };
       await caretakerService.createCaretaker(userData);
       await loadCaretakers();
+      setShowCreateForm(false);
       alert("Caretaker created successfully!");
     } catch (error: unknown) {
       const errorMessage =
@@ -87,18 +89,32 @@ const CaretakerManager = () => {
 
   return (
     <div className="min-h-screen px-4 bg-black-dark">
-      <div className="w-full max-w-5xl mx-auto pt-2 p-6 rounded-lg shadow-md space-y-3">
-        <h2 className="text-2xl mb-4" style={{ color: "var(--gold-soft)" }}>
-          Caretaker Management
-        </h2>
+      <div className="w-full max-w-5xl mx-auto pt-2 p-6 rounded-lg shadow-md">
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-2xl" style={{ color: "var(--gold-soft)" }}>
+            Caretaker Management
+          </h2>
+          <button
+            onClick={() => setShowCreateForm(!showCreateForm)}
+            className="bg-gold-soft text-black-dark px-4 py-2 rounded hover:bg-gold-hover"
+          >
+            {showCreateForm ? "Back to List" : "Create New Caretaker"}
+          </button>
+        </div>
 
-        <CaretakerForm onSubmit={handleSubmit} />
-
-        <CaretakersTable
-          caretakers={caretakers}
-          updateCaretaker={editCaretaker}
-          onDelete={handleDelete}
-        />
+        {showCreateForm ? (
+          <div>
+            <CaretakerForm onSubmit={handleSubmit} />
+          </div>
+        ) : (
+          <div className="mt-6">
+            <CaretakersTable
+              caretakers={caretakers}
+              updateCaretaker={editCaretaker}
+              onDelete={handleDelete}
+            />
+          </div>
+        )}
       </div>
     </div>
   );
