@@ -1,3 +1,5 @@
+import { UserData } from "./IUser";
+
 export interface IReserve {
   userId: string | undefined;
   roomId: string;
@@ -19,6 +21,11 @@ interface IRoomInReservation {
   features: string[];
 }
 
+interface IUserInReservation {
+  id: string;
+  name: string;
+}
+
 export interface IReservation {
   id: string;
   checkInDate: string;
@@ -29,4 +36,11 @@ export interface IReservation {
   deleted_at: string | null;
   totalAmount: string;
   room: IRoomInReservation;
+  user?: IUserInReservation;
+  caretaker?: UserData | null;
+}
+
+export interface IReservationUpdate {
+  id: string;
+  room: Partial<IRoomInReservation>;
 }
