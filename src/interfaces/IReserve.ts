@@ -55,3 +55,16 @@ export interface IReservationUpdate {
   id: string;
   room: Partial<IRoomInReservation>;
 }
+
+export interface IReservationEdit {
+  id: string;
+  checkIn: string;
+  checkOut: string;
+  totalAmount: string;
+  status: string;
+  roomName: string;
+  cats: string[];
+  caretakers: string[];
+  payments: unknown[];
+  userName: string;
+}

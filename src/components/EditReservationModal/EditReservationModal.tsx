@@ -1,19 +1,14 @@
-import { useState, useEffect } from "react";
-import { IReservation } from "@/interfaces/IReserve";
+import { useState, useEffect, useContext } from "react";
+import { IReservationEdit } from "@/interfaces/IReserve";
+import { UserContext } from "@/contexts/userContext";
+import { caretakerService } from "@/services/caretakerServices";
 import { UserData } from "@/interfaces/IUser";
 
 interface EditReservationModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSave: (updatedReservation: IReservation) => void;
-  reservation: IReservation | null;
-  caretakers: UserData[];
-}
-
-interface Caretaker extends UserData {
-  user?: {
-    name: string;
-  };
+  onSave: (reservation: IReservationEdit) => void;
+  reservation: IReservationEdit | null;
 }
 
 export function EditReservationModal({
@@ -21,45 +16,68 @@ export function EditReservationModal({
   onClose,
   onSave,
   reservation,
-  caretakers,
 }: EditReservationModalProps) {
+  const { user } = useContext(UserContext);
   const [formData, setFormData] = useState({
     caretakerId: "",
   });
+  const [availableCaretakers, setAvailableCaretakers] = useState<UserData[]>(
+    []
+  );
 
+  // Cargar caretakers y establecer valor inicial
   useEffect(() => {
-    if (reservation) {
-      setFormData({
-        caretakerId: reservation.caretaker?.id || "",
-      });
-    }
-  }, [reservation]);
+    const loadData = async () => {
+      if (!user?.response?.token || !isOpen) return;
 
-  if (!isOpen || !reservation) return null;
+      try {
+        const caretakers = await caretakerService.getCaretakers(
+          user.response.token
+        );
+        setAvailableCaretakers(caretakers);
+
+        if (reservation) {
+          setFormData({
+            caretakerId: reservation.caretakers[0] || "",
+          });
+        }
+      } catch (error) {
+        console.error("Error loading caretakers:", error);
+      }
+    };
+
+    loadData();
+  }, [isOpen, user?.response?.token, reservation]);
 
   const handleSave = async () => {
     try {
-      console.log("Datos a guardar:", {
+      if (!reservation || !formData.caretakerId) {
+        console.log("Datos faltantes:", { reservation, formData });
+        return;
+      }
+
+      console.log("Guardando con:", {
         reservationId: reservation.id,
         caretakerId: formData.caretakerId,
       });
 
       await onSave({
         ...reservation,
-        caretaker:
-          caretakers.find((c) => c.id === formData.caretakerId) || null,
+        caretakers: [formData.caretakerId],
       });
+
       onClose();
     } catch (error) {
       console.error("Error al guardar:", error);
     }
   };
 
+  if (!isOpen || !reservation) return null;
+
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
       <div className="bg-black-light p-6 rounded-lg w-full max-w-md">
         <h2 className="text-xl text-gold-soft mb-4">Assign Caretaker</h2>
-
         <div className="space-y-4">
           <div>
             <label className="block text-white-ivory mb-2">
@@ -67,34 +85,17 @@ export function EditReservationModal({
             </label>
             <select
               value={formData.caretakerId}
-              onChange={(e) =>
-                setFormData((prev) => ({
-                  ...prev,
-                  caretakerId: e.target.value,
-                }))
-              }
+              onChange={(e) => setFormData({ caretakerId: e.target.value })}
               className="w-full p-2 rounded bg-black-dark text-white-ivory border border-gray-700"
-              style={{ backgroundColor: "#1a1a1a", color: "#f5f5f5" }}
             >
-              <option
-                value=""
-                style={{ backgroundColor: "#1a1a1a", color: "#f5f5f5" }}
-              >
-                Select Caretaker
-              </option>
-
-              {caretakers.map((caretaker: Caretaker) => (
-                <option
-                  key={caretaker.id}
-                  value={caretaker.id}
-                  style={{ backgroundColor: "#1a1a1a", color: "#f5f5f5" }}
-                >
-                  {caretaker.user?.name || "Sin nombre"}
+              <option value="">Select Caretaker</option>
+              {availableCaretakers.map((caretaker) => (
+                <option key={caretaker.id} value={caretaker.id}>
+                  {caretaker.name}
                 </option>
               ))}
             </select>
           </div>
-
           <div className="flex justify-end space-x-3 mt-6">
             <button
               onClick={onClose}

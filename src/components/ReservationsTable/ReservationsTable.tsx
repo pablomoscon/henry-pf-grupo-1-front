@@ -1,14 +1,11 @@
-import { IReservation } from "@/interfaces/IReserve";
+import { IReservationEdit } from "@/interfaces/IReserve";
 import { FaEdit, FaTrash } from "react-icons/fa";
-import { useEffect, useState, useContext, useMemo } from "react";
+import { useState, useMemo } from "react";
 import { EditReservationModal } from "../EditReservationModal/EditReservationModal";
-import { reservationService } from "@/services/editReservationServices";
-import { UserData } from "@/interfaces/IUser";
-import { UserContext } from "@/contexts/userContext";
 
 interface ReservationsTableProps {
-  reservations: IReservation[];
-  onEdit: (reservation: IReservation) => void;
+  reservations: IReservationEdit[];
+  onEdit: (reservation: IReservationEdit) => void;
   onDelete: (id: string) => void;
 }
 
@@ -17,52 +14,21 @@ export function ReservationsTable({
   onEdit,
   onDelete,
 }: ReservationsTableProps) {
-  const { user } = useContext(UserContext);
   const [selectedReservation, setSelectedReservation] =
-    useState<IReservation | null>(null);
-  const [caretakers, setCaretakers] = useState<UserData[]>([]);
+    useState<IReservationEdit | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [isInitialLoading, setIsInitialLoading] = useState(true);
   const [dateRange, setDateRange] = useState({
     startDate: "",
     endDate: "",
   });
 
-  useEffect(() => {
-    if (Array.isArray(reservations)) {
-      setTimeout(() => {
-        setIsInitialLoading(false);
-      }, 300);
-    }
-  }, [reservations]);
-
-  useEffect(() => {
-    const loadCaretakers = async () => {
-      try {
-        if (!user?.response?.token) {
-          return;
-        }
-        const caretakersData = await reservationService.getCaretakers(
-          user.response.token
-        );
-        setCaretakers(caretakersData);
-      } catch (error) {
-        console.error("Error detallado:", error);
-      }
-    };
-
-    if (isModalOpen && user?.response?.token) {
-      loadCaretakers();
-    }
-  }, [isModalOpen, user?.response?.token]);
-
-  const handleEdit = (reservation: IReservation) => {
+  const handleEdit = (reservation: IReservationEdit) => {
     setSelectedReservation(reservation);
     setIsModalOpen(true);
   };
 
-  const handleSave = async (updatedReservation: IReservation) => {
+  const handleSave = async (updatedReservation: IReservationEdit) => {
     onEdit(updatedReservation);
     setIsModalOpen(false);
   };
@@ -71,7 +37,7 @@ export function ReservationsTable({
     return reservations.filter((reservation) => {
       if (!dateRange.startDate && !dateRange.endDate) return true;
 
-      const checkInDate = new Date(reservation.checkInDate);
+      const checkInDate = new Date(reservation.checkIn);
       const startDate = dateRange.startDate
         ? new Date(dateRange.startDate + "T00:00:00")
         : null;
@@ -180,7 +146,7 @@ export function ReservationsTable({
             isLoading ? "opacity-50" : "opacity-100"
           }`}
         >
-          {(isLoading || isInitialLoading) && (
+          {isLoading && (
             <div className="absolute inset-0 flex items-center justify-center bg-black-dark/10">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gold-soft"></div>
             </div>
@@ -228,7 +194,7 @@ export function ReservationsTable({
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-700 bg-black-dark">
-              {isInitialLoading ? (
+              {isLoading ? (
                 <tr>
                   <td
                     colSpan={9}
@@ -250,37 +216,32 @@ export function ReservationsTable({
                     </td>
                     <td className="truncate px-2 py-3 text-center text-sm text-white-ivory">
                       <div className="mx-auto max-w-full truncate px-1">
-                        {reservation.room.name}
+                        {reservation.roomName}
                       </div>
                     </td>
                     <td className="truncate px-2 py-3 text-center text-sm text-white-ivory">
                       <div className="mx-auto max-w-full truncate px-1">
-                        {reservation.user?.name || "N/A"}
+                        {reservation.userName}
                       </div>
                     </td>
                     <td className="truncate px-2 py-3 text-center text-sm text-white-ivory">
                       <div className="mx-auto max-w-full truncate px-1">
-                        {new Date(reservation.checkInDate).toLocaleDateString()}
+                        {new Date(reservation.checkIn).toLocaleDateString()}
                       </div>
                     </td>
                     <td className="truncate px-2 py-3 text-center text-sm text-white-ivory">
                       <div className="mx-auto max-w-full truncate px-1">
-                        {new Date(
-                          reservation.checkOutDate
-                        ).toLocaleDateString()}
+                        {new Date(reservation.checkOut).toLocaleDateString()}
                       </div>
                     </td>
                     <td className="truncate px-2 py-3 text-center text-sm text-white-ivory">
                       <div className="mx-auto max-w-full truncate px-1">
-                        {reservation.room.number_of_cats}
+                        {reservation.cats.length}
                       </div>
                     </td>
                     <td className="truncate px-2 py-3 text-center text-sm text-white-ivory">
                       <div className="mx-auto max-w-full truncate px-1">
-                        {reservation.caretakers &&
-                        reservation.caretakers.length > 0
-                          ? "Assigned"
-                          : "Unassigned"}
+                        {reservation.caretakers[0] || "Unassigned"}
                       </div>
                     </td>
                     <td className="truncate px-2 py-3 text-center text-sm text-white-ivory">
@@ -328,7 +289,6 @@ export function ReservationsTable({
         onClose={() => setIsModalOpen(false)}
         onSave={handleSave}
         reservation={selectedReservation}
-        caretakers={caretakers}
       />
     </>
   );
