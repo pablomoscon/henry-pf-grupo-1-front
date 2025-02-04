@@ -17,7 +17,7 @@ const Chat = () => {
     setCurrentChatId(idFromUrl);
   }, []);
 
-  const { messages, sendMessage } = useChat(
+  const { messages, sendMessage, errorMessage } = useChat(
     currentChatId || '',
     user?.response?.user
   );
@@ -55,6 +55,14 @@ const Chat = () => {
         <h2 className='text-2xl text-gold-soft p-4 border-b border-gray-700'>
           Chat with the Caretaker of my Kitty
         </h2>
+
+        {/* Mostrar mensaje de error si existe */}
+        {errorMessage && (
+          <div className='bg-red-600 text-white p-2 text-center rounded-md mx-4'>
+            {errorMessage}
+          </div>
+        )}
+
 
         {/* Contenedor de mensajes con scroll solo dentro y smooth scroll */}
         <div

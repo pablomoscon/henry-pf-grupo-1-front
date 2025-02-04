@@ -83,7 +83,7 @@ export default function ClientLayout({
             </Link>
 
             <Link
-              href={`/chat/${userId}`}
+              href={`/client-chat/${userId}`}
               className='flex items-center gap-3 p-3 rounded-lg text-gold-soft hover:bg-gold-soft/10 transition-all duration-300'
             >
               <svg
