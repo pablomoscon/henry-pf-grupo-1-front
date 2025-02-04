@@ -38,6 +38,17 @@ export interface IReservation {
   room: IRoomInReservation;
   user?: IUserInReservation;
   caretaker?: UserData | null;
+  caretakers?: {
+    id: string;
+    profileData: string;
+    deleted_at: string | null;
+    user: {
+      id: string;
+      name: string;
+      email: string;
+      // ... other user properties
+    };
+  }[];
 }
 
 export interface IReservationUpdate {

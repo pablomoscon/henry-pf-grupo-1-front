@@ -37,6 +37,24 @@ export function EditReservationModal({
 
   if (!isOpen || !reservation) return null;
 
+  const handleSave = async () => {
+    try {
+      console.log("Datos a guardar:", {
+        reservationId: reservation.id,
+        caretakerId: formData.caretakerId,
+      });
+
+      await onSave({
+        ...reservation,
+        caretaker:
+          caretakers.find((c) => c.id === formData.caretakerId) || null,
+      });
+      onClose();
+    } catch (error) {
+      console.error("Error al guardar:", error);
+    }
+  };
+
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
       <div className="bg-black-light p-6 rounded-lg w-full max-w-md">
@@ -85,24 +103,7 @@ export function EditReservationModal({
               Cancelar
             </button>
             <button
-              onClick={async () => {
-                try {
-                  console.log("Datos a guardar:", {
-                    reservationId: reservation.id,
-                    caretakerId: formData.caretakerId,
-                  });
-
-                  await onSave({
-                    ...reservation,
-                    caretaker:
-                      caretakers.find((c) => c.id === formData.caretakerId) ||
-                      null,
-                  });
-                  onClose();
-                } catch (error) {
-                  console.error("Error al guardar:", error);
-                }
-              }}
+              onClick={handleSave}
               className="px-4 py-2 bg-gold-soft text-black hover:bg-gold-soft/90 rounded transition-colors"
             >
               Guardar

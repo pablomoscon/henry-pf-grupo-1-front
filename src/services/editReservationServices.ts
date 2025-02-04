@@ -14,7 +14,9 @@ export const reservationService = {
       throw new Error(`Error ${response.status}: ${response.statusText}`);
     }
 
-    return response.json();
+    const data = await response.json();
+    console.log("Reservations data:", data);
+    return data;
   },
 
   async createReservation(
@@ -37,37 +39,27 @@ export const reservationService = {
     },
     token?: string
   ): Promise<IReservation> {
-    console.log("1. Datos recibidos:", { id, data });
+    try {
+      const response = await fetch(
+        `http://localhost:3000/reservations/reservationsId/add.caretaker/userId`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            ...(token && { Authorization: `Bearer ${token}` }),
+          },
+        }
+      );
 
-    const updateData = {
-      caretakerId: data.caretakerId,
-    };
+      if (!response.ok) {
+        throw new Error(`Error ${response.status}: ${response.statusText}`);
+      }
 
-    console.log("2. Datos a enviar:", updateData);
-
-    const response = await fetch(`http://localhost:3000/reservations/${id}`, {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-        ...(token && { Authorization: `Bearer ${token}` }),
-      },
-      body: JSON.stringify(updateData),
-    });
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error("3. Error response del backend:", {
-        status: response.status,
-        statusText: response.statusText,
-        errorBody: errorText,
-      });
-      throw new Error("Error updating reservation");
+      return await response.json();
+    } catch (error) {
+      console.error("Error en updateReservation:", error);
+      throw error;
     }
-
-    const responseData = await response.json();
-    console.log("4. Respuesta exitosa del backend:", responseData);
-
-    return responseData;
   },
 
   async deleteReservation(id: string): Promise<void> {

@@ -277,7 +277,10 @@ export function ReservationsTable({
                     </td>
                     <td className="truncate px-2 py-3 text-center text-sm text-white-ivory">
                       <div className="mx-auto max-w-full truncate px-1">
-                        {reservation.caretaker?.name || "Unassigned"}
+                        {reservation.caretakers &&
+                        reservation.caretakers.length > 0
+                          ? "Assigned"
+                          : "Unassigned"}
                       </div>
                     </td>
                     <td className="truncate px-2 py-3 text-center text-sm text-white-ivory">
