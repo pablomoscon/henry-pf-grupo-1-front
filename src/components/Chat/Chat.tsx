@@ -5,8 +5,7 @@ import { ChatContext } from '@/contexts/chatContext';
 import { UserContext } from '@/contexts/userContext';
 import { useChat } from '@/hooks/useChat';
 
-
-const ClientChat = () => {
+const Chat = () => {
   const { user } = useContext(UserContext);
   const { currentChatId, setCurrentChatId } = useContext(ChatContext);
   const [newMessage, setNewMessage] = useState('');
@@ -121,4 +120,4 @@ const ClientChat = () => {
   );
 };
 
-export default ClientChat;
+export default Chat;

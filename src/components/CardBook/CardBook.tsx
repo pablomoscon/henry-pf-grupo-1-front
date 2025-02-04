@@ -34,7 +34,7 @@ const CardBook = ({ book }: { book: IBookCaretaker }) => {
           Feed
         </button>
         <button
-          onClick={() => router.push(`/clientchat/${book.userId}`)} // Usar router.push
+          onClick={() => router.push(`/chat/${book.userId}`)} // Usar router.push
           className='bg-gold-dark hover:bg-yellow-700 text-white px-6 py-2 rounded-lg'
         >
           Chat
