@@ -1,8 +1,8 @@
-import { IReservation } from "@/interfaces/IReserve";
+import { IReservationEdit } from "@/interfaces/IReserve";
 import { useState } from "react";
 
 interface ReservationsTableProps {
-  reservations: IReservation[];
+  reservations: IReservationEdit[];
 }
 
 export const ReservationsTable = ({ reservations }: ReservationsTableProps) => {
@@ -15,7 +15,7 @@ export const ReservationsTable = ({ reservations }: ReservationsTableProps) => {
 
   const filteredReservations = reservations.filter((reservation) => {
     if (filterType === "dates") {
-      const checkInDate = new Date(reservation.checkInDate);
+      const checkInDate = new Date(reservation.checkIn);
       const fromDate = dateFrom ? new Date(dateFrom) : null;
       const toDate = dateTo ? new Date(dateTo + "T23:59:59") : null;
       return (
@@ -29,7 +29,7 @@ export const ReservationsTable = ({ reservations }: ReservationsTableProps) => {
       case "id":
         return reservation.id.toLowerCase().includes(term);
       case "suite":
-        return reservation.room.name.toLowerCase().includes(term);
+        return reservation.roomName.toLowerCase().includes(term);
       case "status":
         return reservation.status.toLowerCase().includes(term);
       default:
@@ -127,19 +127,22 @@ export const ReservationsTable = ({ reservations }: ReservationsTableProps) => {
               </td>
               <td className="truncate px-2 py-3 text-center text-sm text-white-ivory">
                 <div className="mx-auto max-w-full truncate px-1">
-                  {reservation.room.name}
+                  {reservation.roomName}
                 </div>
               </td>
+
               <td className="truncate px-2 py-3 text-center text-sm text-white-ivory">
                 <div className="mx-auto max-w-full truncate px-1">
-                  {new Date(reservation.checkInDate).toLocaleDateString()}
+                  {new Date(reservation.checkIn).toLocaleDateString()}
                 </div>
               </td>
+
               <td className="truncate px-2 py-3 text-center text-sm text-white-ivory">
                 <div className="mx-auto max-w-full truncate px-1">
-                  {new Date(reservation.checkOutDate).toLocaleDateString()}
+                  {new Date(reservation.checkOut).toLocaleDateString()}
                 </div>
               </td>
+
               <td className="truncate px-2 py-3 text-center text-sm text-white-ivory">
                 <div className="mx-auto max-w-full truncate px-1">
                   {reservation.status}

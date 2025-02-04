@@ -484,8 +484,8 @@ const ReservationForm = () => {
         onClose={closeModal}
         onConfirm={handleModalConfirm}
         totalAmount={posData.totalAmount}
-        checkInDate={posData.checkInDate}
-        checkOutDate={posData.checkOutDate}
+        checkIn={posData.checkInDate}
+        checkOut={posData.checkOutDate}
       />
     </div>
   );
