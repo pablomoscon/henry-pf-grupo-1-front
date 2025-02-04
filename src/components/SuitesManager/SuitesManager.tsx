@@ -18,6 +18,7 @@ const SuitesManager = () => {
   const [showModal, setShowModal] = useState(false);
   const [suiteToDelete, setSuiteToDelete] = useState<IRoom | null>(null);
   const [showConfirmDelete, setShowConfirmDelete] = useState(false);
+  const [showCreateForm, setShowCreateForm] = useState(false);
 
   const loadSuites = async () => {
     try {
@@ -62,19 +63,40 @@ const SuitesManager = () => {
     }
   };
 
+  const handleCreateSuccess = async () => {
+    await loadSuites();
+    setShowCreateForm(false);
+  };
+
   return (
-    <div className="p-6">
-      <h1 className="text-3xl text-gold-soft mb-6">Suites Management</h1>
+    <div className="min-h-screen px-4 bg-black-dark">
+      <div className="w-full max-w-5xl mx-auto pt-2 p-6 rounded-lg shadow-md">
+        <div className="flex justify-between items-center mb-4">
+          <h1 className="text-2xl" style={{ color: "var(--gold-soft)" }}>
+            Suites Management
+          </h1>
+          <button
+            onClick={() => setShowCreateForm(!showCreateForm)}
+            className="bg-gold-soft text-black-dark px-4 py-2 rounded hover:bg-gold-hover"
+          >
+            {showCreateForm ? "Back to List" : "Create New Suite"}
+          </button>
+        </div>
 
-      <div className="space-y-6">
-        <SuitesForm onSuccess={loadSuites} />
-
-        <SuitesTable
-          suites={suites}
-          onEdit={handleEdit}
-          setSuiteToDelete={setSuiteToDelete}
-          setShowConfirmDelete={setShowConfirmDelete}
-        />
+        {showCreateForm ? (
+          <div>
+            <SuitesForm onSuccess={handleCreateSuccess} />
+          </div>
+        ) : (
+          <div className="mt-6">
+            <SuitesTable
+              suites={suites}
+              onEdit={handleEdit}
+              setSuiteToDelete={setSuiteToDelete}
+              setShowConfirmDelete={setShowConfirmDelete}
+            />
+          </div>
+        )}
 
         {showEditForm && suiteToEdit && (
           <EditSuiteForm

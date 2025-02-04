@@ -54,13 +54,13 @@ export const UserForm = ({ onSubmit }: UserFormProps) => {
   };
 
   return (
-    <div className="min-h-screen py-12 px-4 flex items-center justify-center bg-black-dark">
+    <div className="py-2 px-4">
       <form
         onSubmit={handleSubmit}
-        className="w-full max-w-xl mx-auto p-5 rounded-lg shadow-md space-y-2"
+        className="w-full max-w-xl mx-auto rounded-lg shadow-md space-y-2"
         style={{ background: "var(--black-dark)" }}
       >
-        <h2 className="text-xl mb-3" style={{ color: "var(--gold-soft)" }}>
+        <h2 className="text-xl" style={{ color: "var(--gold-soft)" }}>
           Create User
         </h2>
 

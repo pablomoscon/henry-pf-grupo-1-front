@@ -10,7 +10,8 @@ export default function ClientLayout({
   children: React.ReactNode;
 }) {
   const { user } = useContext(UserContext);
-  const userData = user?.response?.user;
+  const userId = user?.response?.user?.id;
+
 
   return (
     <div className='min-h-screen pt-24 pb-16 flex bg-black-dark'>
@@ -82,7 +83,7 @@ export default function ClientLayout({
             </Link>
 
             <Link
-              href={`/clientchat/${userData?.id}`}
+              href={`/clientchat/${userId}`}
               className='flex items-center gap-3 p-3 rounded-lg text-gold-soft hover:bg-gold-soft/10 transition-all duration-300'
             >
               <svg

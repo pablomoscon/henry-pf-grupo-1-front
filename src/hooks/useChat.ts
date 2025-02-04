@@ -1,9 +1,6 @@
-import { useEffect, useRef, useContext, useCallback, useState } from 'react';
+import { useEffect, useRef, useCallback, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
-import { ChatContext } from '@/contexts/chatContext';
 import { ChatMessage } from '@/interfaces/IChat';
-import { UserData } from '../interfaces/IUser';
-import { timeStamp } from 'console';
 
 export const useChat = (chatId: string, user: any) => {
   const [messages, setMessages] = useState<any[]>([]);
@@ -25,7 +22,7 @@ export const useChat = (chatId: string, user: any) => {
       });
 
       socketRef.current.on("connect", () => {
-        console.log("Socket connected successfully", socketRef.current?.id);
+        console.log("Socket connected successfully:", socketRef.current?.id);
         socketRef.current?.emit("joinRoom", {
           clientChatRoomId: chatId,
           currentUser: { id: user.id },
@@ -39,20 +36,23 @@ export const useChat = (chatId: string, user: any) => {
       socketRef.current.on("receive_message", (message: ChatMessage) => {
         console.log("Received message:", message);
 
+          const timestamp = message.timestamp || new Date().toISOString();
+
         setMessages((prevMessages) => [
           ...prevMessages,
           {
             senderName: message.senderName || 'Unknown User',
-            body: message.body
+            body: message.body,
+            timestamp: timestamp,
           },
         ]);
       });
 
       socketRef.current.on('initial_messages', (data: any) => {
-        console.log('Mensajes iniciales:', data.messages);
+        console.log('Initial messages:', data.messages);
 
         const updatedMessages = data.messages.map((msg: ChatMessage) => {
-          console.log('Procesando mensaje:', msg);
+          console.log('Processing message:', msg);
           return {
             ...msg
           };
@@ -72,14 +72,16 @@ export const useChat = (chatId: string, user: any) => {
     };
   }, [chatId, user?.id]);
 
-  const sendMessage = useCallback((message: string) => {
+  const sendMessage = useCallback((message: string, timestamp: string) => {
     if (message.trim() && chatId && user?.id) {
       const messageData = {
         currentUser: user.id,
         body: message,
         clientChatRoom: chatId,
-        senderName: user.name
+        senderName: user.name,
+        timestamp: timestamp, 
       };
+
       socketRef.current?.emit('send_message', messageData);
 
       setMessages((prevMessages) => [
@@ -87,6 +89,7 @@ export const useChat = (chatId: string, user: any) => {
         {
           senderName: user.name,
           body: message,
+          timestamp: timestamp, 
           currentUser: true
         },
       ]);

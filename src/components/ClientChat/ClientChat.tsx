@@ -5,16 +5,12 @@ import { ChatContext } from '@/contexts/chatContext';
 import { UserContext } from '@/contexts/userContext';
 import { useChat } from '@/hooks/useChat';
 
-const ClientChat = () => {
-  const { currentChatId, setCurrentChatId } = useContext(ChatContext);
-  const { user } = useContext(UserContext);
-  const [newMessage, setNewMessage] = useState('');
-  const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
-  const { messages, sendMessage } = useChat(
-    currentChatId || '',
-    user?.response?.user
-  );
+const ClientChat = () => {
+  const { user } = useContext(UserContext);
+  const { currentChatId, setCurrentChatId } = useContext(ChatContext);
+  const [newMessage, setNewMessage] = useState('');
+  const messagesContainerRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     const pathParts = window.location.pathname.split('/');
@@ -22,13 +18,19 @@ const ClientChat = () => {
     setCurrentChatId(idFromUrl);
   }, []);
 
+  const { messages, sendMessage } = useChat(
+    currentChatId || '',
+    user?.response?.user
+  );
+
   useEffect(() => {
     console.log('Current user:', user?.response?.user);
   }, [user]);
 
   useEffect(() => {
-    if (messagesEndRef.current) {
-      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    if (messagesContainerRef.current) {
+      messagesContainerRef.current.scrollTop =
+        messagesContainerRef.current.scrollHeight;
     }
   }, [messages]);
 
@@ -44,53 +46,58 @@ const ClientChat = () => {
       timestamp: timestamp,
     });
 
-    sendMessage(newMessage);
+    sendMessage(newMessage, timestamp);
     setNewMessage('');
   };
 
   return (
     <div className='h-[calc(100vh-96px)] flex items-center justify-center bg-black-dark'>
-      <div className='w-full max-w-4xl h-[90%] mx-4 bg-black-dark rounded-lg shadow-lg border border-gray-700 flex flex-col'>
+      <div className='w-full max-w-4xl h-[90%] mx-2 bg-black-dark rounded-lg shadow-lg border border-gray-700 flex flex-col'>
         <h2 className='text-2xl text-gold-soft p-4 border-b border-gray-700'>
           Chat with the Caretaker of my Kitty
         </h2>
 
-        {/* Chat Messages Container */}
-        <div className='flex-1 overflow-y-auto m-6 p-4 space-y-4'>
-          {messages.map((message, index) => (
-            <div
-              key={index}
-              className={`flex ${
-                message.senderName === user?.response?.user?.name
-                  ? 'justify-end'
-                  : 'justify-start'
-              }`}
-            >
+        {/* Contenedor de mensajes con scroll solo dentro y smooth scroll */}
+        <div
+          ref={messagesContainerRef}
+          className='flex-1 overflow-y-auto m-4 p-4 space-y-4'
+          style={{
+            maxHeight: 'calc(100% - 100px)',
+            scrollBehavior: 'smooth',
+          }}
+        >
+          {messages.map((message, index) => {
+            const isSender = message.senderName === user?.response?.user?.name;
+            const isReceiver =
+              Array.isArray(message.receiversNames) &&
+              message.receiversNames.includes(user?.response?.user?.name);
+
+            return (
               <div
-                className={`max-w-[70%] rounded-lg p-3 ${
-                  message.senderName === user?.response?.user?.name
-                    ? 'bg-gold-soft text-black-dark'
-                    : message.receiversNames.includes(
-                        user?.response?.user?.name
-                      )
-                    ? 'bg-gray-700 text-white-basic'
-                    : 'bg-yellow-500 text-black-dark'
-                }`}
+                key={index}
+                className={`flex ${isSender ? 'justify-end' : 'justify-start'}`}
               >
-                <p className='text-sm font-bold'>{message.senderName}</p>
-                <p>{message.body}</p>
-                <p className='text-xs opacity-70'>
-                  {message.timestamp
-                    ? new Date(message.timestamp).toLocaleTimeString()
-                    : 'Invalid Time'}
-                </p>
+                <div
+                  className={`min-w-[20%] rounded-lg p-3 me-2 ms-2 ${
+                    isSender
+                      ? 'bg-gold-soft text-black-dark'
+                      : 'bg-gray-700 text-white-basic'
+                  }`}
+                >
+                  <p className='text-m font-bold'>{message.senderName}</p>
+                  <p>{message.body}</p>
+                  <p className='text-sm opacity-70'>
+                    {message.timestamp
+                      ? new Date(message.timestamp).toLocaleTimeString()
+                      : 'Invalid Time'}
+                  </p>
+                </div>
               </div>
-            </div>
-          ))}
-          <div ref={messagesEndRef} />
+            );
+          })}
         </div>
 
-        {/* Input Container */}
+        {/* Contenedor de input para escribir el mensaje */}
         <div className='p-4 border-t border-gray-700 bg-black-dark mt-auto'>
           <div className='flex gap-2'>
             <input

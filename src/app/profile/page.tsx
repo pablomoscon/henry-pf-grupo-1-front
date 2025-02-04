@@ -1,8 +1,8 @@
-import ClientProfile from "../../components/ClientProfile/ClientProfile";
 import ProtectedRoute from "@/components/ProtectedRoute/ProtectedRoute";
 import ClientLayout from "@/components/ClientLayout/ClientLayout";
+import ClientProfile from "@/components/ClientProfile/ClientProfile";
 
-const DashboardPage = () => {
+const MyProfilePage = () => {
   return (
     <ProtectedRoute>
       <ClientLayout>
@@ -12,4 +12,4 @@ const DashboardPage = () => {
   );
 };
 
-export default DashboardPage;
+export default MyProfilePage;

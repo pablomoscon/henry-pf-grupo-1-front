@@ -1,15 +1,15 @@
 import ProtectedRoute from "@/components/ProtectedRoute/ProtectedRoute";
 import AdminLayout from "@/components/AdminLayout/AdminLayout";
-import ReservationsManager from "@/components/ReservationsManager/ReservationsManager";
+import UserManager from "@/components/UserManager/UserManager";
 
-const ReservationsPage = () => {
+const UsersPage = () => {
   return (
     <ProtectedRoute>
       <AdminLayout>
-        <ReservationsManager />
+        <UserManager />
       </AdminLayout>
     </ProtectedRoute>
   );
 };
 
-export default ReservationsPage;
+export default UsersPage;

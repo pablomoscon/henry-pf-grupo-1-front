@@ -57,16 +57,14 @@ export const bookRegister = async (
     },
   });
 
-
   if (!res.ok) {
-    const errorData = await res.json();  
-    const errorMessage = JSON.parse(errorData.message).message;  
-    throw new Error(errorMessage);  
+    const errorData = await res.json();
+    const errorMessage = JSON.parse(errorData.message).message;
+    throw new Error(errorMessage);
   }
 
   return res.json();
 };
-
 
 export const getUserReservations = async (userId: string, token?: string) => {
   try {
@@ -80,6 +78,32 @@ export const getUserReservations = async (userId: string, token?: string) => {
 
     if (!response.ok) return [];
     return await response.json();
+  } catch (error) {
+    console.error("Error al obtener las reservas:", error);
+    return [];
+  }
+};
+
+export const getUserBooks = async (userId: string, token?: string) => {
+  try {
+    const response = await fetch(
+      `http://localhost:3000/users/${userId}/caretaker-reservations`,
+      {
+        cache: "no-store",
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+      }
+    );
+
+    if (!response.ok) {
+      console.error(
+        `Error en la respuesta: ${response.status} - ${response.statusText}`
+      );
+      return [];
+    }
+
+    const data = await response.json();
+
+    return data;
   } catch (error) {
     console.error("Error al obtener las reservas:", error);
     return [];
