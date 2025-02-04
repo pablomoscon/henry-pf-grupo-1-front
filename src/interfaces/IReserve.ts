@@ -56,6 +56,10 @@ export interface IReservationUpdate {
   room: Partial<IRoomInReservation>;
 }
 
+export interface ICaretaker {
+  id: string;
+  name?: string;
+}
 export interface IReservationEdit {
   id: string;
   checkIn: string;
@@ -64,7 +68,7 @@ export interface IReservationEdit {
   status: string;
   roomName: string;
   cats: string[];
-  caretakers: string[];
+  caretakers?: ICaretaker[];
   payments: unknown[];
   userName: string;
 }

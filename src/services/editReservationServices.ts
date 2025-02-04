@@ -31,24 +31,19 @@ export const reservationService = {
   },
 
   async updateReservation(
-    id: string,
-    data: {
-      caretakerId: string;
-    },
+    reservationId: string,
+    data: { caretakerId: string },
     token?: string
   ): Promise<IReservationEdit> {
     try {
-      console.log("Sending update request with:", { id, data });
+      console.log("Sending update request with:", { reservationId, data });
 
-      const response = await fetch(`http://localhost:3000/reservations/${id}`, {
-        method: "PATCH",
+      const response = await fetch(`http://localhost:3000/reservations/${reservationId}/add-caretaker/${data.caretakerId}`, {
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
           ...(token && { Authorization: `Bearer ${token}` }),
         },
-        body: JSON.stringify({
-          caretakers: [data.caretakerId],
-        }),
       });
 
       if (!response.ok) {
@@ -57,12 +52,14 @@ export const reservationService = {
         throw new Error(`Error ${response.status}: ${response.statusText}`);
       }
 
+      // Retornamos la respuesta en formato JSON
       return await response.json();
     } catch (error) {
       console.error("Error en updateReservation:", error);
       throw error;
     }
   },
+
 
   async deleteReservation(id: string): Promise<void> {
     const response = await fetch(`http://localhost:3000/reservations/${id}`, {

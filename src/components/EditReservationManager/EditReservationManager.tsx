@@ -38,26 +38,31 @@ export const EditReservationManager = () => {
     }
   }, [user?.response?.token]);
 
-  const handleSave = async (updatedReservation: IReservationEdit) => {
-    try {
-      await reservationService.updateReservation(
-        updatedReservation.id,
-        {
-          caretakerId: updatedReservation.caretakers[0] || "",
-        },
-        user?.response?.token
-      );
+const handleSave = async (updatedReservation: IReservationEdit) => {
+  try {
+    
+    const caretakerId =
+      updatedReservation.caretakers && updatedReservation.caretakers.length > 0
+        ? updatedReservation.caretakers[0].id
+        : ''; 
 
-      const updatedReservations = reservations.map((res) =>
-        res.id === updatedReservation.id ? updatedReservation : res
-      );
-      setReservations(updatedReservations);
-      setIsModalOpen(false);
-    } catch (error) {
-      console.error("Error al actualizar la reserva:", error);
-      alert("Error al actualizar la reserva. Por favor, intenta de nuevo.");
-    }
-  };
+    await reservationService.updateReservation(
+      updatedReservation.id,
+      { caretakerId },
+      user?.response?.token
+    );
+
+    const updatedReservations = reservations.map((res) =>
+      res.id === updatedReservation.id ? updatedReservation : res
+    );
+
+    setReservations(updatedReservations);
+    setIsModalOpen(false);
+  } catch (error) {
+    console.error('Error al actualizar la reserva:', error);
+    alert('Error al actualizar la reserva. Por favor, intenta de nuevo.');
+  }
+};
 
   return (
     <div className="min-h-screen pt-24 pb-16 px-4 flex items-center justify-center bg-black-dark">
