@@ -1,74 +1,100 @@
-import { useEffect, useContext } from "react";
-import { io, Socket } from "socket.io-client";
-import { ChatContext } from "@/contexts/chatContext";
-import { ChatMessage } from "@/interfaces/IChat";
+import { useEffect, useRef, useCallback, useState } from 'react';
+import { io, Socket } from 'socket.io-client';
+import { ChatMessage } from '@/interfaces/IChat';
 
-let socket: Socket | null = null;
-
-export const useChat = (chatId: string, userId: string) => {
-  const { addMessage } = useContext(ChatContext);
+export const useChat = (chatId: string, user: any) => {
+  const [messages, setMessages] = useState<any[]>([]);
+  const socketRef = useRef<Socket | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!chatId || !userId) {
-      console.log("Missing required data:", { chatId, userId });
+    if (!chatId || !user?.id) {
+      console.log("Missing required data:", { chatId, user });
       return;
     }
 
-    console.log("Initializing socket connection:", {
-      chatId,
-      userId,
-    });
+    console.log("Initializing socket connection:", { chatId, user });
 
-    socket = io("http://localhost:3000/messages/chat", {
-      transports: ["websocket"],
-      query: {
-        clientChatRoomId: chatId,
-      },
-    });
-
-    socket.on("connect", () => {
-      console.log("Socket connected successfully");
-    });
-
-    socket.on("connect_error", (error) => {
-      console.error("Socket connection error:", error);
-    });
-
-    // Unirse a la sala de chat
-    socket.emit("joinRoom", {
-      clientChatRoomId: chatId,
-      currentUser: { id: userId },
-    });
-
-    // Escuchar mensajes nuevos
-    socket.on("receive_message", (message: ChatMessage) => {
-      console.log("Received message:", message);
-      addMessage({
-        body: message.body,
-        sender: message.senderName,
-        isCurrentUser: false,
+    if (!socketRef.current) {
+      socketRef.current = io("http://localhost:3000/messages/chat", {
+        transports: ["websocket"],
+        query: { clientChatRoomId: chatId },
       });
-    });
 
-    // Limpiar al desmontar
-    return () => {
-      console.log("Cleaning up socket connection");
-      if (socket) {
-        socket.disconnect();
-        socket = null;
-      }
-    };
-  }, [chatId, userId, addMessage]);
+      socketRef.current.on("connect", () => {
+        console.log("Socket connected successfully:", socketRef.current?.id);
+        socketRef.current?.emit("joinRoom", {
+          clientChatRoomId: chatId,
+          currentUser: { id: user.id },
+        });
+      });
 
-  const sendMessage = (message: string) => {
-    if (socket && message.trim()) {
-      socket.emit("send_message", {
-        currentUser: userId,
-        body: message,
-        clientChatRoom: chatId,
+      socketRef.current.on("connect_error", (error) => {
+        console.error("Socket connection error:", error);
+      });
+
+      socketRef.current.on("receive_message", (message: ChatMessage) => {
+        console.log("Received message:", message);
+
+          const timestamp = message.timestamp || new Date().toISOString();
+
+        setMessages((prevMessages) => [
+          ...prevMessages,
+          {
+            senderName: message.senderName || 'Unknown User',
+            body: message.body,
+            timestamp: timestamp,
+          },
+        ]);
+      });
+
+      socketRef.current.on('initial_messages', (data: any) => {
+        console.log('Initial messages:', data.messages);
+
+        const updatedMessages = data.messages.map((msg: ChatMessage) => {
+          console.log('Processing message:', msg);
+          return {
+            ...msg
+          };
+        });
+
+        setMessages(updatedMessages);
+      });
+
+      socketRef.current.on("message_error", (data) => {
+        console.log("Error received from server:", data);
+        setErrorMessage(data.message);
       });
     }
-  };
 
-  return { sendMessage };
+    return () => {
+      socketRef.current?.disconnect();
+    };
+  }, [chatId, user?.id]);
+
+  const sendMessage = useCallback((message: string, timestamp: string) => {
+    if (message.trim() && chatId && user?.id) {
+      const messageData = {
+        currentUser: user.id,
+        body: message,
+        clientChatRoom: chatId,
+        senderName: user.name,
+        timestamp: timestamp, 
+      };
+
+      socketRef.current?.emit('send_message', messageData);
+
+      setMessages((prevMessages) => [
+        ...prevMessages,
+        {
+          senderName: user.name,
+          body: message,
+          timestamp: timestamp, 
+          currentUser: true
+        },
+      ]);
+    }
+  }, [chatId, user]);
+
+  return { messages, sendMessage, errorMessage };
 };
