@@ -1,14 +1,14 @@
 "use client";
 
 import { useState, useEffect, useContext } from "react";
-import { IReservation } from "@/interfaces/IReserve";
+import { IReservationEdit } from "@/interfaces/IReserve";
 import { reservationService } from "@/services/reservationServices";
 import { ReservationsTable } from "../ReservationsStatsTable/ReservationsStatsTable";
 import { UserContext } from "@/contexts/userContext";
 
 const ReservationsManager = () => {
   const { user } = useContext(UserContext);
-  const [reservations, setReservations] = useState<IReservation[]>([]);
+  const [reservations, setReservations] = useState<IReservationEdit[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -36,7 +36,7 @@ const ReservationsManager = () => {
     <div className="min-h-screen px-4 bg-black-dark">
       <div className="w-full max-w-5xl mx-auto pt-2 p-6 rounded-lg shadow-md space-y-3">
         <h2 className="text-2xl mb-4" style={{ color: "var(--gold-soft)" }}>
-          Reservations Management
+          Reservations Stats
         </h2>
 
         <ReservationsTable reservations={reservations} />
