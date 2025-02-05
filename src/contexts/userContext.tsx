@@ -45,7 +45,7 @@ const UserProvider = ({ children }: { children: React.ReactNode }) => {
 
   const logOut = async () => {
     alert("You have logged out.");
-    await new Promise((resolve) => setTimeout(resolve, 5000));
+    await new Promise((resolve) => setTimeout(resolve, 800));
     localStorage.removeItem("user");
     setUser(null);
     setLoading(true);
