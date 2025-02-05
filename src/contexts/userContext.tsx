@@ -1,7 +1,6 @@
 "use client";
 import { LoginResponse, UserData } from "@/interfaces/IUser";
 import { useState, createContext, useEffect } from "react";
-import { useRouter } from "next/navigation";
 
 interface UserContextProps {
   user: LoginResponse | null;
@@ -11,7 +10,6 @@ interface UserContextProps {
   updateUser: (userData: Partial<UserData>) => void;
   handleGoogleLogin: (googleData: { token: string; user: UserData }) => void;
   loading: boolean; // Nuevo: indica si el contexto está cargando
-  checkTokenExpiration: () => void;
 }
 
 export const UserContext = createContext<UserContextProps>({
@@ -22,47 +20,11 @@ export const UserContext = createContext<UserContextProps>({
   updateUser: () => {},
   handleGoogleLogin: () => {},
   loading: true, // Nuevo: valor inicial
-  checkTokenExpiration: () => {},
 });
 
 const UserProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<LoginResponse | null>(null);
   const [loading, setLoading] = useState(true); // Nuevo: estado para el loading
-  const router = useRouter();
-
-  const checkTokenExpiration = () => {
-    const localUser = localStorage.getItem("user");
-    if (localUser) {
-      try {
-        const userData = JSON.parse(localUser);
-        const tokenTimestamp = userData.tokenTimestamp || 0;
-        const currentTime = new Date().getTime();
-        const oneHour = 60 * 60 * 1000;
-
-        if (currentTime - tokenTimestamp > oneHour) {
-          logOut();
-          router.push("/login");
-          alert("Your session has expired. Please login again.");
-        }
-      } catch (error) {
-        console.error("Error checking token expiration:", error);
-        logOut();
-      }
-    }
-  };
-
-  const setUserWithTimestamp = (userData: LoginResponse | null) => {
-    if (userData) {
-      const userWithTimestamp = {
-        ...userData,
-        tokenTimestamp: new Date().getTime(),
-      };
-      localStorage.setItem("user", JSON.stringify(userWithTimestamp));
-      setUser(userWithTimestamp);
-    } else {
-      setUser(null);
-    }
-  };
 
   useEffect(() => {
     if (user) {
@@ -122,13 +84,12 @@ const UserProvider = ({ children }: { children: React.ReactNode }) => {
     <UserContext.Provider
       value={{
         user,
-        setUser: setUserWithTimestamp,
+        setUser,
         isLogged,
         logOut,
         updateUser,
         handleGoogleLogin,
         loading, // Nuevo: se expone loading en el contexto
-        checkTokenExpiration,
       }}
     >
       {children}
