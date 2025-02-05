@@ -43,7 +43,7 @@ const Modal = ({ onClose, onConfirm }: ModalProps) => {
           ✖
         </button>
         <p className="text-white-basic text-xl text-center mb-10">
-          Selecciona tu Photo / Video
+          Select your Photo / Video
         </p>
         <input
           type="file"
@@ -54,7 +54,7 @@ const Modal = ({ onClose, onConfirm }: ModalProps) => {
           (isVideo ? (
             <video controls className="w-full rounded-lg mt-4 mb-4">
               <source src={preview} type={selectedFile?.type} />
-              Tu navegador no soporta la reproducción de videos.
+              Your browser does not support video playback.
             </video>
           ) : (
             <img
@@ -68,7 +68,7 @@ const Modal = ({ onClose, onConfirm }: ModalProps) => {
           onClick={handleConfirm}
           disabled={!selectedFile}
         >
-          Aceptar
+          Accept
         </button>
       </div>
     </div>
