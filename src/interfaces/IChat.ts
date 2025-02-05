@@ -17,5 +17,5 @@ export interface ChatMessage {
   body: string;
   senderName: string;
   timestamp: Date;
-  currentUser: boolean;
+  currentUser?: boolean;
 }

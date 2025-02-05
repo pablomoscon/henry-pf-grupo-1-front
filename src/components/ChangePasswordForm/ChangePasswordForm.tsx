@@ -65,7 +65,7 @@ const ChangePasswordForm = () => {
   });
 
   return (
-    <div className="flex items-center justify-center mt-2">
+    <div className="min-h-screen flex items-center justify-center py-24 px-4 bg-black-dark">
       <form
         onSubmit={handleSubmit}
         autoComplete="off"
