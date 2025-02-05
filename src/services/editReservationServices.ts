@@ -38,13 +38,16 @@ export const reservationService = {
     try {
       console.log("Sending update request with:", { reservationId, data });
 
-      const response = await fetch(`http://localhost:3000/reservations/${reservationId}/add-caretaker/${data.caretakerId}`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          ...(token && { Authorization: `Bearer ${token}` }),
-        },
-      });
+      const response = await fetch(
+        `http://localhost:3000/reservations/${reservationId}/add-caretaker/${data.caretakerId}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            ...(token && { Authorization: `Bearer ${token}` }),
+          },
+        }
+      );
 
       if (!response.ok) {
         const errorData = await response.json();
@@ -60,11 +63,45 @@ export const reservationService = {
     }
   },
 
-
-  async deleteReservation(id: string): Promise<void> {
+  async deleteReservation(id: string, token: string): Promise<void> {
     const response = await fetch(`http://localhost:3000/reservations/${id}`, {
       method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
     });
     if (!response.ok) throw new Error("Error deleting reservation");
+  },
+
+  async unassignCaretaker(
+    reservationId: string,
+    data: { caretakerId: string },
+    token?: string
+  ): Promise<IReservationEdit> {
+    try {
+      console.log("Sending update request with:", { reservationId, data });
+
+      const response = await fetch(
+        `http://localhost:3000/reservations/${reservationId}/caretaker/${data.caretakerId}`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            ...(token && { Authorization: `Bearer ${token}` }),
+          },
+        }
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error("Server response:", errorData);
+        throw new Error(`Error ${response.status}: ${response.statusText}`);
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.error("Error en updateReservation:", error);
+      throw error;
+    }
   },
 };
