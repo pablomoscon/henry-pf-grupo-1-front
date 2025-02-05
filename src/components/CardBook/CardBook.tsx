@@ -44,7 +44,7 @@ const CardBook = ({ book }: { book: IBookCaretaker }) => {
                 )}&idReceiver=${book.userId}`
               );
             } else {
-              console.error("reservationId no disponible.");
+              console.error("reservationId not available.");
             }
           }}
         >

@@ -29,7 +29,7 @@ const CardLog: React.FC<{ post: IPost }> = ({ post }) => {
           {post.media_url.includes(".mp4") ? (
             <video className="w-full rounded-lg" controls>
               <source src={post.media_url} type="video/mp4" />
-              Tu navegador no soporta la reproducción de videos.
+              Your browser does not support video playback.
             </video>
           ) : (
             <div className="flex justify-center items-center">

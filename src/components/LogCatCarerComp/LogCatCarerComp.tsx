@@ -68,7 +68,7 @@ const LogCatCareComp = () => {
       reservationId,
     };
 
-    console.log("Datos enviados al post", formData);
+    console.log("Data sent to post", formData);
 
     try {
       const newPost = await registerPost(formData, token);
@@ -136,7 +136,7 @@ const LogCatCareComp = () => {
           posts.map((post) => <CardLog key={post.id} post={post} />)
         ) : (
           <p className="text-white-basic text-center mt-4">
-            No hay posteos aún.
+            There are no posts yet.
           </p>
         )}
       </div>

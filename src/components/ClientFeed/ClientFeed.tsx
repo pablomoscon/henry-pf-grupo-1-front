@@ -42,7 +42,7 @@ const ClientFeed = () => {
             .map((post) => <CardLog key={post.id} post={post} />)
         ) : (
           <p className="text-white-basic text-center mt-4">
-            No hay posteos aún.
+            There are no posts yet.
           </p>
         )}
       </div>
