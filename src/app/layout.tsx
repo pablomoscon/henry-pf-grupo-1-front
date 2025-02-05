@@ -5,6 +5,8 @@ import Navbar from "@/components/Navbar/Navbar";
 import Footer from "@/components/Footer/Footer";
 import Contexts from "@/contexts/contexts";
 import ToastifyClient from "@/components/ToastifyClient/ToastifyClient";
+import SessionCheck from "@/components/SessionCheck/SessionCheck";
+import UserProvider from "@/contexts/userContext";
 
 const primaryFont = Merriweather({
   subsets: ["latin"],
@@ -34,13 +36,16 @@ export default function RootLayout({
         <body
           className={`${primaryFont.variable} ${secondaryFont.variable} antialiased`}
         >
-          <div className="flex flex-col min-h-screen">
-            <Navbar />
-            <main className="bg-black">{children}</main>
+          <UserProvider>
+            <SessionCheck />
+            <div className="flex flex-col min-h-screen">
+              <Navbar />
+              <main className="bg-black">{children}</main>
 
-            <Footer />
-          </div>
-          <ToastifyClient />
+              <Footer />
+            </div>
+            <ToastifyClient />
+          </UserProvider>
         </body>
       </html>
     </Contexts>
