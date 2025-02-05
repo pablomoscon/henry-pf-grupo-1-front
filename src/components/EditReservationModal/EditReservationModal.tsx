@@ -64,11 +64,11 @@ export function EditReservationModal({
 
   const handleSave = async () => {
     if (!reservation || !isReadyToSave) {
-      console.log("Esperando actualización...");
+      console.log("Waiting for update...");
       return;
     }
 
-    console.log("Guardando con:", {
+    console.log("Saving with:", {
       reservationId: reservation.id,
       caretakerId: formData.caretakerId,
     });
@@ -81,7 +81,7 @@ export function EditReservationModal({
 
       onClose();
     } catch (error) {
-      console.error("Error al guardar:", error);
+      console.error("Error while saving:", error);
     }
   };
 
