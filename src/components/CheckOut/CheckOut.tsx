@@ -13,11 +13,9 @@ interface CheckInProps {
 }
 
 const CheckOut: React.FC<CheckInProps> = ({ roomId, token }) => {
-  const { checkOutDate, setCheckOutDate } = useDateContext(); // Contexto de fechas
+  const { checkOutDate, setCheckOutDate } = useDateContext();
+  const [reservedDates, setReservedDates] = useState<Dayjs[]>([]);
 
-  const [reservedDates, setReservedDates] = useState<Dayjs[]>([]); // Estado para las fechas bloqueadas
-
-  // Llamada al servicio para obtener fechas bloqueadas
   useEffect(() => {
     const fetchReservedDates = async () => {
       if (!roomId || !token) {
@@ -25,10 +23,10 @@ const CheckOut: React.FC<CheckInProps> = ({ roomId, token }) => {
         return;
       }
       try {
-        console.log("Token enviado al servicio:", token); // Para verificar el valor del token
+        console.log("Token enviado al servicio:", token);
         const blockedDates = await getDateReserved(roomId, token);
         console.log("Fechas bloqueadas recibidas:", blockedDates);
-        setReservedDates(blockedDates.map((date) => dayjs(date))); // Convertimos las fechas a Dayjs
+        setReservedDates(blockedDates.map((date) => dayjs(date)));
       } catch (error) {
         console.error("Error al obtener las fechas bloqueadas:", error);
       }
@@ -37,28 +35,33 @@ const CheckOut: React.FC<CheckInProps> = ({ roomId, token }) => {
     fetchReservedDates();
   }, [roomId, token]);
 
-  // Función para verificar si una fecha está reservada
   const isReserved = (date: Dayjs) => {
     return reservedDates.some((reserved) => reserved.isSame(date, "day"));
   };
 
-  // Componente para renderizar cada día con personalización
+  const isPastDate = (date: Dayjs) => {
+    return date.isBefore(dayjs(), "day");
+  };
+
   const renderDay = (props: any) => {
     const { day, outsideCurrentMonth } = props;
-    const isDisabled = isReserved(day);
+    const isDisabled = isReserved(day) || isPastDate(day);
     const isSelected = day.isSame(checkOutDate, "day");
 
     return (
       <button
-        onClick={() => !isDisabled && setCheckOutDate(day)} // Solo permitimos clics en fechas habilitadas
-        className={`p-2 rounded-full transition-all duration-200 ${
+        onClick={() => !isDisabled && setCheckOutDate(day)}
+        className={`p-2 rounded-full transition-all duration-200 text-white ${
           isDisabled
-            ? "bg-red-500 text-white cursor-not-allowed"
+            ? "text-red-500 cursor-not-allowed"
             : isSelected
-            ? "bg-gold-dark text-black"
-            : "hover:bg-blue-200 text-black"
-        } ${outsideCurrentMonth ? "text-gray-400" : ""}`}
+            ? "bg-gold-dark"
+            : "hover:bg-green-dark"
+        } ${outsideCurrentMonth ? "text-gray-500" : ""}`}
         disabled={isDisabled}
+        style={{
+          color: isDisabled ? "red" : "",
+        }}
       >
         {day.format("D")}
       </button>
@@ -69,11 +72,17 @@ const CheckOut: React.FC<CheckInProps> = ({ roomId, token }) => {
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <div className="flex flex-col items-center">
         <DateCalendar
-          value={checkOutDate} // Pasamos el estado actual
-          onChange={(date) => setCheckOutDate(date)} // Actualizamos el estado
-          shouldDisableDate={isReserved} // Deshabilitamos fechas reservadas
+          value={checkOutDate}
+          onChange={(date) => setCheckOutDate(date)}
+          shouldDisableDate={(date) => isReserved(date) || isPastDate(date)}
           slots={{
             day: renderDay,
+          }}
+          sx={{
+            "& .MuiPickersCalendarHeader-label": { color: "white" },
+            "& .MuiPickersArrowSwitcher-root button": { color: "white" },
+            "& .MuiDayCalendar-weekDayLabel": { color: "white" },
+            "& .MuiButtonBase-root:disabled": { color: "red !important" },
           }}
         />
       </div>

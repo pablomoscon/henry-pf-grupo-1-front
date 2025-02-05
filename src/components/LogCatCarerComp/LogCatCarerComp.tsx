@@ -60,6 +60,11 @@ const LogCatCareComp = () => {
       return;
     }
 
+    if (!postText.trim() && !media) {
+      alert("You must add text or select a photo/video before posting.");
+      return;
+    }
+
     const formData: IPostSend = {
       file: media || undefined,
       body: postText,
@@ -67,8 +72,6 @@ const LogCatCareComp = () => {
       receiver: idReceiver || "",
       reservationId,
     };
-
-    console.log("Data sent to post", formData);
 
     try {
       const newPost = await registerPost(formData, token);
