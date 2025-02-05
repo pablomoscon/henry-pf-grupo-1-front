@@ -4,7 +4,7 @@ import { IReservationEdit } from "@/interfaces/IReserve";
 import { FaEdit, FaTrash } from "react-icons/fa";
 import { useState, useMemo } from "react";
 import { EditReservationModal } from "../EditReservationModal/EditReservationModal";
-
+import { DeleteModal } from "../DeleteModal/DeleteModal";
 interface ReservationsTableProps {
   reservations: IReservationEdit[];
   onEdit: (reservation: IReservationEdit) => void;
@@ -26,6 +26,7 @@ export function ReservationsTable({
   });
   const [filterField, setFilterField] = useState("id");
   const [filterText, setFilterText] = useState("");
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   const handleEdit = (reservation: IReservationEdit) => {
     setSelectedReservation(reservation);
@@ -97,6 +98,27 @@ export function ReservationsTable({
     setIsLoading(true);
     setDateRange((prev) => ({ ...prev, [type]: value }));
     setTimeout(() => setIsLoading(false), 300);
+  };
+
+  const handleDelete = async (reservationToDelete: IReservationEdit) => {
+    setIsDeleteModalOpen(true);
+    setSelectedReservation(reservationToDelete);
+  };
+
+  const handleConfirmDelete = async () => {
+    try {
+      // Lógica para eliminar la reserva
+      await onDelete(selectedReservation?.id || "");
+      setIsDeleteModalOpen(false);
+      alert("Reservation deleted successfully!");
+    } catch (error) {
+      console.error("Error deleting reservation:", error);
+      alert("Error deleting reservation");
+    }
+  };
+
+  const handleCancelDelete = () => {
+    setIsDeleteModalOpen(false);
   };
 
   return (
@@ -275,7 +297,7 @@ export function ReservationsTable({
                           <FaEdit size={16} />
                         </button>
                         <button
-                          onClick={() => onDelete(reservation.id)}
+                          onClick={() => handleDelete(reservation)}
                           className="text-red-400 hover:text-red-300 transition-colors"
                         >
                           <FaTrash size={16} />
@@ -305,6 +327,13 @@ export function ReservationsTable({
         onClose={() => setIsModalOpen(false)}
         onSave={handleSave}
         reservation={selectedReservation}
+      />
+      <DeleteModal
+        isOpen={isDeleteModalOpen}
+        onClose={handleCancelDelete}
+        onConfirm={handleConfirmDelete}
+        title="Delete Reservation"
+        message="Are you sure you want to delete this reservation?"
       />
     </>
   );

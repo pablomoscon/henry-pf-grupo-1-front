@@ -58,6 +58,17 @@ export const EditReservationManager = () => {
     }
   };
 
+  const handleDelete = async (id: string) => {
+    if (user?.response?.token)
+      try {
+        await reservationService.deleteReservation(id, user.response.token);
+        await fetchReservations();
+      } catch (error) {
+        console.error("Error deleting reservation", error);
+        alert("Error deleting reservation. Please try again.");
+      }
+  };
+
   return (
     <div className="w-full max-w-4xl mx-auto">
       <h2 className="text-2xl mb-6" style={{ color: "var(--gold-soft)" }}>
@@ -71,7 +82,7 @@ export const EditReservationManager = () => {
             setIsModalOpen(true);
           }}
           onDelete={(id) => {
-            console.log("Delete:", id);
+            handleDelete(id);
           }}
         />
         <EditReservationModal

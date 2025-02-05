@@ -25,18 +25,18 @@ export const DeleteModal = ({
           {title}
         </h3>
         <p>{message}</p>
-        <div className="mt-4 flex gap-2">
+        <div className="mt-4 flex justify-center gap-2">
           <button
             onClick={onConfirm}
-            className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+            className="bg-green-dark text-white px-4 py-2 rounded hover:bg-green-olive"
           >
-            Eliminar
+            Delete
           </button>
           <button
             onClick={onClose}
             className="bg-black-light text-white-ivory px-4 py-2 rounded hover:bg-opacity-80"
           >
-            Cancelar
+            Cancel
           </button>
         </div>
       </div>
