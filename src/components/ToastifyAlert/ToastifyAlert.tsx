@@ -11,7 +11,7 @@ export default function ToastifyAlert() {
     window.alert = (message: string) => {
       toast(message, {
         position: "top-left",
-        autoClose: 2000,
+        autoClose: 5000,
         hideProgressBar: false,
         closeOnClick: true,
         pauseOnHover: true,
