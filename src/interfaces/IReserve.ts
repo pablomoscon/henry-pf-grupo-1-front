@@ -1,5 +1,3 @@
-import { UserData } from "./IUser";
-
 export interface IReserve {
   userId: string | undefined;
   roomId: string;
@@ -37,18 +35,6 @@ export interface IReservation {
   totalAmount: string;
   room: IRoomInReservation;
   user?: IUserInReservation;
-  caretaker?: UserData | null;
-  caretakers?: {
-    id: string;
-    profileData: string;
-    deleted_at: string | null;
-    user: {
-      id: string;
-      name: string;
-      email: string;
-      // ... other user properties
-    };
-  }[];
 }
 
 export interface IReservationUpdate {
@@ -71,4 +57,14 @@ export interface IReservationEdit {
   caretakers?: ICaretaker[];
   payments: unknown[];
   userName: string;
+}
+
+export interface Caretaker {
+  id: string;
+  name: string;
+}
+
+export interface Reservation {
+  id: string;
+  caretakers: Caretaker[];
 }
