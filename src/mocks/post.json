@@ -1,0 +1,47 @@
+[
+  {
+    "id": "19352946-6a67-49fa-802b-bdecaf3c64b4",
+    "media_url": "https://res.cloudinary.com/dofznnphj/image/upload/v1738156550/uploads/TheFancyBox%20Logo.jpg.jpg",
+    "type": "POST",
+    "uploaded_at": null,
+    "deleted_at": null,
+    "body": "Hola, ¿cómo estás?\n",
+    "timestamp": "2025-01-29T13:31:57.587Z",
+    "sender": {
+      "id": "123e4567-e89b-12d3-a456-426614174003",
+      "name": "Bob Johnson",
+      "email": "bob.johnson@mail.com",
+      "customerId": "43989097",
+      "phone": "+5412345681",
+      "deleted_at": null,
+      "address": "321 Pine St, Star City",
+      "role": "caretaker",
+      "status": "active",
+      "createdAt": "2025-01-29T13:31:36.824Z"
+    },
+    "receivers": [
+      {
+        "id": "123e4567-e89b-12d3-a456-426614174000",
+        "name": "John Williams",
+        "email": "john.williams@mail.com",
+        "customerId": "22234768",
+        "phone": "+5412345678",
+        "deleted_at": null,
+        "address": "123 Main St, Springfield",
+        "role": "admin",
+        "status": "active",
+        "createdAt": "2025-01-29T13:31:36.809Z"
+      }
+    ],
+    "reservation": {
+      "id": "123e4567-e89b-12d3-a456-426614174000",
+      "checkInDate": "2025-01-09",
+      "checkOutDate": "2025-01-10",
+      "status": "PENDING",
+      "createdAt": "2025-01-01T08:00:00.000Z",
+      "updatedAt": "2025-01-05T10:00:00.000Z",
+      "deleted_at": null,
+      "totalAmount": "100.00"
+    }
+  }
+]

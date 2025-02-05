@@ -1,0 +1,153 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --black-dark: #0d0d0d;
+  --black-light: #1a1a1a;
+  --white-ivory: #fdf6e3;
+  --white-basic: #f8f8f8;
+  --gray-ash: #b0b0b0;
+  --gold-soft: #d4af37;
+  --gold-dark: #92781f;
+  --green-olive: #9cb380;
+  --green-dark: #7c985a;
+
+  --primary-font: "Merriweather", serif;
+  --secondary-font: "Roboto", sans-serif;
+
+  --navbar-height: 120px;
+  --footer-height: 40px;
+}
+
+.bg-gradient-navbar {
+  background: linear-gradient(
+    to bottom,
+    rgba(253, 246, 227, 1) 0%,
+    rgba(253, 246, 227, 0.9) 50%,
+    rgba(253, 246, 227, 0.8) 60%,
+    rgba(255, 255, 255, 0) 100%
+  );
+}
+
+.bg-gradient-about {
+  background: linear-gradient(
+      to top,
+      rgba(255, 255, 255, 0) 0%,
+      rgba(255, 255, 255, 0.8) 20%,
+      rgba(255, 255, 255, 1) 50%,
+      rgba(255, 255, 255, 0.8) 80%,
+      rgba(255, 255, 255, 0) 100%
+    ),
+    black;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--secondary-font);
+  color: var(--white-basic);
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  flex-grow: 1;
+}
+
+.wrapper {
+  width: 95%;
+  max-width: 1390px;
+  margin: 0 auto;
+}
+
+.flex-grow {
+  flex-grow: 1;
+}
+
+h1 {
+  margin-top: 0.3rem;
+  margin-bottom: 0.3rem;
+  font-family: var(--primary-font);
+  font-size: 2.8rem;
+  font-weight: 500;
+  text-align: center;
+}
+
+h2 {
+  font-size: 2rem;
+  font-weight: 500;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.button_gold {
+  background-color: var(--gold-soft);
+  color: var(--black-dark);
+  font-size: 0.75rem;
+  font-weight: bold;
+  display: block;
+  width: max-content;
+  padding: 0.3rem 1rem;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+}
+
+.button_gold:hover {
+  background-color: var(--gold-dark);
+}
+
+.button_green {
+  background-color: var(--green-olive);
+  color: var(--black-dark);
+  font-size: 0.75rem;
+  font-weight: bold;
+  display: block;
+  width: max-content;
+  padding: 0.5rem 1.5rem;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+}
+
+.button_green:hover {
+  background-color: var(--green-dark);
+}
+
+/* Ejemplo de sombra en global.css */
+.shadow-md {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.shadow-lg {
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Elimina las flechas para navegadores basados en WebKit */
+input[type="number"].no-arrows::-webkit-inner-spin-button,
+input[type="number"].no-arrows::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Elimina las flechas para Firefox */
+input[type="number"].no-arrows {
+  -moz-appearance: textfield;
+}
+
+.Toastify__progress-bar {
+  background: var(--gold-soft) !important;
+}
+
+.Toastify__toast {
+  min-height: 48px !important;
+  padding: 8px !important;
+  font-size: 14px !important;
+  margin-bottom: 0.5rem !important;
+}
+
+.Toastify__toast-container {
+  width: 280px !important;
+}
