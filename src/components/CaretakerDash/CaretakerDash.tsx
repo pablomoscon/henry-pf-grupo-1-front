@@ -23,6 +23,8 @@ const CaretakerDash = () => {
     fetchBooks();
   }, [userData, token]);
 
+  console.log(books);
+
   return (
     <div className="flex flex-col items-center min-h-screen pt-24 pb-12 px-4">
       <h1 className="text-4xl text-center text-gold-soft pb-8">
