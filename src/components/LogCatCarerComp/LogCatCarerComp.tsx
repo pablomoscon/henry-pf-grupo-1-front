@@ -1,32 +1,43 @@
 "use client";
 import { useState, useContext, useEffect } from "react";
-import { getPosts } from "@/services/logServices";
+import { useSearchParams } from "next/navigation"; // Importamos useSearchParams
+import { getPosts, registerPost } from "@/services/logServices";
 import { UserContext } from "@/contexts/userContext";
-import { registerPost } from "@/services/logServices";
-import { IPostSend } from "@/interfaces/IPost";
-import { IPost } from "@/interfaces/IPost";
+import { IPostSend, IPost } from "@/interfaces/IPost";
 import CardLog from "../CardLog/CardLog";
 import ModalLog from "../ModalLog/ModalLog";
 
 const LogCatCareComp = () => {
+  const searchParams = useSearchParams();
+  const reservationId = searchParams.get("reservationId");
+  const userName = searchParams.get("userName");
+  const catsNames = searchParams.get("catsNames")?.split(",");
+  const idReceiver = searchParams.get("idReceiver");
+
   const [posts, setPosts] = useState<IPost[]>([]);
   const [loading, setLoading] = useState(true);
   const [postText, setPostText] = useState("");
   const [media, setMedia] = useState<File | null>(null);
   const [showModal, setShowModal] = useState(false);
   const [fileName, setFileName] = useState("");
-  const { user } = useContext(UserContext);
 
+  const { user } = useContext(UserContext);
   const token = user?.response.token;
   const idUser = user?.response.user.id;
 
   useEffect(() => {
     const loadPosts = async () => {
-      if (!idUser) return;
+      if (!reservationId) return;
       setLoading(true);
       try {
-        const data = await getPosts(idUser);
-        setPosts(data);
+        const data = await getPosts(reservationId);
+
+        const sortedPosts = data.sort(
+          (a, b) =>
+            new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+        );
+
+        setPosts(sortedPosts);
       } catch (error) {
         console.error("Error fetching posts:", error);
       } finally {
@@ -35,7 +46,7 @@ const LogCatCareComp = () => {
     };
 
     loadPosts();
-  }, [idUser]);
+  }, [reservationId]);
 
   const handleMediaConfirm = (file: File | null) => {
     setMedia(file);
@@ -44,12 +55,17 @@ const LogCatCareComp = () => {
   };
 
   const handleSubmit = async () => {
+    if (!reservationId) {
+      alert("No reservation selected!");
+      return;
+    }
+
     const formData: IPostSend = {
       file: media || undefined,
       body: postText,
-      sender: "123e4567-e89b-12d3-a456-426614174001",
-      receiver: "123e4567-e89b-12d3-a456-426614174000",
-      reservationId: "123e4567-e89b-12d3-a456-426614174002",
+      sender: idUser || "",
+      receiver: idReceiver || "",
+      reservationId,
     };
 
     console.log("Datos enviados al post", formData);
@@ -73,7 +89,14 @@ const LogCatCareComp = () => {
   return (
     <div className="flex justify-center pt-24 pb-20 mb-24 px-4">
       <div className="bg-black-dark border border-white-basic rounded-lg p-6 w-full max-w-2xl">
-        <h2 className="text-center text-gold-soft text-3xl mb-4">Pucho</h2>
+        <div>
+          <h2 className="text-center text-gold-soft text-3xl mb-4">
+            Customer - {userName}
+          </h2>
+          <h3 className="text-center text-white-basic text-xl mb-2">
+            Feed Cat: {catsNames?.join(", ")}
+          </h3>
+        </div>
 
         {/* Cuadro de carga de post */}
         <div className="bg-black-dark border border-white-basic rounded-lg p-6 mb-4 w-full max-w-2xl">
@@ -113,7 +136,7 @@ const LogCatCareComp = () => {
           posts.map((post) => <CardLog key={post.id} post={post} />)
         ) : (
           <p className="text-white-basic text-center mt-4">
-            There are no posts yet.
+            No hay posteos aún.
           </p>
         )}
       </div>

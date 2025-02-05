@@ -18,4 +18,5 @@ export interface IBookCaretaker {
   roomName: string;
   checkInDate: string;
   checkOutDate: string;
+  reservationId: string;
 }

@@ -1,5 +1,4 @@
 import { useState } from "react";
-
 interface ModalProps {
   onClose: () => void;
   onConfirm: (file: File | null) => void;
@@ -35,20 +34,23 @@ const Modal = ({ onClose, onConfirm }: ModalProps) => {
         >
           ✖
         </button>
-        <h2 className="text-white-basic text-center mb-4">
+        <p className="text-white-basic text-xl text-center mb-10">
           Selecciona tu Photo / Video
-        </h2>
+        </p>
         <input
           type="file"
-          accept="image/*,video/*"
+          accept="image/png, image/jpeg, image/jpg, video/mp4, video/avi, video/mov"
           onChange={handleFileChange}
-          className="w-full mb-4"
         />
         {preview && (
-          <img src={preview} alt="Preview" className="w-full rounded-lg mb-4" />
+          <img
+            src={preview}
+            alt="Preview"
+            className="w-full rounded-lg mt-4 mb-4"
+          />
         )}
         <button
-          className="bg-green-dark text-white px-4 py-2 rounded-lg w-full"
+          className="bg-green-dark text-white px-4 py-2 rounded-lg w-full mt-4"
           onClick={handleConfirm}
           disabled={!selectedFile}
         >
