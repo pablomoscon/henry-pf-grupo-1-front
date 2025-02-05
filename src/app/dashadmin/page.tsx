@@ -1,12 +1,12 @@
 import ProtectedRoute from "@/components/ProtectedRoute/ProtectedRoute";
 import AdminLayout from "@/components/AdminLayout/AdminLayout";
-import ReservationsManager from "@/components/ReservationsManager/ReservationsManager";
+import { EditReservationManager } from "@/components/EditReservationManager/EditReservationManager";
 
 const ReservationsPage = () => {
   return (
     <ProtectedRoute>
       <AdminLayout>
-        <ReservationsManager />
+        <EditReservationManager />
       </AdminLayout>
     </ProtectedRoute>
   );

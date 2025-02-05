@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect, useContext, useCallback } from "react";
 import { ReservationsTable } from "@/components/ReservationsTable/ReservationsTable";
 import { reservationService } from "@/services/editReservationServices";
 import { IReservationEdit } from "@/interfaces/IReserve";
@@ -14,59 +14,53 @@ export const EditReservationManager = () => {
     useState<IReservationEdit | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  useEffect(() => {
-    const fetchReservations = async () => {
-      if (!user?.response?.token) {
-        console.log("No hay token disponible");
-        return;
+  const fetchReservations = useCallback(async () => {
+    if (!user?.response?.token) {
+      return;
+    }
+    try {
+      const data = await reservationService.getReservations(
+        user.response.token
+      );
+      if (data) {
+        setReservations(data);
       }
-
-      try {
-        const data = await reservationService.getReservations(
-          user.response.token
-        );
-        if (data) {
-          setReservations(data);
-        }
-      } catch (error) {
-        console.error("Error al obtener reservaciones:", error);
-      }
-    };
-
-    if (user?.response?.token) {
-      fetchReservations();
+    } catch (error) {
+      console.error("Error getting reservations", error);
     }
   }, [user?.response?.token]);
 
-const handleSave = async (updatedReservation: IReservationEdit) => {
-  try {
-    
-    const caretakerId =
-      updatedReservation.caretakers && updatedReservation.caretakers.length > 0
-        ? updatedReservation.caretakers[0].id
-        : ''; 
+  useEffect(() => {
+    if (user?.response?.token) {
+      fetchReservations();
+    }
+  }, [user?.response?.token, fetchReservations]);
 
-    await reservationService.updateReservation(
-      updatedReservation.id,
-      { caretakerId },
-      user?.response?.token
-    );
+  const handleSave = async (updatedReservation: IReservationEdit) => {
+    try {
+      const caretakerId =
+        updatedReservation.caretakers &&
+        updatedReservation.caretakers.length > 0
+          ? updatedReservation.caretakers[0].id
+          : "";
 
-    const updatedReservations = reservations.map((res) =>
-      res.id === updatedReservation.id ? updatedReservation : res
-    );
+      await reservationService.updateReservation(
+        updatedReservation.id,
+        { caretakerId },
+        user?.response?.token
+      );
+      await fetchReservations();
 
-    setReservations(updatedReservations);
-    setIsModalOpen(false);
-  } catch (error) {
-    console.error('Error al actualizar la reserva:', error);
-    alert('Error al actualizar la reserva. Por favor, intenta de nuevo.');
-  }
-};
+      setIsModalOpen(false);
+    } catch (error) {
+      console.error("Error updating reservation", error);
+      alert("Error updating reservation. Please try again.");
+    }
+  };
 
   return (
     <div className="min-h-screen pt-24 pb-16 px-4 flex items-center justify-center bg-black-dark">
-      <div className="w-full max-w-7xl mx-auto p-6 rounded-lg shadow-md space-y-3">
+      <div className="w-full max-w-4xl mx-auto p-6 rounded-lg shadow-md space-y-3">
         <h2 className="text-2xl mb-4" style={{ color: "var(--gold-soft)" }}>
           Edit Reservations
         </h2>
