@@ -1,4 +1,5 @@
 import { useState } from "react";
+
 interface ModalProps {
   onClose: () => void;
   onConfirm: (file: File | null) => void;
@@ -7,15 +8,22 @@ interface ModalProps {
 const Modal = ({ onClose, onConfirm }: ModalProps) => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
+  const [isVideo, setIsVideo] = useState<boolean>(false);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files[0]) {
       const file = event.target.files[0];
       setSelectedFile(file);
+
       if (file.type.startsWith("image")) {
         setPreview(URL.createObjectURL(file));
+        setIsVideo(false);
+      } else if (file.type.startsWith("video")) {
+        setPreview(URL.createObjectURL(file));
+        setIsVideo(true);
       } else {
         setPreview(null);
+        setIsVideo(false);
       }
     }
   };
@@ -42,13 +50,19 @@ const Modal = ({ onClose, onConfirm }: ModalProps) => {
           accept="image/png, image/jpeg, image/jpg, video/mp4, video/avi, video/mov"
           onChange={handleFileChange}
         />
-        {preview && (
-          <img
-            src={preview}
-            alt="Preview"
-            className="w-full rounded-lg mt-4 mb-4"
-          />
-        )}
+        {preview &&
+          (isVideo ? (
+            <video controls className="w-full rounded-lg mt-4 mb-4">
+              <source src={preview} type={selectedFile?.type} />
+              Tu navegador no soporta la reproducción de videos.
+            </video>
+          ) : (
+            <img
+              src={preview}
+              alt="Preview"
+              className="w-full rounded-lg mt-4 mb-4"
+            />
+          ))}
         <button
           className="bg-green-dark text-white px-4 py-2 rounded-lg w-full mt-4"
           onClick={handleConfirm}
