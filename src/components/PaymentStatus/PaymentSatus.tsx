@@ -16,10 +16,9 @@ export default function PaymentStatus() {
     } else {
       alert('Invalid Payment Status');
     }
-
     setTimeout(() => {
       router.push('/');
-    }, 2000);
+    }, 3000);
   }, [status, router]);
 
   return (
