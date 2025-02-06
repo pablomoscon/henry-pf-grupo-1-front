@@ -3,6 +3,8 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useContext } from "react";
 import { UserContext } from "@/contexts/userContext";
+import { fetchWithInterceptor } from "@/services/fetchInterceptor";
+import { API_URL } from "../../../envs";
 
 const GoogleCallback = () => {
   const router = useRouter();
@@ -27,8 +29,8 @@ const GoogleCallback = () => {
           return;
         }
 
-        const response = await fetch(
-          "http://localhost:3000/auth/google/callback",
+        const response = await fetchWithInterceptor(
+          `${API_URL}/auth/google/callback`,
           {
             headers: {
               Authorization: `Bearer ${token}`,

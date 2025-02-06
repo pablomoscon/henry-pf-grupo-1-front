@@ -2,15 +2,19 @@ import posts from "@/mocks/post";
 import { IPostSend } from "@/interfaces/IPost";
 import { IPost } from "@/interfaces/IPost";
 import { API_URL } from "../../envs";
+import { fetchWithInterceptor } from "./fetchInterceptor";
 
 export const getPosts1 = () => {
   return posts;
 };
 
 export const getPosts = async (idUser: string): Promise<IPost[]> => {
-  const res = await fetch(`${API_URL}/messages/received/${idUser}`, {
-    cache: "no-store",
-  })
+  const res = await fetchWithInterceptor(
+    `${API_URL}/messages/received/${idUser}`,
+    {
+      cache: "no-store",
+    }
+  )
     .then((res) => res.json())
     .catch(() => {
       return [];
@@ -37,7 +41,7 @@ export const registerPost = async (
   formDataToSend.append("reservationId", reservationId);
 
   try {
-    const res = await fetch(`${API_URL}/messages/posts`, {
+    const res = await fetchWithInterceptor(`${API_URL}/messages/posts`, {
       method: "POST",
       body: formDataToSend,
       headers: {

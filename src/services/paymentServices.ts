@@ -1,11 +1,12 @@
 import { API_URL } from "../../envs";
+import { fetchWithInterceptor } from "./fetchInterceptor";
 
 export const fetchPaymentStatus = async (
   sessionId: string,
   status: string
 ): Promise<string> => {
   const url = `${API_URL}/payments/status?sessionId=${sessionId}&status=${status}`;
-  const response = await fetch(url);
+  const response = await fetchWithInterceptor(url);
 
   if (!response.ok) {
     throw new Error("Error al obtener el estado del pago.");
@@ -18,7 +19,7 @@ export const confirmPayment = async (reservationId: string, token?: string) => {
   try {
     console.log("token", token);
 
-    const response = await fetch(
+    const response = await fetchWithInterceptor(
       `${API_URL}/payments/create-checkout-session/${reservationId}`,
       {
         method: "POST",

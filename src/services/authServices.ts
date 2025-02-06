@@ -1,4 +1,5 @@
 import { API_URL } from "../../envs";
+import { fetchWithInterceptor } from "./fetchInterceptor";
 
 export const googleAuth = () => {
   window.location.href = `${API_URL}/auth/google`;
@@ -6,11 +7,14 @@ export const googleAuth = () => {
 
 export const getUserData = async (token: string) => {
   try {
-    const response = await fetch(`${API_URL}/auth/google/callback`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    const response = await fetchWithInterceptor(
+      `${API_URL}/auth/google/callback`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
 
     if (!response.ok) {
       throw new Error("Failed to get user data");
