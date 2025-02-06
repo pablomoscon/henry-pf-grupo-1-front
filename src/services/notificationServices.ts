@@ -1,4 +1,4 @@
-import { API_URL } from "../envs";
+import { API_URL } from "../../envs";
 
 export const getAllNotifications = async (
   userId: string,

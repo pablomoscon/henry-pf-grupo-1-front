@@ -6,7 +6,7 @@ import {
   ChangePasswordData,
   ChangePasswordResponse,
 } from "@/interfaces/IUser";
-import { API_URL } from "../envs";
+import { API_URL } from "../../envs";
 
 export const userRegister = async (data: UserRegister) => {
   const res = await fetch(`${API_URL}/auth/signup`, {
