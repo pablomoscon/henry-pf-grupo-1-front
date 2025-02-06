@@ -13,17 +13,13 @@ export const fetchWithInterceptor = async (
     const response = await fetch(url, options);
 
     if (response.status === 401) {
-      const data = await response.json();
-      if (data.message === "Unauthorized") {
-        if (logoutHandler) {
-          logoutHandler();
-        } else {
-          // Fallback por si el handler no está configurado
-          localStorage.removeItem("user");
-          window.location.href = "/";
-        }
-        throw new Error("Unauthorized - Redirecting to login");
+      if (logoutHandler) {
+        logoutHandler();
+      } else {
+        localStorage.removeItem("user");
+        window.location.href = "/";
       }
+      throw new Error("Unauthorized - Redirecting to login");
     }
 
     return response;
