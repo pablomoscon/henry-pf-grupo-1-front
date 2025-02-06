@@ -23,14 +23,16 @@ export default function PaymentStatus() {
   }, [status, router]);
 
   return (
-    <div>
-      <h1>
-        {status === 'succeeded'
-          ? 'Payment Successful'
-          : status === 'canceled'
-          ? 'Payment Cancelled'
-          : 'Invalid Payment Status'}
-      </h1>
+    <div className='text-3xl font-bold text-center py-10 h-screen flex items-center justify-center'>
+      <div>
+        <h1>
+          {status === 'succeeded'
+            ? 'Payment Successful'
+            : status === 'canceled'
+            ? 'Payment Cancelled'
+            : 'Invalid Payment Status'}
+        </h1>
+      </div>
     </div>
   );
 }
