@@ -1,11 +1,11 @@
 "use client";
 import Image from "next/image";
-import { IRoom } from "@/interfaces/IRoom";
+import { IRoomResponse } from "@/interfaces/IRoom";
 import { useContext } from "react";
 import { UserContext } from "@/contexts/userContext";
 import { useRouter, usePathname } from "next/navigation";
 
-const Detail = ({ room }: { room: IRoom }) => {
+const Detail = ({ room }: { room: IRoomResponse }) => {
   const { user } = useContext(UserContext);
   const router = useRouter();
   const pathname = usePathname();
