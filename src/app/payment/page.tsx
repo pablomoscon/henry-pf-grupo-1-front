@@ -1,38 +1,17 @@
-"use client";
+import PaymentStatus from '@/components/PaymentStatus/PaymentSatus';
+import ToastifyAlert from '@/components/ToastifyAlert/ToastifyAlert';
+import Link from 'next/link';
 
-import { Suspense } from "react";
-import PaymentCancel from "@/components/PaymentCancel/PaymentCancel";
-import PaymentSuccess from "@/components/PaymentSuccess.tsx/PaymentSuccess";
-import Link from "next/link";
-import { useSearchParams } from "next/navigation";
-
-function PaymentPage() {
-  const searchParams = useSearchParams();
-  const sessionId = searchParams.get("sessionId");
-  const status = searchParams.get("status");
-
+export default function PaymentPage() {
   return (
-    <div className="text-3xl font-bold text-center py-10 h-screen flex items-center justify-center">
+    <div className='text-3xl font-bold text-center py-10 h-screen flex items-center justify-center'>
+      <ToastifyAlert />
       <div>
-        {status === "succeeded" ? (
-          <PaymentSuccess sessionId={sessionId} status={status} />
-        ) : status === "canceled" ? (
-          <PaymentCancel sessionId={sessionId} status={status} />
-        ) : (
-          <p>No valid status specified.</p>
-        )}
-        <Link href="/" className="text-blue-500 block mt-4">
+        <PaymentStatus />{' '}
+        <Link href='/' className='text-gold-soft block mt-4'>
           Back to The Fancy Box
         </Link>
       </div>
     </div>
-  );
-}
-
-export default function Page() {
-  return (
-    <Suspense fallback={<div>Loading...</div>}>
-      <PaymentPage />
-    </Suspense>
   );
 }
