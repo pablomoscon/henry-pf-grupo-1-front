@@ -1,6 +1,7 @@
 "use client";
 import { LoginResponse, UserData } from "@/interfaces/IUser";
 import { useState, createContext, useEffect } from "react";
+import { setLogoutHandler } from "@/services/fetchInterceptor";
 
 interface UserContextProps {
   user: LoginResponse | null;
@@ -37,6 +38,9 @@ const UserProvider = ({ children }: { children: React.ReactNode }) => {
     const localUser = localStorage.getItem("user");
     setUser(localUser ? JSON.parse(localUser) : null);
     setLoading(false); // Actualiza el estado de loading después de cargar
+
+    // Configurar el handler de logout
+    setLogoutHandler(() => logOut());
   }, []);
 
   const isLogged = () => {

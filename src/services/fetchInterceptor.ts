@@ -1,3 +1,10 @@
+type LogoutFunction = () => void;
+let logoutHandler: LogoutFunction | null = null;
+
+export const setLogoutHandler = (handler: LogoutFunction) => {
+  logoutHandler = handler;
+};
+
 export const fetchWithInterceptor = async (
   url: string,
   options?: RequestInit
@@ -8,12 +15,13 @@ export const fetchWithInterceptor = async (
     if (response.status === 401) {
       const data = await response.json();
       if (data.message === "Unauthorized") {
-        // Clear local storage
-        localStorage.removeItem("user");
-
-        // Redirect to home page
-        window.location.href = "/";
-
+        if (logoutHandler) {
+          logoutHandler();
+        } else {
+          // Fallback por si el handler no está configurado
+          localStorage.removeItem("user");
+          window.location.href = "/";
+        }
         throw new Error("Unauthorized - Redirecting to login");
       }
     }

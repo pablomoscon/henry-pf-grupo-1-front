@@ -1,9 +1,10 @@
 import { UserData, UserRegister } from "@/interfaces/IUser";
 import { API_URL } from "../../envs";
+import { fetchWithInterceptor } from "./fetchInterceptor";
 
 export const caretakerService = {
   async getCaretakers(token: string): Promise<UserData[]> {
-    const response = await fetch(`${API_URL}/users/caretakers`, {
+    const response = await fetchWithInterceptor(`${API_URL}/users/caretakers`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -14,19 +15,22 @@ export const caretakerService = {
   async createCaretaker(
     caretaker: Omit<UserRegister, "role" | "confirmPassword">
   ): Promise<void> {
-    const response = await fetch(`${API_URL}/auth/caretaker-signup`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        ...caretaker,
-        role: "caretaker",
-        status: "active",
-        isVerified: true,
-        confirmPassword: caretaker.password,
-      }),
-    });
+    const response = await fetchWithInterceptor(
+      `${API_URL}/auth/caretaker-signup`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          ...caretaker,
+          role: "caretaker",
+          status: "active",
+          isVerified: true,
+          confirmPassword: caretaker.password,
+        }),
+      }
+    );
 
     if (!response.ok) {
       const error = await response.json();
@@ -42,7 +46,7 @@ export const caretakerService = {
     const { name, email, phone, address, customerId } = userData;
     const updateData = { name, email, phone, address, customerId };
 
-    const res = await fetch(`${API_URL}/users/${id}`, {
+    const res = await fetchWithInterceptor(`${API_URL}/users/${id}`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",

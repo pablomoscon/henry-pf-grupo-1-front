@@ -1,9 +1,10 @@
+import { fetchWithInterceptor } from "./fetchInterceptor";
 import { IReview, IReviewCreate } from "@/interfaces/IReview";
 import { API_URL } from "../../envs";
 
 export const fetchReviews = async (): Promise<IReview[]> => {
   try {
-    const response = await fetch(`${API_URL}/reviews`, {
+    const response = await fetchWithInterceptor(`${API_URL}/reviews`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
