@@ -1,12 +1,12 @@
-import { IRoom } from "@/interfaces/IRoom";
+import { IRoomResponse } from "@/interfaces/IRoom";
 import { FaEdit, FaTrash } from "react-icons/fa";
 import Image from "next/image";
 import { useState } from "react";
 
 interface SuitesTableProps {
-  suites: IRoom[];
-  onEdit: (suite: IRoom) => void;
-  setSuiteToDelete: (suite: IRoom | null) => void;
+  suites: IRoomResponse[];
+  onEdit: (suite: IRoomResponse) => void;
+  setSuiteToDelete: (suite: IRoomResponse | null) => void;
   setShowConfirmDelete: (show: boolean) => void;
 }
 

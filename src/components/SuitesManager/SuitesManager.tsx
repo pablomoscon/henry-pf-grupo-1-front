@@ -2,7 +2,7 @@
 
 import { useState, useContext, useEffect } from "react";
 import { UserContext } from "@/contexts/userContext";
-import { IRoom } from "@/interfaces/IRoom";
+import { IRoomResponse } from "@/interfaces/IRoom";
 import { getRooms } from "@/services/roomService";
 import { roomService } from "@/services/roomService";
 import SuitesForm from "../SuitesForm/SuitesForm";
@@ -12,11 +12,13 @@ import { DeleteModal } from "../DeleteModal/DeleteModal";
 
 const SuitesManager = () => {
   const { user } = useContext(UserContext);
-  const [suites, setSuites] = useState<IRoom[]>([]);
+  const [suites, setSuites] = useState<IRoomResponse[]>([]);
   const [showEditForm, setShowEditForm] = useState(false);
-  const [suiteToEdit, setSuiteToEdit] = useState<IRoom | null>(null);
+  const [suiteToEdit, setSuiteToEdit] = useState<IRoomResponse | null>(null);
   const [showModal, setShowModal] = useState(false);
-  const [suiteToDelete, setSuiteToDelete] = useState<IRoom | null>(null);
+  const [suiteToDelete, setSuiteToDelete] = useState<IRoomResponse | null>(
+    null
+  );
   const [showConfirmDelete, setShowConfirmDelete] = useState(false);
   const [showCreateForm, setShowCreateForm] = useState(false);
 
@@ -33,7 +35,7 @@ const SuitesManager = () => {
     loadSuites();
   }, []);
 
-  const handleEdit = (suite: IRoom) => {
+  const handleEdit = (suite: IRoomResponse) => {
     console.log("Suite to edit:", suite);
     const suiteWithId = {
       ...suite,
