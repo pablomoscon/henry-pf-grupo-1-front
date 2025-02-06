@@ -1,6 +1,6 @@
 import { IRoom, IRoomResponse } from "@/interfaces/IRoom";
 
-export const getRooms = async (): Promise<IRoom[]> => {
+export const getRooms = async (): Promise<IRoomResponse[]> => {
   const res = await fetch("http://localhost:3000/rooms?page=1&limit=100", {
     cache: "no-store",
   })
@@ -8,7 +8,7 @@ export const getRooms = async (): Promise<IRoom[]> => {
     .catch(() => {
       return [];
     });
-  return res as IRoom[];
+  return res as IRoomResponse[];
 };
 
 export const getRoomById = async (
@@ -88,7 +88,7 @@ export const filterRooms = async (
   numberOfCats: string,
   minPrice: string,
   maxPrice: string
-): Promise<IRoom[]> => {
+): Promise<IRoomResponse[]> => {
   const params = new URLSearchParams({
     checkInDate,
     checkOutDate,
@@ -100,7 +100,7 @@ export const filterRooms = async (
   try {
     const res = await fetch(`http://localhost:3000/rooms/filters?${params}`);
     const data = await res.json();
-    return data as IRoom[];
+    return data as IRoomResponse[];
   } catch {
     return [];
   }
