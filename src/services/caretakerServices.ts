@@ -1,8 +1,9 @@
 import { UserData, UserRegister } from "@/interfaces/IUser";
+import { API_URL } from "../envs";
 
 export const caretakerService = {
   async getCaretakers(token: string): Promise<UserData[]> {
-    const response = await fetch("http://localhost:3000/users/caretakers", {
+    const response = await fetch(`${API_URL}/users/caretakers`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -13,7 +14,7 @@ export const caretakerService = {
   async createCaretaker(
     caretaker: Omit<UserRegister, "role" | "confirmPassword">
   ): Promise<void> {
-    const response = await fetch("http://localhost:3000/auth/caretaker-signup", {
+    const response = await fetch(`${API_URL}/auth/caretaker-signup`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -41,7 +42,7 @@ export const caretakerService = {
     const { name, email, phone, address, customerId } = userData;
     const updateData = { name, email, phone, address, customerId };
 
-    const res = await fetch(`http://localhost:3000/users/${id}`, {
+    const res = await fetch(`${API_URL}/users/${id}`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
@@ -59,7 +60,7 @@ export const caretakerService = {
   },
 
   async deleteCaretaker(id: string, token: string): Promise<void> {
-    const response = await fetch(`http://localhost:3000/users/${id}`, {
+    const response = await fetch(`${API_URL}/users/${id}`, {
       method: "DELETE",
       headers: {
         Authorization: `Bearer ${token}`,

@@ -1,3 +1,5 @@
+import { API_URL } from "../envs";
+
 export const getAllNotifications = async (
   userId: string,
   token: string,
@@ -6,7 +8,7 @@ export const getAllNotifications = async (
 ) => {
   try {
     const response = await fetch(
-      `http://localhost:3000/notifications/user/${userId}?page=${page}&limit=${limit}`,
+      `${API_URL}/notifications/user/${userId}?page=${page}&limit=${limit}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -24,7 +26,7 @@ export const getAllNotifications = async (
 export const getUnreadNotifications = async (userId: string, token: string) => {
   try {
     const response = await fetch(
-      `http://localhost:3000/notifications?userId=${userId}&isRead=false`,
+      `${API_URL}/notifications?userId=${userId}&isRead=false`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -44,17 +46,14 @@ export const markNotificationAsRead = async (
   token: string
 ) => {
   try {
-    const response = await fetch(
-      `http://localhost:3000/notifications/${notificationId}`,
-      {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ isRead: true }),
-      }
-    );
+    const response = await fetch(`${API_URL}/notifications/${notificationId}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ isRead: true }),
+    });
     if (!response.ok) {
       console.error("Failed to mark notification as read");
       return false;

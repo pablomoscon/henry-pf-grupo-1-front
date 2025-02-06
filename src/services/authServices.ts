@@ -1,10 +1,12 @@
+import { API_URL } from "../envs";
+
 export const googleAuth = () => {
-  window.location.href = "http://localhost:3000/auth/google";
+  window.location.href = `${API_URL}/auth/google`;
 };
 
 export const getUserData = async (token: string) => {
   try {
-    const response = await fetch("http://localhost:3000/auth/google/callback", {
+    const response = await fetch(`${API_URL}/auth/google/callback`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },

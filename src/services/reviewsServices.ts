@@ -1,8 +1,9 @@
 import { IReview, IReviewCreate } from "@/interfaces/IReview";
+import { API_URL } from "../envs";
 
 export const fetchReviews = async (): Promise<IReview[]> => {
   try {
-    const response = await fetch("http://localhost:3000/reviews", {
+    const response = await fetch(`${API_URL}/reviews`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -26,7 +27,7 @@ export const createReview = async (
   token: string
 ): Promise<IReview> => {
   try {
-    const response = await fetch("http://localhost:3000/reviews", {
+    const response = await fetch(`${API_URL}/reviews`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
