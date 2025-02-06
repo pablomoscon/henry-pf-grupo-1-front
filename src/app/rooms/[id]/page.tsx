@@ -3,9 +3,7 @@ import { notFound } from "next/navigation";
 import Detail from "@/components/Detail/Detail";
 
 interface PageProps {
-  params: {
-    id: string;
-  };
+  params: Promise<{ id: string }>;
 }
 
 const Room = async ({ params }: PageProps) => {
