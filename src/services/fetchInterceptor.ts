@@ -10,7 +10,13 @@ export const fetchWithInterceptor = async (
   options?: RequestInit
 ): Promise<Response> => {
   try {
-    const response = await fetch(url, options);
+    const response = await fetch(url, {
+      ...options,
+      credentials: "include",
+      headers: {
+        ...options?.headers,
+      },
+    });
 
     if (response.status === 401) {
       if (logoutHandler) {
