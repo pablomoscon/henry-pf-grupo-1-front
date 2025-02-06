@@ -1,6 +1,7 @@
 import { useEffect, useRef, useCallback, useState } from "react";
 import { io, Socket } from "socket.io-client";
 import { ChatMessage, ChatUser } from "@/interfaces/IChat";
+import { API_URL } from "../../envs";
 
 export const useChat = (chatId: string, user: ChatUser | null | undefined) => {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -16,7 +17,7 @@ export const useChat = (chatId: string, user: ChatUser | null | undefined) => {
     console.log("Initializing socket connection:", { chatId, user });
 
     if (!socketRef.current) {
-      socketRef.current = io("http://localhost:3000/messages/chat", {
+      socketRef.current = io(`${API_URL}/messages/chat`, {
         transports: ["websocket"],
         query: { clientChatRoomId: chatId },
       });
