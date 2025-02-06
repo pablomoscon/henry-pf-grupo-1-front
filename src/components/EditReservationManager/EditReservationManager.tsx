@@ -1,18 +1,17 @@
+// EditReservationManager.tsx
 "use client";
-
-import { useState, useEffect, useContext, useCallback } from "react";
-import { ReservationsTable } from "@/components/ReservationsTable/ReservationsTable";
-import { reservationService } from "@/services/editReservationServices";
+import React, { useState, useEffect, useCallback, useContext } from "react";
 import { IReservationEdit } from "@/interfaces/IReserve";
+import { reservationService } from "@/services/editReservationServices";
 import { UserContext } from "@/contexts/userContext";
-import { EditReservationModal } from "@/components/EditReservationModal/EditReservationModal";
-
+import { ReservationsTable } from "@/components/ReservationsTable/ReservationsTable";
+import { EditReservationForm } from "../editReservationForm/editReservationForm";
 export const EditReservationManager = () => {
   const { user } = useContext(UserContext);
   const [reservations, setReservations] = useState<IReservationEdit[]>([]);
   const [selectedReservation, setSelectedReservation] =
     useState<IReservationEdit | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isEditOpen, setIsEditOpen] = useState(false);
 
   const fetchReservations = useCallback(async () => {
     if (!user?.response?.token) {
@@ -38,6 +37,7 @@ export const EditReservationManager = () => {
 
   const handleSave = async (updatedReservation: IReservationEdit) => {
     try {
+      console.log(user?.response?.token);
       const caretakerId =
         updatedReservation.caretakers &&
         updatedReservation.caretakers.length > 0
@@ -50,12 +50,15 @@ export const EditReservationManager = () => {
         user?.response?.token
       );
       await fetchReservations();
-
-      setIsModalOpen(false);
     } catch (error) {
       console.error("Error updating reservation", error);
       alert("Error updating reservation. Please try again.");
     }
+  };
+
+  const handleEdit = (reservation: IReservationEdit) => {
+    setSelectedReservation(reservation);
+    setIsEditOpen(true);
   };
 
   const handleDelete = async (id: string) => {
@@ -77,20 +80,16 @@ export const EditReservationManager = () => {
       <div className="bg-black-dark rounded-lg shadow-md">
         <ReservationsTable
           reservations={reservations}
-          onEdit={(reservation) => {
-            setSelectedReservation(reservation);
-            setIsModalOpen(true);
-          }}
-          onDelete={(id) => {
-            handleDelete(id);
-          }}
+          onEdit={handleEdit}
+          onDelete={handleDelete}
         />
-        <EditReservationModal
-          isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
-          onSave={handleSave}
-          reservation={selectedReservation}
-        />
+        {isEditOpen && (
+          <EditReservationForm
+            reservation={selectedReservation}
+            onClose={() => setIsEditOpen(false)}
+            onSave={handleSave}
+          />
+        )}
       </div>
     </div>
   );

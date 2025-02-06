@@ -18,17 +18,6 @@ export const reservationService = {
     console.log("Raw response:", data);
     return data;
   },
-  async createReservation(
-    data: Omit<IReservationEdit, "id">
-  ): Promise<IReservationEdit> {
-    const response = await fetch("http://localhost:3000/reservations", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data),
-    });
-    if (!response.ok) throw new Error("Error creating reservation");
-    return response.json();
-  },
 
   async updateReservation(
     reservationId: string,
@@ -63,16 +52,6 @@ export const reservationService = {
     }
   },
 
-  async deleteReservation(id: string, token: string): Promise<void> {
-    const response = await fetch(`http://localhost:3000/reservations/${id}`, {
-      method: "DELETE",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    if (!response.ok) throw new Error("Error deleting reservation");
-  },
-
   async unassignCaretaker(
     reservationId: string,
     data: { caretakerId: string },
@@ -82,7 +61,7 @@ export const reservationService = {
       console.log("Sending update request with:", { reservationId, data });
 
       const response = await fetch(
-        `http://localhost:3000/reservations/${reservationId}/caretaker/${data.caretakerId}`,
+        `http://localhost:3000/reservations/${reservationId}/remove-caretaker/${data.caretakerId}`,
         {
           method: "DELETE",
           headers: {
@@ -103,5 +82,27 @@ export const reservationService = {
       console.error("Error en updateReservation:", error);
       throw error;
     }
+  },
+
+  async deleteReservation(id: string, token: string): Promise<void> {
+    const response = await fetch(`http://localhost:3000/reservations/${id}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    if (!response.ok) throw new Error("Error deleting reservation");
+  },
+
+  async createReservation(
+    data: Omit<IReservationEdit, "id">
+  ): Promise<IReservationEdit> {
+    const response = await fetch("http://localhost:3000/reservations", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+    if (!response.ok) throw new Error("Error creating reservation");
+    return response.json();
   },
 };
