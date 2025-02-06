@@ -1,9 +1,9 @@
-'use client';
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation'; 
-import { UserContext } from '@/contexts/userContext';
-import { useContext } from 'react';
-import LoadingSpinner from '../LoadingSpinner/LoadingSpinner';
+"use client";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { UserContext } from "@/contexts/userContext";
+import { useContext } from "react";
+import LoadingSpinner from "../LoadingSpinner/LoadingSpinner";
 
 const LoadingPage = () => {
   const { isLogged, handleGoogleLogin } = useContext(UserContext);
@@ -12,40 +12,49 @@ const LoadingPage = () => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
+        console.log("1. All cookies:", document.cookie);
+
         const authCookie = document.cookie
-          .split('; ')
-          .find((row) => row.startsWith('auth='));
+          .split("; ")
+          .find((row) => row.startsWith("auth="));
 
-        if (!authCookie) return;
+        console.log("2. Auth cookie found:", authCookie);
 
-        const cookieValue = decodeURIComponent(authCookie.split('=')[1]);
-        const { token, user } = JSON.parse(cookieValue);
-
-        if (!token || !user) {
-          console.error('Token or user data missing.');
+        if (!authCookie) {
+          console.log("3. No auth cookie found");
           return;
         }
-        handleGoogleLogin({
-          token,
-          user,
-        });
 
-        router.push('/profile');
+        const cookieValue = decodeURIComponent(authCookie.split("=")[1]);
+        console.log("4. Decoded cookie value:", cookieValue);
+
+        const { token, user } = JSON.parse(cookieValue);
+        console.log("5. Parsed cookie data:", { token: "REDACTED", user });
+
+        if (!token || !user) {
+          console.error("6. Token or user data missing");
+          return;
+        }
+
+        handleGoogleLogin({ token, user });
+        router.push("/profile");
       } catch (error) {
-        console.error('Error during authentication process:', error);
+        console.error("7. Error processing cookie:", error);
       }
     };
 
     if (!isLogged()) {
+      console.log("8. User not logged in, fetching data");
       fetchUserData();
     } else {
-      router.push('/profile');
+      console.log("9. User already logged in, redirecting");
+      router.push("/profile");
     }
   }, [isLogged, handleGoogleLogin, router]);
 
   return (
-    <div className='flex justify-center items-center h-screen'>
-    <LoadingSpinner/>
+    <div className="flex justify-center items-center h-screen">
+      <LoadingSpinner />
     </div>
   );
 };
