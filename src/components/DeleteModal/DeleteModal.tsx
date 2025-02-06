@@ -17,14 +17,14 @@ export const DeleteModal = ({
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-      <div className="bg-black-dark p-6 rounded-lg text-white-ivory">
+      <div className="bg-black-dark p-6 rounded-lg text-white-ivory justify-center">
         <h3
-          className="text-lg font-bold mb-4"
+          className="text-lg mb-4 justify-center"
           style={{ color: "var(--gold-soft)" }}
         >
           {title}
         </h3>
-        <p>{message}</p>
+        <p className="justify-center">{message}</p>
         <div className="mt-4 flex justify-center gap-2">
           <button
             onClick={onConfirm}

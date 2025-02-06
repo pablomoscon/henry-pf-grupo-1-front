@@ -1,20 +1,19 @@
-// EditReservationForm.tsx
 "use client";
+// RemoveCaretakerForm.tsx
 import React, { useState, useEffect, useContext } from "react";
 import { IReservationEdit } from "@/interfaces/IReserve";
 import { caretakerService } from "@/services/caretakerServices";
 import { UserData } from "@/interfaces/IUser";
 import { UserContext } from "@/contexts/userContext";
 
-export const EditReservationForm = ({
-  reservation,
-  onClose,
-  onSave,
-}: {
+interface Props {
   reservation: IReservationEdit | null;
   onClose: () => void;
-  onSave: (reservation: IReservationEdit) => void;
-}) => {
+  onRemove: (reservation: IReservationEdit) => void;
+}
+
+const RemoveCaretakerForm = ({ reservation, onClose, onRemove }: Props) => {
+  console.log("Reservation:", reservation);
   const { user } = useContext(UserContext);
   const [availableCaretakers, setAvailableCaretakers] = useState<UserData[]>(
     []
@@ -40,24 +39,25 @@ export const EditReservationForm = ({
     }
   }, [user?.response.token]);
 
-  const handleSave = async () => {
-    if (reservation && selectedCaretaker) {
-      setShowConfirmDialog(true);
-    }
-  };
-
   const handleConfirmDialogClose = () => {
     setShowConfirmDialog(false);
   };
 
   const handleConfirmDialogConfirm = async () => {
-    if (reservation && selectedCaretaker) {
-      const updatedReservation = {
-        ...reservation,
-        caretakers: [selectedCaretaker],
-      };
-      onSave(updatedReservation);
-      alert("Reservation updated successfully!");
+    console.log("Se está ejecutando handleConfirmDialogConfirm");
+    console.log("Parámetros:", reservation, selectedCaretaker);
+
+    console.log("selectedCaretaker:", selectedCaretaker);
+    if (reservation && reservation.caretakers) {
+      if (reservation.caretakers[0]) {
+        const updatedReservation = {
+          ...reservation,
+          caretakers: [],
+        };
+        onRemove(updatedReservation);
+        console.log("Se llamó a onRemove");
+        alert("Reservation updated successfully!");
+      }
     }
     setShowConfirmDialog(false);
   };
@@ -79,7 +79,7 @@ export const EditReservationForm = ({
   return (
     <div className="bg-black-dark rounded-lg shadow-md p-4">
       <h3 className="text-lg mb-4" style={{ color: "var(--gold-soft)" }}>
-        Assign Caretaker from Reservation:{" "}
+        Remove Caretaker from Reservation:{" "}
         <span style={{ color: "var(--green-olive)" }}>{reservation?.id}</span>
       </h3>
       <form>
@@ -87,49 +87,47 @@ export const EditReservationForm = ({
           <label className="block text-sm mb-2" htmlFor="caretaker">
             Caretaker:
           </label>
-          <div className="flex items-center mb-4">
+          <div className="flex items-center">
             <select
               id="caretaker"
-              className="block w-full p-1 pl-10 text-sm text-gray-700 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-600 focus:border-transparent"
-              value={selectedCaretaker?.id || ""}
+              value={reservation?.caretakers?.[0]?.id || ""}
               onChange={handleCaretakerChange}
+              className="block w-full p-1 pl-10 text-sm text-gray-700 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-600 focus:border-transparent"
             >
-              <option value="">Select a caretaker</option>
-              {availableCaretakers.length > 0 &&
-                availableCaretakers.map((caretaker) => (
-                  <option key={caretaker.id} value={caretaker.id}>
-                    {caretaker.name}
-                  </option>
-                ))}
+              <option value={reservation?.caretakers?.[0]?.id}>
+                {reservation?.caretakers?.[0]?.name}
+              </option>
             </select>
-            <button
-              type="button"
-              className="bg-gray-300 hover:bg-gray-400 text-xs text-gray-800 font-semibold py-1 px-2 rounded ml-4"
-              onClick={onClose}
-            >
-              Cancel
-            </button>
-            <button
-              type="button"
-              className="bg-gold-soft hover:bg-gold-soft-dark text-xs text-gray-800 font-semibold py-1 px-4 rounded ml-4"
-              onClick={handleSave}
-            >
-              Save
-            </button>
+            <div className="flex ml-4">
+              <button
+                type="button"
+                className="bg-gray-300 hover:bg-gray-400 text-xs text-gray-800 font-semibold py-1 px-2 rounded mr-2"
+                onClick={onClose}
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                className="bg-gold-soft hover:bg-gold-soft-dark text-xs text-gray-800 font-semibold py-1 px-4 rounded"
+                onClick={() => setShowConfirmDialog(true)}
+              >
+                Remove
+              </button>
+            </div>
           </div>
         </div>
       </form>
       {showConfirmDialog && (
         <div className="fixed top-0 left-0 right-0 bottom-0 bg-black-dark bg-opacity-50 flex justify-center items-center">
-          <div className="bg-black rounded-lg shadow-md p-4 ">
+          <div className="bg-black-dark  rounded-lg shadow-md p-4">
             <h3
               className="text-lg mb-4 flex justify-center"
               style={{ color: "var(--gold-soft)" }}
             >
-              Confirm Update
+              Confirm Removal
             </h3>
             <p className="flex justify-center">
-              Are you sure you want to update the reservation?
+              Are you sure you want to remove the caretaker?
             </p>
             <div className="flex justify-center mt-8">
               <button
@@ -153,3 +151,5 @@ export const EditReservationForm = ({
     </div>
   );
 };
+
+export default RemoveCaretakerForm;

@@ -52,7 +52,7 @@ export const reservationService = {
     }
   },
 
-  async unassignCaretaker(
+  async removeCaretaker(
     reservationId: string,
     data: { caretakerId: string },
     token?: string

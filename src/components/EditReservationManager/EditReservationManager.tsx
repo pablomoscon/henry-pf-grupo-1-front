@@ -6,6 +6,8 @@ import { reservationService } from "@/services/editReservationServices";
 import { UserContext } from "@/contexts/userContext";
 import { ReservationsTable } from "@/components/ReservationsTable/ReservationsTable";
 import { EditReservationForm } from "../editReservationForm/editReservationForm";
+import RemoveCaretakerForm from "../RemoveCaretakerForm/RemoveCaretakerForm";
+
 export const EditReservationManager = () => {
   const { user } = useContext(UserContext);
   const [reservations, setReservations] = useState<IReservationEdit[]>([]);
@@ -72,6 +74,40 @@ export const EditReservationManager = () => {
       }
   };
 
+  const handleRemoveCaretaker = async (
+    updatedReservation: IReservationEdit
+  ) => {
+    debugger;
+    console.log(
+      "handleRemoveCaretaker llamado con parámetros:",
+      updatedReservation
+    );
+    try {
+      console.log(user?.response?.token);
+      const caretakerId =
+        updatedReservation.caretakers &&
+        updatedReservation.caretakers.length > 0
+          ? updatedReservation.caretakers[0].id
+          : "";
+
+      console.log("caretakerId:", caretakerId);
+      console.log("updatedReservation.id:", updatedReservation.id);
+
+      console.log("Llamando a reservationService.removeCaretaker...");
+      await reservationService.removeCaretaker(
+        updatedReservation.id,
+        { caretakerId },
+        user?.response?.token
+      );
+      console.log("removeCaretaker llamado correctamente");
+
+      await fetchReservations();
+    } catch (error) {
+      console.error("Error updating reservation", error);
+      alert("Error updating reservation. Please try again.");
+    }
+  };
+
   return (
     <div className="w-full max-w-4xl mx-auto">
       <h2 className="text-2xl mb-6" style={{ color: "var(--gold-soft)" }}>
@@ -82,12 +118,20 @@ export const EditReservationManager = () => {
           reservations={reservations}
           onEdit={handleEdit}
           onDelete={handleDelete}
+          onSave={handleSave}
         />
         {isEditOpen && (
           <EditReservationForm
             reservation={selectedReservation}
             onClose={() => setIsEditOpen(false)}
             onSave={handleSave}
+          />
+        )}
+        {isEditOpen && (
+          <RemoveCaretakerForm
+            reservation={selectedReservation}
+            onClose={() => setIsEditOpen(false)}
+            onRemove={handleRemoveCaretaker}
           />
         )}
       </div>
