@@ -40,6 +40,8 @@ const ClientFeed = () => {
             .slice()
             .reverse()
             .map((post) => <CardLog key={post.id} post={post} />)
+        ) : loading ? (
+          <p className="text-white-basic text-center mt-4">Loading posts...</p>
         ) : (
           <p className="text-white-basic text-center mt-4">
             There are no posts yet.

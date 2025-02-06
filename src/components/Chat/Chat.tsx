@@ -15,11 +15,16 @@ const Chat = () => {
     const pathParts = window.location.pathname.split("/");
     const idFromUrl = pathParts[pathParts.length - 1];
     setCurrentChatId(idFromUrl);
-  }, []);
+  }, [setCurrentChatId]);
 
   const { messages, sendMessage, errorMessage } = useChat(
     currentChatId || "",
     user?.response?.user
+      ? {
+          id: user.response.user.id || "",
+          name: user.response.user.name || "",
+        }
+      : null
   );
 
   useEffect(() => {
@@ -73,10 +78,11 @@ const Chat = () => {
           }}
         >
           {messages.map((message, index) => {
-            const isSender = message.senderName === user?.response?.user?.name;
+            const isSender =
+              message.senderName === (user?.response?.user?.name || "");
             const isReceiver =
               Array.isArray(message.receiversNames) &&
-              message.receiversNames.includes(user?.response?.user?.name);
+              message.receiversNames.includes(user?.response?.user?.name || "");
 
             return (
               <div
@@ -87,6 +93,8 @@ const Chat = () => {
                   className={`min-w-[20%] rounded-lg p-3 me-2 ms-2 ${
                     isSender
                       ? "bg-gold-soft text-black-dark"
+                      : isReceiver
+                      ? "bg-green-olive text-white-basic"
                       : "bg-gray-700 text-white-basic"
                   }`}
                 >

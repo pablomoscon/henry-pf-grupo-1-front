@@ -16,6 +16,12 @@ export interface ChatContextType {
 export interface ChatMessage {
   body: string;
   senderName: string;
-  timestamp: Date;
-  currentUser: boolean;
+  timestamp: string | Date;
+  currentUser?: boolean;
+  receiversNames?: string[];
+}
+
+export interface ChatUser {
+  id: string;
+  name: string;
 }
