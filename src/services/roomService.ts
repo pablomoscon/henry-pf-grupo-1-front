@@ -1,5 +1,5 @@
 import { IRoom, IRoomResponse } from "@/interfaces/IRoom";
-import { API_URL } from "../envs";
+import { API_URL } from "../../envs";
 
 export const getRooms = async (): Promise<IRoomResponse[]> => {
   const res = await fetch(`${API_URL}/rooms?page=1&limit=100`, {

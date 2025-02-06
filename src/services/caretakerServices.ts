@@ -1,5 +1,5 @@
 import { UserData, UserRegister } from "@/interfaces/IUser";
-import { API_URL } from "../envs";
+import { API_URL } from "../../envs";
 
 export const caretakerService = {
   async getCaretakers(token: string): Promise<UserData[]> {

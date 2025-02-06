@@ -1,4 +1,4 @@
-import { API_URL } from "../envs";
+import { API_URL } from "../../envs";
 
 export const googleAuth = () => {
   window.location.href = `${API_URL}/auth/google`;

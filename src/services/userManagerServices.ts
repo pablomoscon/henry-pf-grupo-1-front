@@ -1,6 +1,6 @@
 import { UserData, UserRegister } from "@/interfaces/IUser";
 import { userRegister } from "./userServices";
-import { API_URL } from "../envs";
+import { API_URL } from "../../envs";
 
 export const userManagerService = {
   async getUsers(token: string | undefined): Promise<UserData[]> {

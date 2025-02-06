@@ -1,6 +1,6 @@
 import dayjs from "dayjs";
 import { IReserve } from "@/interfaces/IReserve";
-import { API_URL } from "../envs";
+import { API_URL } from "../../envs";
 
 export const getDateReserved = async (
   roomId: string,

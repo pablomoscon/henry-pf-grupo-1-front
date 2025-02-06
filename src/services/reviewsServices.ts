@@ -1,5 +1,5 @@
 import { IReview, IReviewCreate } from "@/interfaces/IReview";
-import { API_URL } from "../envs";
+import { API_URL } from "../../envs";
 
 export const fetchReviews = async (): Promise<IReview[]> => {
   try {

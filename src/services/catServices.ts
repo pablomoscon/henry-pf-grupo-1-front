@@ -1,6 +1,6 @@
 import { ICat, CatFormData } from "@/interfaces/ICat";
 import { ICatUser } from "@/interfaces/IBook";
-import { API_URL } from "../envs";
+import { API_URL } from "../../envs";
 
 export const getCats = async (token?: string): Promise<ICat[]> => {
   try {

@@ -1,7 +1,7 @@
 import posts from "@/mocks/post";
 import { IPostSend } from "@/interfaces/IPost";
 import { IPost } from "@/interfaces/IPost";
-import { API_URL } from "../envs";
+import { API_URL } from "../../envs";
 
 export const getPosts1 = () => {
   return posts;

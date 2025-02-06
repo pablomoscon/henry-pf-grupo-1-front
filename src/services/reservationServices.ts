@@ -1,5 +1,5 @@
 import { IReservation } from "@/interfaces/IReserve";
-import { API_URL } from "../envs";
+import { API_URL } from "../../envs";
 
 export const reservationService = {
   async getReservations(token?: string): Promise<IReservation[]> {
