@@ -6,13 +6,14 @@ import { DateCalendar } from "@mui/x-date-pickers/DateCalendar";
 import { useDateContext } from "@/contexts/dateContext"; // Contexto de fechas
 import dayjs, { Dayjs } from "dayjs";
 import { getDateReserved } from "@/services/bookService";
+import { PickersDayProps } from "@mui/x-date-pickers/PickersDay";
 
-interface CheckInProps {
+interface CheckOutProps {
   roomId: string;
   token: string | undefined;
 }
 
-const CheckOut: React.FC<CheckInProps> = ({ roomId, token }) => {
+const CheckOut: React.FC<CheckOutProps> = ({ roomId, token }) => {
   const { checkOutDate, setCheckOutDate } = useDateContext();
   const [reservedDates, setReservedDates] = useState<Dayjs[]>([]);
 
@@ -43,7 +44,7 @@ const CheckOut: React.FC<CheckInProps> = ({ roomId, token }) => {
     return date.isBefore(dayjs(), "day");
   };
 
-  const renderDay = (props: any) => {
+  const renderDay = (props: PickersDayProps<Dayjs>) => {
     const { day, outsideCurrentMonth } = props;
     const isDisabled = isReserved(day) || isPastDate(day);
     const isSelected = day.isSame(checkOutDate, "day");

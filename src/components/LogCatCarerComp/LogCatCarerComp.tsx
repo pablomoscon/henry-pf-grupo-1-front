@@ -137,6 +137,8 @@ const LogCatCareComp = () => {
 
         {posts.length > 0 ? (
           posts.map((post) => <CardLog key={post.id} post={post} />)
+        ) : loading ? (
+          <p className="text-white-basic text-center mt-4">Cargando posts...</p>
         ) : (
           <p className="text-white-basic text-center mt-4">
             There are no posts yet.

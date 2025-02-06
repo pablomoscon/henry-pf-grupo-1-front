@@ -6,6 +6,7 @@ import { DateCalendar } from "@mui/x-date-pickers/DateCalendar";
 import { useDateContext } from "@/contexts/dateContext";
 import dayjs, { Dayjs } from "dayjs";
 import { getDateReserved } from "@/services/bookService";
+import { PickersDayProps } from "@mui/x-date-pickers/PickersDay";
 
 interface CheckInProps {
   roomId: string;
@@ -43,7 +44,7 @@ const CheckIn: React.FC<CheckInProps> = ({ roomId, token }) => {
     return date.isBefore(dayjs(), "day");
   };
 
-  const renderDay = (props: any) => {
+  const renderDay = (props: PickersDayProps<Dayjs>) => {
     const { day, outsideCurrentMonth } = props;
     const isDisabled = isReserved(day) || isPastDate(day);
     const isSelected = day.isSame(checkInDate, "day");
@@ -60,7 +61,7 @@ const CheckIn: React.FC<CheckInProps> = ({ roomId, token }) => {
         } ${outsideCurrentMonth ? "text-gray-500" : ""}`}
         disabled={isDisabled}
         style={{
-          color: isDisabled ? "red" : "", // Se asegura de que el color rojo sea aplicado cuando el día está deshabilitado
+          color: isDisabled ? "red" : "",
         }}
       >
         {day.format("D")}

@@ -1,9 +1,9 @@
-import { useEffect, useRef, useCallback, useState } from 'react';
-import { io, Socket } from 'socket.io-client';
-import { ChatMessage } from '@/interfaces/IChat';
+import { useEffect, useRef, useCallback, useState } from "react";
+import { io, Socket } from "socket.io-client";
+import { ChatMessage, ChatUser } from "@/interfaces/IChat";
 
-export const useChat = (chatId: string, user: any) => {
-  const [messages, setMessages] = useState<any[]>([]);
+export const useChat = (chatId: string, user: ChatUser | null | undefined) => {
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
   const socketRef = useRef<Socket | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -36,30 +36,35 @@ export const useChat = (chatId: string, user: any) => {
       socketRef.current.on("receive_message", (message: ChatMessage) => {
         console.log("Received message:", message);
 
-          const timestamp = message.timestamp || new Date().toISOString();
+        const timestamp = message.timestamp || new Date().toISOString();
 
         setMessages((prevMessages) => [
           ...prevMessages,
           {
-            senderName: message.senderName || 'Unknown User',
+            senderName: message.senderName || "Unknown User",
             body: message.body,
             timestamp: timestamp,
+            currentUser: false,
+            receiversNames: message.receiversNames || [],
           },
         ]);
       });
 
-      socketRef.current.on('initial_messages', (data: any) => {
-        console.log('Initial messages:', data.messages);
+      socketRef.current.on(
+        "initial_messages",
+        (data: { messages: ChatMessage[] }) => {
+          console.log("Initial messages:", data.messages);
 
-        const updatedMessages = data.messages.map((msg: ChatMessage) => {
-          console.log('Processing message:', msg);
-          return {
-            ...msg
-          };
-        });
+          const updatedMessages = data.messages.map((msg: ChatMessage) => {
+            console.log("Processing message:", msg);
+            return {
+              ...msg,
+            };
+          });
 
-        setMessages(updatedMessages);
-      });
+          setMessages(updatedMessages);
+        }
+      );
 
       socketRef.current.on("message_error", (data) => {
         console.log("Error received from server:", data);
@@ -70,31 +75,35 @@ export const useChat = (chatId: string, user: any) => {
     return () => {
       socketRef.current?.disconnect();
     };
-  }, [chatId, user?.id]);
+  }, [chatId, user?.id, user]);
 
-  const sendMessage = useCallback((message: string, timestamp: string) => {
-    if (message.trim() && chatId && user?.id) {
-      const messageData = {
-        currentUser: user.id,
-        body: message,
-        clientChatRoom: chatId,
-        senderName: user.name,
-        timestamp: timestamp, 
-      };
-
-      socketRef.current?.emit('send_message', messageData);
-
-      setMessages((prevMessages) => [
-        ...prevMessages,
-        {
-          senderName: user.name,
+  const sendMessage = useCallback(
+    (message: string, timestamp: string) => {
+      if (message.trim() && chatId && user?.id) {
+        const messageData = {
+          currentUser: user.id,
           body: message,
-          timestamp: timestamp, 
-          currentUser: true
-        },
-      ]);
-    }
-  }, [chatId, user]);
+          clientChatRoom: chatId,
+          senderName: user.name,
+          timestamp: timestamp,
+        };
+
+        socketRef.current?.emit("send_message", messageData);
+
+        setMessages((prevMessages) => [
+          ...prevMessages,
+          {
+            senderName: user.name,
+            body: message,
+            timestamp: timestamp,
+            currentUser: true,
+            receiversNames: [],
+          },
+        ]);
+      }
+    },
+    [chatId, user]
+  );
 
   return { messages, sendMessage, errorMessage };
 };
