@@ -2,16 +2,16 @@
 
 import { useState } from "react";
 import { filterRooms } from "@/services/roomService";
-import { IRoom } from "@/interfaces/IRoom";
+import { IRoomResponse } from "@/interfaces/IRoom";
 import Card from "@/components/Card/Card";
 import Filter from "@/components/Filter/Filter";
 
-const SuitesClient = ({ initialRooms }: { initialRooms: IRoom[] }) => {
+const SuitesClient = ({ initialRooms }: { initialRooms: IRoomResponse[] }) => {
   // Ordenar las habitaciones iniciales por precio
   const sortedInitialRooms = [...initialRooms].sort(
     (a, b) => a.price - b.price
   );
-  const [rooms, setRooms] = useState<IRoom[]>(sortedInitialRooms);
+  const [rooms, setRooms] = useState<IRoomResponse[]>(sortedInitialRooms);
   const [currentPage, setCurrentPage] = useState(1);
   const cardsPerPage = 8;
 
@@ -30,10 +30,21 @@ const SuitesClient = ({ initialRooms }: { initialRooms: IRoom[] }) => {
       minPrice,
       maxPrice
     );
-    // Ordenar las habitaciones filtradas por precio
-    const sortedFilteredRooms = [...filteredRooms].sort(
-      (a, b) => a.price - b.price
-    );
+    // Convert IRoom[] to IRoomResponse[] and sort
+    const sortedFilteredRooms: IRoomResponse[] = [...filteredRooms]
+      .sort((a, b) => a.price - b.price)
+      .map((room) => ({
+        id: room.id,
+        name: room.name,
+        description: room.description,
+        img:
+          typeof room.img === "string"
+            ? room.img
+            : URL.createObjectURL(room.img),
+        features: room.features,
+        number_of_cats: room.number_of_cats,
+        price: room.price,
+      }));
     setRooms(sortedFilteredRooms);
   };
 
@@ -71,7 +82,7 @@ const SuitesClient = ({ initialRooms }: { initialRooms: IRoom[] }) => {
 
       {/* Contenedor de las Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-6 w-full max-w-6xl mx-auto mb-2">
-        {currentRooms.map((room: IRoom) => (
+        {currentRooms.map((room: IRoomResponse) => (
           <Card key={room.id} room={room} />
         ))}
       </div>
