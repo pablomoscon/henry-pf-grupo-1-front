@@ -1,8 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
-import { IRoom } from "@/interfaces/IRoom";
+import { IRoomResponse } from "@/interfaces/IRoom";
 
-const Card = ({ room }: { room: IRoom }) => {
+const Card = ({ room }: { room: IRoomResponse }) => {
   return (
     <div className=" p-3 bg-black-dark rounded-lg shadow-md text-gold-soft w-auto">
       {/* Imagen */}

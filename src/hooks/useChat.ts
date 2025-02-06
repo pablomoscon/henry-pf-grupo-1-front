@@ -75,7 +75,7 @@ export const useChat = (chatId: string, user: ChatUser | null | undefined) => {
     return () => {
       socketRef.current?.disconnect();
     };
-  }, [chatId, user?.id, user]);
+  }, [chatId, user?.id]);
 
   const sendMessage = useCallback(
     (message: string, timestamp: string) => {
