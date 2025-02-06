@@ -17,6 +17,7 @@ dist/
 
 # Archivos de configuración locales y del sistema operativo
 .env
+.env.local
 .env.* # Variables de entorno específicas
 .DS_Store # macOS
 Thumbs.db # Windows
