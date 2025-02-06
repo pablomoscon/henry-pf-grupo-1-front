@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { useFormik } from "formik";
-import { IRoom } from "@/interfaces/IRoom";
+import { IRoomResponse } from "@/interfaces/IRoom";
 import { roomService } from "@/services/roomService";
 import Image from "next/image";
 
 interface EditSuiteFormProps {
-  suite: IRoom;
+  suite: IRoomResponse;
   onClose: () => void;
   onSuccess: () => void;
   token: string;
@@ -34,9 +34,7 @@ export const EditSuiteForm = ({
   const [newFeature, setNewFeature] = useState("");
   const [features, setFeatures] = useState<string[]>(suite.features || []);
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
-  const [previewUrl, setPreviewUrl] = useState<string | null>(
-    typeof suite.img === "string" ? suite.img : null
-  );
+  const [previewImage, setPreviewImage] = useState<string>(suite.img);
 
   const abbreviateFeature = (feature: string) => {
     const abbreviations: { [key: string]: string } = {
@@ -54,14 +52,11 @@ export const EditSuiteForm = ({
     return abbreviations[feature] || feature;
   };
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
+  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
     if (file) {
       setSelectedImage(file);
-      const objectUrl = URL.createObjectURL(file);
-      setPreviewUrl(objectUrl);
-
-      return () => URL.revokeObjectURL(objectUrl);
+      setPreviewImage(URL.createObjectURL(file));
     }
   };
 
@@ -72,35 +67,30 @@ export const EditSuiteForm = ({
       price: suite.price,
       number_of_cats: suite.number_of_cats,
       features: features,
+      img: null as File | null,
     },
     onSubmit: async (values) => {
       try {
-        const suiteId = suite.id;
-        if (!suiteId) {
-          throw new Error("Suite ID is required");
-        }
-
         const formData = new FormData();
         formData.append("name", values.name);
         formData.append("description", values.description);
         formData.append("price", values.price.toString());
         formData.append("number_of_cats", values.number_of_cats.toString());
 
-        features.forEach((feature, index) => {
-          formData.append(`features[${index}]`, feature);
-        });
-
         if (selectedImage) {
           formData.append("img", selectedImage);
         }
 
-        await roomService.updateRoom(formData, suiteId, token);
-        alert("Suite updated successfully!");
+        // Append features
+        values.features.forEach((feature, index) => {
+          formData.append(`features[${index}]`, feature);
+        });
+
+        await roomService.updateRoom(formData, suite.id || "", token);
         onSuccess();
         onClose();
       } catch (error) {
         console.error("Error updating suite:", error);
-        alert("Error updating suite");
       }
     },
   });
@@ -200,10 +190,10 @@ export const EditSuiteForm = ({
                 Image
               </label>
               <div className="bg-black-light rounded p-2 space-y-2">
-                {previewUrl && (
+                {previewImage && (
                   <div className="relative w-full h-[100px]">
                     <Image
-                      src={previewUrl}
+                      src={previewImage}
                       alt="Suite preview"
                       fill
                       className="object-cover rounded"
