@@ -1,6 +1,6 @@
 "use client";
 import { useState, useContext, useEffect } from "react";
-import { useSearchParams } from "next/navigation"; // Importamos useSearchParams
+import { useSearchParams, useRouter } from "next/navigation";
 import { getPosts, registerPost } from "@/services/logServices";
 import { UserContext } from "@/contexts/userContext";
 import { IPostSend, IPost } from "@/interfaces/IPost";
@@ -8,6 +8,7 @@ import CardLog from "../CardLog/CardLog";
 import ModalLog from "../ModalLog/ModalLog";
 
 const LogCatCareComp = () => {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const reservationId = searchParams.get("reservationId");
   const userName = searchParams.get("userName");
@@ -90,7 +91,16 @@ const LogCatCareComp = () => {
   };
 
   return (
-    <div className="flex justify-center pt-24 pb-20 mb-24 px-4">
+    <div className="flex flex-col items-center min-h-screen pt-32 pb-20 px-4">
+      <div className="w-full max-w-2xl mb-6">
+        <button
+          onClick={() => router.push("/dashcaretaker")}
+          className="px-6 py-2 rounded-lg border border-gold-soft/20 text-gold-soft/70 hover:text-gold-soft hover:border-gold-soft/50 transition-colors"
+        >
+          Back to Dashboard
+        </button>
+      </div>
+
       <div className="bg-black-dark border border-white-basic rounded-lg p-6 w-full max-w-2xl">
         <div>
           <h2 className="text-center text-gold-soft text-3xl mb-4">
