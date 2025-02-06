@@ -1,4 +1,4 @@
-import { IRoom } from "@/interfaces/IRoom";
+import { IRoom, IRoomResponse } from "@/interfaces/IRoom";
 
 export const getRooms = async (): Promise<IRoom[]> => {
   const res = await fetch("http://localhost:3000/rooms?page=1&limit=100", {
@@ -11,13 +11,15 @@ export const getRooms = async (): Promise<IRoom[]> => {
   return res as IRoom[];
 };
 
-export const getRoomById = async (id: string): Promise<IRoom | undefined> => {
+export const getRoomById = async (
+  id: string
+): Promise<IRoomResponse | undefined> => {
   const res = await fetch(`http://localhost:3000/rooms/${id}`, {
     cache: "no-store",
   }).catch(() => null);
 
   if (!res || !res.ok) return undefined;
-  return (await res.json()) as IRoom;
+  return (await res.json()) as IRoomResponse;
 };
 
 interface RoomDataToRegister {
