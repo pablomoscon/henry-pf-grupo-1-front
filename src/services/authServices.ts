@@ -10,9 +10,11 @@ export const getUserData = async (token: string) => {
     const response = await fetchWithInterceptor(
       `${API_URL}/auth/google/callback`,
       {
+        method: 'GET',  
         headers: {
           Authorization: `Bearer ${token}`,
         },
+        credentials: 'include', 
       }
     );
 
