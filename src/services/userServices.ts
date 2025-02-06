@@ -6,9 +6,10 @@ import {
   ChangePasswordData,
   ChangePasswordResponse,
 } from "@/interfaces/IUser";
+import { API_URL } from "../envs";
 
 export const userRegister = async (data: UserRegister) => {
-  const res = await fetch("http://localhost:3000/auth/signup", {
+  const res = await fetch(`${API_URL}/auth/signup`, {
     method: "POST",
     body: JSON.stringify(data),
     headers: { "content-type": "application/json" },
@@ -17,7 +18,7 @@ export const userRegister = async (data: UserRegister) => {
 };
 
 export const userLogin = async (data: UserLogin): Promise<LoginResponse> => {
-  const res = await fetch("http://localhost:3000/auth/login", {
+  const res = await fetch(`${API_URL}/auth/login`, {
     method: "POST",
     body: JSON.stringify(data),
     headers: { "content-type": "application/json" },
@@ -30,7 +31,7 @@ export const updateUserProfile = async (
   id: string,
   token: string
 ) => {
-  const res = await fetch(`http://localhost:3000/users/${id}`, {
+  const res = await fetch(`${API_URL}/users/${id}`, {
     method: "PATCH",
     headers: {
       "Content-Type": "application/json",
@@ -51,16 +52,13 @@ export const changePassword = async (
   userId: string,
   token: string
 ): Promise<ChangePasswordResponse> => {
-  const res = await fetch(
-    `http://localhost:3000/credentials/${userId}?token=${token}`,
-    {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    }
-  );
+  const res = await fetch(`${API_URL}/credentials/${userId}?token=${token}`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
 
   const responseData = await res.json();
   console.log("Server response:", responseData);

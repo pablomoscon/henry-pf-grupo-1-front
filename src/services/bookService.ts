@@ -1,5 +1,6 @@
 import dayjs from "dayjs";
 import { IReserve } from "@/interfaces/IReserve";
+import { API_URL } from "../envs";
 
 export const getDateReserved = async (
   roomId: string,
@@ -10,7 +11,7 @@ export const getDateReserved = async (
   try {
     // Llamamos al endpoint con el roomId
     const response = await fetch(
-      `http://localhost:3000/reservations/unavailable-rooms?roomId=${roomId}`,
+      `${API_URL}/reservations/unavailable-rooms?roomId=${roomId}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -48,7 +49,7 @@ export const bookRegister = async (
   data: IReserve,
   token: string | undefined
 ) => {
-  const res = await fetch("http://localhost:3000/reservations/", {
+  const res = await fetch(`${API_URL}/reservations/`, {
     method: "POST",
     body: JSON.stringify(data),
     headers: {
@@ -69,7 +70,7 @@ export const bookRegister = async (
 export const getUserReservations = async (userId: string, token?: string) => {
   try {
     const response = await fetch(
-      `http://localhost:3000/reservations/users-reservations?userId=${userId}`,
+      `${API_URL}/reservations/users-reservations?userId=${userId}`,
       {
         cache: "no-store",
         headers: token ? { Authorization: `Bearer ${token}` } : {},
@@ -87,7 +88,7 @@ export const getUserReservations = async (userId: string, token?: string) => {
 export const getUserBooks = async (userId: string, token?: string) => {
   try {
     const response = await fetch(
-      `http://localhost:3000/users/${userId}/caretaker-reservations`,
+      `${API_URL}/users/${userId}/caretaker-reservations`,
       {
         cache: "no-store",
         headers: token ? { Authorization: `Bearer ${token}` } : {},

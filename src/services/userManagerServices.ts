@@ -1,9 +1,10 @@
 import { UserData, UserRegister } from "@/interfaces/IUser";
 import { userRegister } from "./userServices";
+import { API_URL } from "../envs";
 
 export const userManagerService = {
   async getUsers(token: string | undefined): Promise<UserData[]> {
-    const response = await fetch("http://localhost:3000/users/user-role", {
+    const response = await fetch(`${API_URL}/users/user-role`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -31,7 +32,7 @@ export const userManagerService = {
     const { name, email, phone, address, customerId } = userData;
     const updateData = { name, email, phone, address, customerId };
 
-    const res = await fetch(`http://localhost:3000/users/${id}`, {
+    const res = await fetch(`${API_URL}/users/${id}`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
@@ -49,7 +50,7 @@ export const userManagerService = {
   },
 
   async deleteUser(id: string, token: string): Promise<void> {
-    const response = await fetch(`http://localhost:3000/users/${id}`, {
+    const response = await fetch(`${API_URL}/users/${id}`, {
       method: "DELETE",
       headers: {
         Authorization: `Bearer ${token}`,

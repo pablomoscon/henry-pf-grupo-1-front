@@ -1,7 +1,8 @@
 import { IRoom, IRoomResponse } from "@/interfaces/IRoom";
+import { API_URL } from "../envs";
 
 export const getRooms = async (): Promise<IRoomResponse[]> => {
-  const res = await fetch("http://localhost:3000/rooms?page=1&limit=100", {
+  const res = await fetch(`${API_URL}/rooms?page=1&limit=100`, {
     cache: "no-store",
   })
     .then((res) => res.json())
@@ -14,7 +15,7 @@ export const getRooms = async (): Promise<IRoomResponse[]> => {
 export const getRoomById = async (
   id: string
 ): Promise<IRoomResponse | undefined> => {
-  const res = await fetch(`http://localhost:3000/rooms/${id}`, {
+  const res = await fetch(`${API_URL}/rooms/${id}`, {
     cache: "no-store",
   }).catch(() => null);
 
@@ -60,7 +61,7 @@ export const registerRoom = async (
       formData.append("features", "[]");
     }
 
-    const response = await fetch(`http://localhost:3000/rooms`, {
+    const response = await fetch(`${API_URL}/rooms`, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -98,7 +99,7 @@ export const filterRooms = async (
   });
 
   try {
-    const res = await fetch(`http://localhost:3000/rooms/filters?${params}`);
+    const res = await fetch(`${API_URL}/rooms/filters?${params}`);
     const data = await res.json();
     return data as IRoomResponse[];
   } catch {
@@ -133,7 +134,7 @@ export const updateRoom = async (
       formData.append("features", "[]");
     }
 
-    const response = await fetch(`http://localhost:3000/rooms/${id}`, {
+    const response = await fetch(`${API_URL}/rooms/${id}`, {
       method: "PATCH",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -155,7 +156,7 @@ export const updateRoom = async (
 
 export const roomService = {
   async updateRoom(data: FormData, id: string, token: string): Promise<IRoom> {
-    const response = await fetch(`http://localhost:3000/rooms/${id}`, {
+    const response = await fetch(`${API_URL}/rooms/${id}`, {
       method: "PATCH",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -172,7 +173,7 @@ export const roomService = {
   },
 
   async deleteRoom(id: string, token: string): Promise<void> {
-    const response = await fetch(`http://localhost:3000/rooms/${id}`, {
+    const response = await fetch(`${API_URL}/rooms/${id}`, {
       method: "DELETE",
       headers: {
         Authorization: `Bearer ${token}`,

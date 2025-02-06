@@ -1,8 +1,10 @@
+import { API_URL } from "../envs";
+
 export const fetchPaymentStatus = async (
   sessionId: string,
   status: string
 ): Promise<string> => {
-  const url = `http://localhost:3001/payments/status?sessionId=${sessionId}&status=${status}`;
+  const url = `${API_URL}/payments/status?sessionId=${sessionId}&status=${status}`;
   const response = await fetch(url);
 
   if (!response.ok) {
@@ -17,7 +19,7 @@ export const confirmPayment = async (reservationId: string, token?: string) => {
     console.log("token", token);
 
     const response = await fetch(
-      `http://localhost:3000/payments/create-checkout-session/${reservationId}`,
+      `${API_URL}/payments/create-checkout-session/${reservationId}`,
       {
         method: "POST",
         headers: {

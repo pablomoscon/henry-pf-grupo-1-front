@@ -1,9 +1,10 @@
 import { ICat, CatFormData } from "@/interfaces/ICat";
 import { ICatUser } from "@/interfaces/IBook";
+import { API_URL } from "../envs";
 
 export const getCats = async (token?: string): Promise<ICat[]> => {
   try {
-    const res = await fetch("http://localhost:3000/cats", {
+    const res = await fetch(`${API_URL}/cats`, {
       cache: "no-store",
       headers: token ? { Authorization: `Bearer ${token}` } : {},
     });
@@ -42,7 +43,7 @@ export const catRegister = async (formData: CatFormData, token?: string) => {
   );
 
   try {
-    const res = await fetch("http://localhost:3000/cats", {
+    const res = await fetch(`${API_URL}/cats`, {
       method: "POST",
       headers: token ? { Authorization: `Bearer ${token}` } : {},
       body: formDataToSend,
@@ -100,7 +101,7 @@ export const updateCat = async (
   );
 
   try {
-    const res = await fetch(`http://localhost:3000/cats/${id}`, {
+    const res = await fetch(`${API_URL}/cats/${id}`, {
       method: "PATCH",
       headers: token ? { Authorization: `Bearer ${token}` } : {},
       body: formDataToSend,

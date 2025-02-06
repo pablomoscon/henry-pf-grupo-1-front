@@ -1,13 +1,14 @@
 import posts from "@/mocks/post";
 import { IPostSend } from "@/interfaces/IPost";
 import { IPost } from "@/interfaces/IPost";
+import { API_URL } from "../envs";
 
 export const getPosts1 = () => {
   return posts;
 };
 
 export const getPosts = async (idUser: string): Promise<IPost[]> => {
-  const res = await fetch(`http://localhost:3000/messages/received/${idUser}`, {
+  const res = await fetch(`${API_URL}/messages/received/${idUser}`, {
     cache: "no-store",
   })
     .then((res) => res.json())
@@ -36,7 +37,7 @@ export const registerPost = async (
   formDataToSend.append("reservationId", reservationId);
 
   try {
-    const res = await fetch("http://localhost:3000/messages/posts", {
+    const res = await fetch(`${API_URL}/messages/posts`, {
       method: "POST",
       body: formDataToSend,
       headers: {

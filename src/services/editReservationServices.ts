@@ -1,11 +1,11 @@
 import { IReservationEdit } from "@/interfaces/IReserve";
+import { API_URL } from "../envs";
 
 export const reservationService = {
   async getReservations(token?: string): Promise<IReservationEdit[]> {
-    const response = await fetch("http://localhost:3000/reservations", {
+    const response = await fetch(`${API_URL}/reservations`, {
       headers: {
         ...(token && { Authorization: `Bearer ${token}` }),
-
         "Content-Type": "application/json",
       },
     });
@@ -21,7 +21,7 @@ export const reservationService = {
   async createReservation(
     data: Omit<IReservationEdit, "id">
   ): Promise<IReservationEdit> {
-    const response = await fetch("http://localhost:3000/reservations", {
+    const response = await fetch(`${API_URL}/reservations`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
@@ -39,7 +39,7 @@ export const reservationService = {
       console.log("Sending update request with:", { reservationId, data });
 
       const response = await fetch(
-        `http://localhost:3000/reservations/${reservationId}/add-caretaker/${data.caretakerId}`,
+        `${API_URL}/reservations/${reservationId}/add-caretaker/${data.caretakerId}`,
         {
           method: "POST",
           headers: {
@@ -64,7 +64,7 @@ export const reservationService = {
   },
 
   async deleteReservation(id: string, token: string): Promise<void> {
-    const response = await fetch(`http://localhost:3000/reservations/${id}`, {
+    const response = await fetch(`${API_URL}/reservations/${id}`, {
       method: "DELETE",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -82,7 +82,7 @@ export const reservationService = {
       console.log("Sending update request with:", { reservationId, data });
 
       const response = await fetch(
-        `http://localhost:3000/reservations/${reservationId}/caretaker/${data.caretakerId}`,
+        `${API_URL}/reservations/${reservationId}/caretaker/${data.caretakerId}`,
         {
           method: "DELETE",
           headers: {
