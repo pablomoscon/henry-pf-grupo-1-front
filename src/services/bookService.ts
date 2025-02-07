@@ -1,6 +1,7 @@
 import dayjs from "dayjs";
 import { IReserve } from "@/interfaces/IReserve";
 import { API_URL } from "../../envs";
+import { fetchWithInterceptor } from "./fetchInterceptor";
 
 export const getDateReserved = async (
   roomId: string,
@@ -9,8 +10,7 @@ export const getDateReserved = async (
   const blockedDates: string[] = [];
 
   try {
-    // Llamamos al endpoint con el roomId
-    const response = await fetch(
+    const response = await fetchWithInterceptor(
       `${API_URL}/reservations/unavailable-rooms?roomId=${roomId}`,
       {
         headers: {
@@ -49,7 +49,7 @@ export const bookRegister = async (
   data: IReserve,
   token: string | undefined
 ) => {
-  const res = await fetch(`${API_URL}/reservations/`, {
+  const res = await fetchWithInterceptor(`${API_URL}/reservations/`, {
     method: "POST",
     body: JSON.stringify(data),
     headers: {
@@ -69,7 +69,7 @@ export const bookRegister = async (
 
 export const getUserReservations = async (userId: string, token?: string) => {
   try {
-    const response = await fetch(
+    const response = await fetchWithInterceptor(
       `${API_URL}/reservations/users-reservations?userId=${userId}`,
       {
         cache: "no-store",
@@ -87,7 +87,7 @@ export const getUserReservations = async (userId: string, token?: string) => {
 
 export const getUserBooks = async (userId: string, token?: string) => {
   try {
-    const response = await fetch(
+    const response = await fetchWithInterceptor(
       `${API_URL}/users/${userId}/caretaker-reservations`,
       {
         cache: "no-store",
@@ -103,7 +103,6 @@ export const getUserBooks = async (userId: string, token?: string) => {
     }
 
     const data = await response.json();
-
     return data;
   } catch (error) {
     console.error("Error al obtener las reservas:", error);

@@ -1,9 +1,10 @@
 import { IReservationEdit } from "@/interfaces/IReserve";
 import { API_URL } from "../../envs";
+import { fetchWithInterceptor } from "./fetchInterceptor";
 
 export const reservationService = {
   async getReservations(token?: string): Promise<IReservationEdit[]> {
-    const response = await fetch(`${API_URL}/reservations`, {
+    const response = await fetchWithInterceptor(`${API_URL}/reservations`, {
       headers: {
         ...(token && { Authorization: `Bearer ${token}` }),
         "Content-Type": "application/json",
@@ -21,7 +22,7 @@ export const reservationService = {
   async createReservation(
     data: Omit<IReservationEdit, "id">
   ): Promise<IReservationEdit> {
-    const response = await fetch(`${API_URL}/reservations`, {
+    const response = await fetchWithInterceptor(`${API_URL}/reservations`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
@@ -38,7 +39,7 @@ export const reservationService = {
     try {
       console.log("Sending update request with:", { reservationId, data });
 
-      const response = await fetch(
+      const response = await fetchWithInterceptor(
         `${API_URL}/reservations/${reservationId}/add-caretaker/${data.caretakerId}`,
         {
           method: "POST",
@@ -73,7 +74,7 @@ export const reservationService = {
     if (!response.ok) throw new Error("Error deleting reservation");
   },
 
-  async unassignCaretaker(
+  async removeCaretaker(
     reservationId: string,
     data: { caretakerId: string },
     token?: string

@@ -1,10 +1,11 @@
 import { ICat, CatFormData } from "@/interfaces/ICat";
 import { ICatUser } from "@/interfaces/IBook";
 import { API_URL } from "../../envs";
+import { fetchWithInterceptor } from "./fetchInterceptor";
 
 export const getCats = async (token?: string): Promise<ICat[]> => {
   try {
-    const res = await fetch(`${API_URL}/cats`, {
+    const res = await fetchWithInterceptor(`${API_URL}/cats`, {
       cache: "no-store",
       headers: token ? { Authorization: `Bearer ${token}` } : {},
     });
@@ -14,6 +15,22 @@ export const getCats = async (token?: string): Promise<ICat[]> => {
   } catch {
     return [];
   }
+};
+
+export const getCatsUser = async (
+  id: string,
+  token: string | undefined
+): Promise<ICatUser[]> => {
+  const res = await fetchWithInterceptor(`${API_URL}/users/cats/${id}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  })
+    .then((res) => res.json())
+    .catch(() => {
+      return [];
+    });
+  return res as ICatUser[];
 };
 
 export const catRegister = async (formData: CatFormData, token?: string) => {
@@ -43,7 +60,7 @@ export const catRegister = async (formData: CatFormData, token?: string) => {
   );
 
   try {
-    const res = await fetch(`${API_URL}/cats`, {
+    const res = await fetchWithInterceptor(`${API_URL}/cats`, {
       method: "POST",
       headers: token ? { Authorization: `Bearer ${token}` } : {},
       body: formDataToSend,
@@ -118,20 +135,4 @@ export const updateCat = async (
     console.error("Error en updateCat:", error);
     throw error;
   }
-};
-
-export const getCatsUser = async (
-  id: string,
-  token: string | undefined
-): Promise<ICatUser[]> => {
-  const res = await fetch(`http://localhost:3000/users/cats/${id}`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  })
-    .then((res) => res.json())
-    .catch(() => {
-      return [];
-    });
-  return res as ICatUser[];
 };

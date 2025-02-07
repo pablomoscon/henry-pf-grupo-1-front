@@ -1,8 +1,9 @@
 import { IRoom, IRoomResponse } from "@/interfaces/IRoom";
 import { API_URL } from "../../envs";
+import { fetchWithInterceptor } from "./fetchInterceptor";
 
 export const getRooms = async (): Promise<IRoomResponse[]> => {
-  const res = await fetch(`${API_URL}/rooms?page=1&limit=100`, {
+  const res = await fetchWithInterceptor(`${API_URL}/rooms?page=1&limit=100`, {
     cache: "no-store",
   })
     .then((res) => res.json())
@@ -15,7 +16,7 @@ export const getRooms = async (): Promise<IRoomResponse[]> => {
 export const getRoomById = async (
   id: string
 ): Promise<IRoomResponse | undefined> => {
-  const res = await fetch(`${API_URL}/rooms/${id}`, {
+  const res = await fetchWithInterceptor(`${API_URL}/rooms/${id}`, {
     cache: "no-store",
   }).catch(() => null);
 
@@ -61,7 +62,7 @@ export const registerRoom = async (
       formData.append("features", "[]");
     }
 
-    const response = await fetch(`${API_URL}/rooms`, {
+    const response = await fetchWithInterceptor(`${API_URL}/rooms`, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${token}`,
