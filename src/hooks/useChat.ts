@@ -6,6 +6,7 @@ import { API_URL } from "../../envs";
 export const useChat = (chatId: string, user: ChatUser | null | undefined) => {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const socketRef = useRef<Socket | null>(null);
+  const [loading, setLoading] = useState<boolean>(true); 
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   useEffect(() => {
@@ -64,6 +65,7 @@ export const useChat = (chatId: string, user: ChatUser | null | undefined) => {
           });
 
           setMessages(updatedMessages);
+          setLoading(false);
         }
       );
 
@@ -106,5 +108,5 @@ export const useChat = (chatId: string, user: ChatUser | null | undefined) => {
     [chatId, user]
   );
 
-  return { messages, sendMessage, errorMessage };
+  return { messages, sendMessage, errorMessage, loading };
 };
