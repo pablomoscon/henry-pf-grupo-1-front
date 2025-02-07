@@ -1,8 +1,12 @@
-/* import ProtectedRoute from "@/components/ProtectedRoute/ProtectedRoute"; */
 import CaretakerDash from "@/components/CaretakerDash/CaretakerDash";
+import ProtectedRoute from "@/components/ProtectedRoute/ProtectedRoute";
 
 const DashCaretaker = () => {
-  return <CaretakerDash />;
+  return (
+    <ProtectedRoute>
+      <CaretakerDash />
+    </ProtectedRoute>
+  );
 };
 
 export default DashCaretaker;

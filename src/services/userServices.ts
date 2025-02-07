@@ -1,3 +1,4 @@
+import { fetchWithInterceptor } from "./fetchInterceptor";
 import {
   UserLogin,
   UserRegister,
@@ -9,7 +10,7 @@ import {
 import { API_URL } from "../../envs";
 
 export const userRegister = async (data: UserRegister) => {
-  const res = await fetch(`${API_URL}/auth/signup`, {
+  const res = await fetchWithInterceptor(`${API_URL}/auth/signup`, {
     method: "POST",
     body: JSON.stringify(data),
     headers: { "content-type": "application/json" },
@@ -18,7 +19,7 @@ export const userRegister = async (data: UserRegister) => {
 };
 
 export const userLogin = async (data: UserLogin): Promise<LoginResponse> => {
-  const res = await fetch(`${API_URL}/auth/login`, {
+  const res = await fetchWithInterceptor(`${API_URL}/auth/login`, {
     method: "POST",
     body: JSON.stringify(data),
     headers: { "content-type": "application/json" },
@@ -31,7 +32,7 @@ export const updateUserProfile = async (
   id: string,
   token: string
 ) => {
-  const res = await fetch(`${API_URL}/users/${id}`, {
+  const res = await fetchWithInterceptor(`${API_URL}/users/${id}`, {
     method: "PATCH",
     headers: {
       "Content-Type": "application/json",

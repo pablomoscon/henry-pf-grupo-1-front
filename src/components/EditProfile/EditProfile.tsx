@@ -16,6 +16,7 @@ const EditProfile = () => {
     email: "",
     phone: "",
     address: "",
+    customerId: "",
   });
 
   useEffect(() => {
@@ -25,6 +26,7 @@ const EditProfile = () => {
         email: userData.email || "",
         phone: userData.phone || "",
         address: userData.address || "",
+        customerId: userData.customerId || "",
       });
     }
   }, [userData]);
@@ -69,6 +71,24 @@ const EditProfile = () => {
         <div className="bg-black-dark p-6 rounded-lg shadow-lg border border-gold-soft/10">
           <form onSubmit={handleSubmit} className="space-y-3">
             <div className="space-y-3">
+              <div>
+                <label
+                  htmlFor="customerId"
+                  className="block text-sm font-medium mb-1"
+                  style={{ color: "var(--white-ivory)" }}
+                >
+                  DNI
+                </label>
+                <input
+                  type="text"
+                  id="customerId"
+                  name="customerId"
+                  value={formData.customerId}
+                  onChange={handleChange}
+                  className="w-full bg-black-light text-white-ivory p-2 rounded-md border border-gold-soft/20 focus:border-gold-soft/50 focus:outline-none"
+                />
+              </div>
+
               <div>
                 <label
                   htmlFor="name"
