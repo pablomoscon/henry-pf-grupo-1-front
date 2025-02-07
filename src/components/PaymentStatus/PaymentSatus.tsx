@@ -1,7 +1,7 @@
 'use client';
 import { UserContext } from '@/contexts/userContext';
 import { fetchPaymentStatus } from '@/services/paymentServices';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { useContext, useEffect, useState } from 'react';
 
 export default function PaymentStatus() {
@@ -12,12 +12,14 @@ export default function PaymentStatus() {
   const token = user?.response?.token;
   const [message, setMessage] = useState<string>('Validating payment...');
   const [loading, setLoading] = useState<boolean>(true);
+  const router = useRouter();
 
   useEffect(() => {
     const checkPaymentStatus = async () => {
       if (!sessionId || !status || !token) {
         setMessage('Missing sessionId, status, or token.');
         setLoading(false);
+        setTimeout(() => router.push('/'), 2500);
         return;
       }
 
@@ -29,11 +31,22 @@ export default function PaymentStatus() {
         console.error(error);
       } finally {
         setLoading(false);
+        setTimeout(() => router.push('/'), 3000); // Redirigir después de 3 segundos
       }
     };
 
     checkPaymentStatus();
-  }, [sessionId, status, token]);
+  }, [sessionId, status, token, router]); // Elimina hasAlerted de las dependencias
+
+  useEffect(() => {
+    if (status === 'succeeded') {
+      alert('Payment Succeeded');
+    } else if (status === 'canceled') {
+      alert('Payment Cancelled');
+    } else if (status) {
+      alert('Invalid Payment Status');
+    }
+  }, [status]); // Este efecto se ejecuta solo cuando cambia `status`
 
   return (
     <div className='text-3xl font-bold text-center py-10 h-screen flex items-center justify-center'>
