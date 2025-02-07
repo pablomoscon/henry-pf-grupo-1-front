@@ -57,6 +57,7 @@ export const EditReservationForm = ({
       };
       onSave(updatedReservation);
       alert("Reservation updated successfully!");
+      onClose();
     }
     setShowConfirmDialog(false);
   };
