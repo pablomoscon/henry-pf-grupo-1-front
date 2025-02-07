@@ -409,67 +409,43 @@ const ReservationForm = () => {
             </div>
           </div>
 
-          <div className="space-y-3">
+          <div className="space-y-3 mt-4 text-center">
             <h2
-              className="text-xl font-semibold"
+              className="text-xl font-semibold mt-8"
               style={{ color: "var(--green-olive)" }}
             >
-              Kitty Cats
+              Select Your Cat Guests
             </h2>
-            <div>
-              <label
-                className="block text-sm font-medium mb-2"
-                style={{ color: "var(--white-ivory)" }}
-              >
-                Select Kitties:
-              </label>
-              <select
-                name="catsIds"
-                multiple
-                title="Select your kitties"
-                aria-label="Select your kitties"
-                value={userData.catsIds} // Array de IDs seleccionados
-                onChange={(e) => {
-                  const selectedOptions = Array.from(
-                    e.target.selectedOptions,
-                    (option) => option.value
-                  );
-
-                  setUserData({
-                    ...userData,
-                    catsIds: selectedOptions, // Actualiza el array con los IDs seleccionados
-                  });
-
-                  // Eliminar el error si se corrige
-                  if (
-                    selectedOptions.length > 0 &&
-                    selectedOptions.length <= userData.numCat
-                  ) {
-                    setErrors((prevErrors) => {
-                      delete prevErrors.catsIds;
-                      return { ...prevErrors };
-                    });
-                  }
-                }}
-                className="block w-full px-4 py-2 rounded-md border border-gray-600 focus:outline-none focus:ring-2"
-                style={{
-                  backgroundColor: "var(--black-light)",
-                  color: "var(--white-basic)",
-                }}
-              >
-                <option value="" disabled>
-                  Select one or more kitties
-                </option>
+            <div className="bg-black-light px-12 py-4 rounded-lg inline-block">
+              <div className="flex flex-col items-center">
                 {cats.map((cat) => (
-                  <option key={cat.id} value={cat.id}>
+                  <label key={cat.id} className="flex items-center text-white">
+                    <input
+                      type="checkbox"
+                      value={cat.id}
+                      checked={userData.catsIds.includes(cat.id)}
+                      onChange={(e) => {
+                        const { value, checked } = e.target;
+                        setUserData((prevData) => ({
+                          ...prevData,
+                          catsIds: checked
+                            ? [...prevData.catsIds, value]
+                            : prevData.catsIds.filter((id) => id !== value),
+                        }));
+                      }}
+                      className="mr-2"
+                    />
                     {cat.name}
-                  </option>
+                  </label>
                 ))}
-              </select>
-              {errors.catsIds && (
-                <p className="mt-1 text-sm text-red-500">{errors.catsIds}</p>
-              )}
+              </div>
             </div>
+
+            {errors.catsIds && (
+              <p className="mt-2 text-sm text-red-500 text-center">
+                {errors.catsIds}
+              </p>
+            )}
           </div>
 
           <div className="flex justify-center pt-6">
