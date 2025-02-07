@@ -4,6 +4,7 @@ import { useContext, useState, useEffect, useRef } from 'react';
 import { ChatContext } from '@/contexts/chatContext';
 import { UserContext } from '@/contexts/userContext';
 import { useChat } from '@/hooks/useChat';
+import LoadingSpinner from '../LoadingSpinner/LoadingSpinner';
 
 const Chat = () => {
   const { user } = useContext(UserContext);
@@ -71,7 +72,7 @@ const Chat = () => {
         {/* Contenedor de mensajes con scroll solo dentro y smooth scroll */}
         {loading ? (
           <div className='flex items-center justify-center m-4 text-white-basic'>
-            <span>Loading...</span>{' '}
+            <LoadingSpinner/>
             {/* Puedes poner un spinner o cualquier indicativo aquí */}
           </div>
         ) : (
