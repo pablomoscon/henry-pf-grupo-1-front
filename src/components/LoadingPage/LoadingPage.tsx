@@ -1,6 +1,6 @@
 'use client';
 import { useEffect } from 'react';
-import { useRouter } from 'next/navigation'; 
+import { useRouter } from 'next/navigation';
 import { UserContext } from '@/contexts/userContext';
 import { useContext } from 'react';
 import LoadingSpinner from '../LoadingSpinner/LoadingSpinner';
@@ -25,6 +25,7 @@ const LoadingPage = () => {
           console.error('Token or user data missing.');
           return;
         }
+
         handleGoogleLogin({
           token,
           user,
@@ -45,7 +46,7 @@ const LoadingPage = () => {
 
   return (
     <div className='flex justify-center items-center h-screen'>
-    <LoadingSpinner/>
+      <LoadingSpinner />
     </div>
   );
 };
