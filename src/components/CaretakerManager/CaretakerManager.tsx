@@ -21,8 +21,7 @@ const CaretakerManager = () => {
         user?.response.token || ""
       );
       setCaretakers(data);
-    } catch (error) {
-      console.error("Error loading caretakers:", error);
+    } catch {
       alert("Error loading caretakers");
     }
   }, [user]);
@@ -67,8 +66,7 @@ const CaretakerManager = () => {
 
       await loadCaretakers();
       alert("Caretaker updated successfully!");
-    } catch (error) {
-      console.error("Error updating caretaker:", error);
+    } catch {
       alert("Error updating caretaker");
     }
   };
@@ -81,8 +79,7 @@ const CaretakerManager = () => {
       );
       await loadCaretakers();
       alert("Caretaker deleted successfully!");
-    } catch (error) {
-      console.error("Error deleting caretaker:", error);
+    } catch {
       alert("Error deleting caretaker");
     }
   };

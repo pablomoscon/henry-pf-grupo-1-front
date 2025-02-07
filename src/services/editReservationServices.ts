@@ -16,7 +16,6 @@ export const reservationService = {
     }
 
     const data = await response.json();
-    console.log("Raw response:", data);
     return data;
   },
   async createReservation(
@@ -37,8 +36,6 @@ export const reservationService = {
     token?: string
   ): Promise<IReservationEdit> {
     try {
-      console.log("Sending update request with:", { reservationId, data });
-
       const response = await fetchWithInterceptor(
         `${API_URL}/reservations/${reservationId}/add-caretaker/${data.caretakerId}`,
         {
@@ -52,14 +49,12 @@ export const reservationService = {
 
       if (!response.ok) {
         const errorData = await response.json();
-        console.error("Server response:", errorData);
-        throw new Error(`Error ${response.status}: ${response.statusText}`);
+        throw new Error(
+          `Error ${response.status}: ${response.statusText} - ${errorData.message}`
+        );
       }
-
-      // Retornamos la respuesta en formato JSON
       return await response.json();
     } catch (error) {
-      console.error("Error en updateReservation:", error);
       throw error;
     }
   },
@@ -80,8 +75,6 @@ export const reservationService = {
     token?: string
   ): Promise<IReservationEdit> {
     try {
-      console.log("Sending update request with:", { reservationId, data });
-
       const response = await fetch(
         `${API_URL}/reservations/${reservationId}/caretaker/${data.caretakerId}`,
         {
@@ -95,13 +88,14 @@ export const reservationService = {
 
       if (!response.ok) {
         const errorData = await response.json();
-        console.error("Server response:", errorData);
-        throw new Error(`Error ${response.status}: ${response.statusText}`);
+
+        throw new Error(
+          `Error ${response.status}: ${response.statusText} - ${errorData.message}`
+        );
       }
 
       return await response.json();
     } catch (error) {
-      console.error("Error en updateReservation:", error);
       throw error;
     }
   },

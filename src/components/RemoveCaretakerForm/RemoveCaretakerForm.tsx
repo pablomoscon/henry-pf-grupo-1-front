@@ -1,3 +1,4 @@
+/*
 "use client";
 import React, { useState, useEffect, useContext } from "react";
 import { IReservationEdit } from "@/interfaces/IReserve";
@@ -152,3 +153,4 @@ const RemoveCaretakerForm = ({ reservation, onClose, onRemove }: Props) => {
 };
 
 export default RemoveCaretakerForm;
+*/
