@@ -5,7 +5,6 @@ import { reservationService } from "@/services/editReservationServices";
 import { UserContext } from "@/contexts/userContext";
 import { ReservationsTable } from "@/components/ReservationsTable/ReservationsTable";
 import { EditReservationForm } from "../editReservationForm/editReservationForm";
-import RemoveCaretakerForm from "../RemoveCaretakerForm/RemoveCaretakerForm";
 
 export const EditReservationManager = () => {
   const { user } = useContext(UserContext);
@@ -25,8 +24,8 @@ export const EditReservationManager = () => {
       if (data) {
         setReservations(data);
       }
-    } catch (error) {
-      console.error("Error getting reservations", error);
+    } catch {
+      alert("Error fetching reservation. Please try again.");
     }
   }, [user?.response?.token]);
 
@@ -38,7 +37,6 @@ export const EditReservationManager = () => {
 
   const handleSave = async (updatedReservation: IReservationEdit) => {
     try {
-      console.log(user?.response?.token);
       const caretakerId =
         updatedReservation.caretakers &&
         updatedReservation.caretakers.length > 0
@@ -51,8 +49,7 @@ export const EditReservationManager = () => {
         user?.response?.token
       );
       await fetchReservations();
-    } catch (error) {
-      console.error("Error updating reservation", error);
+    } catch {
       alert("Error updating reservation. Please try again.");
     }
   };
@@ -67,44 +64,9 @@ export const EditReservationManager = () => {
       try {
         await reservationService.deleteReservation(id, user.response.token);
         await fetchReservations();
-      } catch (error) {
-        console.error("Error deleting reservation", error);
+      } catch {
         alert("Error deleting reservation. Please try again.");
       }
-  };
-
-  const handleRemoveCaretaker = async (
-    updatedReservation: IReservationEdit
-  ) => {
-    debugger;
-    console.log(
-      "handleRemoveCaretaker llamado con parámetros:",
-      updatedReservation
-    );
-    try {
-      console.log(user?.response?.token);
-      const caretakerId =
-        updatedReservation.caretakers &&
-        updatedReservation.caretakers.length > 0
-          ? updatedReservation.caretakers[0].id
-          : "";
-
-      console.log("caretakerId:", caretakerId);
-      console.log("updatedReservation.id:", updatedReservation.id);
-
-      console.log("Llamando a reservationService.removeCaretaker...");
-      await reservationService.removeCaretaker(
-        updatedReservation.id,
-        { caretakerId },
-        user?.response?.token
-      );
-      console.log("removeCaretaker llamado correctamente");
-
-      await fetchReservations();
-    } catch (error) {
-      console.error("Error updating reservation", error);
-      alert("Error updating reservation. Please try again.");
-    }
   };
 
   return (
@@ -124,13 +86,6 @@ export const EditReservationManager = () => {
             reservation={selectedReservation}
             onClose={() => setIsEditOpen(false)}
             onSave={handleSave}
-          />
-        )}
-        {isEditOpen && (
-          <RemoveCaretakerForm
-            reservation={selectedReservation}
-            onClose={() => setIsEditOpen(false)}
-            onRemove={handleRemoveCaretaker}
           />
         )}
       </div>

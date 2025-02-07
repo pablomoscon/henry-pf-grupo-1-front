@@ -31,8 +31,8 @@ export const EditReservationForm = ({
             user.response.token
           );
           setAvailableCaretakers(caretakers);
-        } catch (error) {
-          console.error("Error loading caretakers", error);
+        } catch {
+          alert("Error loading caretakers");
         }
       };
       loadData();
@@ -89,7 +89,7 @@ export const EditReservationForm = ({
           <div className="flex items-center mb-4">
             <select
               id="caretaker"
-              className="block w-full p-1 pl-10 text-sm text-gray-700 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-600 focus:border-transparent"
+              className="p-2  w-full rounded bg-black-light text-white-ivory border border-gray-700 text-sm focus:outline-none focus:border-gold-soft transition-all duration-300"
               value={selectedCaretaker?.id || ""}
               onChange={handleCaretakerChange}
             >
@@ -103,14 +103,14 @@ export const EditReservationForm = ({
             </select>
             <button
               type="button"
-              className="bg-gray-300 hover:bg-gray-400 text-xs text-gray-800 font-semibold py-1 px-2 rounded ml-4"
+              className="bg-black-light hover:bg-opacity-50 text-gray-white  py-2 px-4 rounded ml-4"
               onClick={onClose}
             >
               Cancel
             </button>
             <button
               type="button"
-              className="bg-gold-soft hover:bg-gold-soft-dark text-xs text-gray-800 font-semibold py-1 px-4 rounded ml-4"
+              className="bg-green-dark hover:bg-green-olive text-gray-white mr-2 py-2 px-4 rounded ml-4"
               onClick={handleSave}
             >
               Save
@@ -133,7 +133,7 @@ export const EditReservationForm = ({
             <div className="flex justify-center mt-8">
               <button
                 type="button"
-                className="bg-green-dark hover:bg-gold-soft-dark text-gray-white mr-2 py-2 px-4 rounded"
+                className="bg-green-dark hover:bg-green-olive text-gray-white mr-2 py-2 px-4 rounded"
                 onClick={handleConfirmDialogConfirm}
               >
                 Confirm

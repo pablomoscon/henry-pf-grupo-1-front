@@ -46,7 +46,6 @@ export const CaretakerForm = ({ onSubmit }: CaretakerFormProps) => {
         role: "caretaker",
         confirmPassword: undefined,
       };
-      console.log("Datos del caretaker a enviar:", caretakerData);
       await onSubmit(caretakerData);
       setShowConfirm(false);
       setCurrentCaretaker({
@@ -60,8 +59,7 @@ export const CaretakerForm = ({ onSubmit }: CaretakerFormProps) => {
         role: "caretaker",
         profileData: "",
       });
-    } catch (error) {
-      console.error("Error detallado:", error);
+    } catch {
       alert("Error al crear caretaker. Por favor, verifica los datos.");
     }
   };

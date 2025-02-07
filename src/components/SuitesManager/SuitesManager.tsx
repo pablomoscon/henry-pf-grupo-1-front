@@ -26,8 +26,8 @@ const SuitesManager = () => {
     try {
       const data = await getRooms();
       setSuites(data);
-    } catch (error) {
-      console.error("Error loading suites:", error);
+    } catch {
+      alert("Error loading suites");
     }
   };
 
@@ -36,7 +36,6 @@ const SuitesManager = () => {
   }, []);
 
   const handleEdit = (suite: IRoomResponse) => {
-    console.log("Suite to edit:", suite);
     const suiteWithId = {
       ...suite,
       _id: suite.id,
@@ -59,8 +58,7 @@ const SuitesManager = () => {
       setShowConfirmDelete(false);
       setSuiteToDelete(null);
       alert("Suite successfully deleted");
-    } catch (error) {
-      console.error("Error deleting suite:", error);
+    } catch {
       alert("Error deleting suite");
     }
   };
