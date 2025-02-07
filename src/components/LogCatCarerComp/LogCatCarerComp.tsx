@@ -31,7 +31,7 @@ const LogCatCareComp = () => {
       if (!reservationId) return;
       setLoading(true);
       try {
-        const data = await getPosts(reservationId);
+        const data = await getPosts(reservationId, token);
 
         const sortedPosts = data.sort(
           (a, b) =>
