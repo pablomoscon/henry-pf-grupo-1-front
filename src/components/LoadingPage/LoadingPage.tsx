@@ -12,6 +12,9 @@ const LoadingPage = () => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
+        // Add a small delay to allow cookie to be set
+        await new Promise((resolve) => setTimeout(resolve, 500));
+
         console.log("1. All cookies:", document.cookie);
 
         const authCookie = document.cookie
@@ -21,7 +24,8 @@ const LoadingPage = () => {
         console.log("2. Auth cookie found:", authCookie);
 
         if (!authCookie) {
-          console.log("3. No auth cookie found");
+          console.log("3. No auth cookie found, redirecting to login");
+          router.push("/login");
           return;
         }
 
@@ -31,28 +35,35 @@ const LoadingPage = () => {
         const { token, user } = JSON.parse(cookieValue);
         console.log("5. Parsed cookie data:", { token: "REDACTED", user });
 
-      if (!token || !user) {
-        console.error('Token or user data missing.');
-        return;
+        if (!token || !user) {
+          console.error("6. Token or user data missing");
+          router.push("/login");
+          return;
+        }
+
+        handleGoogleLogin({ token, user });
+        router.push("/profile");
+      } catch (error) {
+        console.error("7. Error processing cookie:", error);
+        router.push("/login");
       }
-      handleGoogleLogin({
-        token,
-        user,
-      });
+    };
 
-      router.push('/profile');
-    } catch (error) {
-      console.error('Error during authentication process:', error);
+    // Add a timeout to prevent infinite loading
+    const timeoutId = setTimeout(() => {
+      router.push("/login");
+    }, 5000);
+
+    if (!isLogged()) {
+      console.log("8. User not logged in, fetching data");
+      fetchUserData();
+    } else {
+      console.log("9. User already logged in, redirecting");
+      router.push("/profile");
     }
-  };
 
-  if (!isLogged()) {
-    setTimeout(() => fetchUserData(), 400);
-  } else {
-    router.push('/profile');
-  }
-}, [isLogged, handleGoogleLogin, router]);
-
+    return () => clearTimeout(timeoutId);
+  }, [isLogged, handleGoogleLogin, router]);
 
   return (
     <div className="flex justify-center items-center h-screen">
