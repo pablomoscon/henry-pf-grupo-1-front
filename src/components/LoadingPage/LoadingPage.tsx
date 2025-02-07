@@ -31,26 +31,28 @@ const LoadingPage = () => {
         const { token, user } = JSON.parse(cookieValue);
         console.log("5. Parsed cookie data:", { token: "REDACTED", user });
 
-        if (!token || !user) {
-          console.error("6. Token or user data missing");
-          return;
-        }
-
-        handleGoogleLogin({ token, user });
-        router.push("/profile");
-      } catch (error) {
-        console.error("7. Error processing cookie:", error);
+      if (!token || !user) {
+        console.error('Token or user data missing.');
+        return;
       }
-    };
+      handleGoogleLogin({
+        token,
+        user,
+      });
 
-    if (!isLogged()) {
-      console.log("8. User not logged in, fetching data");
-      fetchUserData();
-    } else {
-      console.log("9. User already logged in, redirecting");
-      router.push("/profile");
+      router.push('/profile');
+    } catch (error) {
+      console.error('Error during authentication process:', error);
     }
-  }, [isLogged, handleGoogleLogin, router]);
+  };
+
+  if (!isLogged()) {
+    setTimeout(() => fetchUserData(), 400);
+  } else {
+    router.push('/profile');
+  }
+}, [isLogged, handleGoogleLogin, router]);
+
 
   return (
     <div className="flex justify-center items-center h-screen">
