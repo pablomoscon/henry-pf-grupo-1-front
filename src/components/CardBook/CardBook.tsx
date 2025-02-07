@@ -31,7 +31,7 @@ const CardBook = ({ book }: { book: IBookCaretaker }) => {
 
       <div className="flex flex-col space-y-2">
         <button
-          className="bg-green-olive hover:bg-green-700 text-white px-6 py-2 rounded-lg"
+          className="bg-green-dark hover:bg-green-olive text-white px-6 py-2 rounded-lg"
           onClick={() => {
             if (book.reservationId) {
               router.push(
@@ -51,8 +51,8 @@ const CardBook = ({ book }: { book: IBookCaretaker }) => {
           Feed
         </button>
         <button
-          onClick={() => router.push(`/caretaker-chat/${book.userId}`)} // Usar router.push
-          className="bg-gold-dark hover:bg-yellow-700 text-white px-6 py-2 rounded-lg"
+          onClick={() => router.push(`/caretaker-chat/${book.userId}`)}
+          className="bg-gold-dark hover:bg-gold-soft text-white px-6 py-2 rounded-lg"
         >
           Chat
         </button>
