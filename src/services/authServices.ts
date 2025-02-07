@@ -1,5 +1,4 @@
 import { API_URL } from "../../envs";
-import { fetchWithInterceptor } from "./fetchInterceptor";
 
 export const googleAuth = () => {
   window.location.href = `${API_URL}/auth/google`;
