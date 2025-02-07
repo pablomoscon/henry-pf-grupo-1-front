@@ -9,7 +9,7 @@ export const getUserSession = async () => {
   try {
     const response = await fetch(`${API_URL}/auth/me`, {
       method: 'GET',
-      credentials: 'include',
+      credentials: 'include', 
     });
 
     if (!response.ok) {
