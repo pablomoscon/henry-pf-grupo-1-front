@@ -66,6 +66,7 @@ const SuitesManager = () => {
   const handleCreateSuccess = async () => {
     await loadSuites();
     setShowCreateForm(false);
+    alert("Suite created successfully!");
   };
 
   return (

@@ -351,13 +351,13 @@ export function ReservationsTable({
                         <span
                           style={{
                             color:
-                              reservation.status === "Completed"
+                              reservation.status === "completed"
                                 ? "var(--green-olive)"
-                                : reservation.status === "Confirmed"
+                                : reservation.status === "confirmed"
                                 ? "var(--green-dark)"
-                                : reservation.status === "Cancelled"
+                                : reservation.status === "canceled"
                                 ? "grey"
-                                : reservation.status === "Pending"
+                                : reservation.status === "pending"
                                 ? "var(--gold-dark)"
                                 : "var(--white-ivory)",
                           }}
