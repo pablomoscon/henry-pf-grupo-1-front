@@ -3,13 +3,24 @@ import { fetchWithInterceptor } from "./fetchInterceptor";
 
 export const fetchPaymentStatus = async (
   sessionId: string,
-  status: string
+  status: string,
+  token: string
 ): Promise<string> => {
+  if (!token) {
+    throw new Error('Token not available.');
+  }
+
   const url = `${API_URL}/payments/status?sessionId=${sessionId}&status=${status}`;
-  const response = await fetchWithInterceptor(url);
+  const response = await fetch(url, {
+    method: 'GET',
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+  });
 
   if (!response.ok) {
-    throw new Error("Error al obtener el estado del pago.");
+    throw new Error('Error al obtener el estado del pago.');
   }
 
   return response.text();
