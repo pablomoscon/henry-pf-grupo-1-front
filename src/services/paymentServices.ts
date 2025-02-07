@@ -38,18 +38,18 @@ export const confirmPayment = async (reservationId: string, token?: string) => {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ token }), // Aquí estamos enviando el token en el cuerpo de la solicitud
+        body: JSON.stringify({ token }),
       }
     );
 
     if (!response.ok) {
-      throw new Error("Error al crear la sesión de pago");
+      throw new Error("Error creating the payment session");
     }
 
     const data = await response.json();
 
     if (data.sessionUrl) {
-      window.location.href = data.sessionUrl; // Redirige a la URL de Stripe
+      window.location.href = data.sessionUrl;
     } else {
       throw new Error("Error: No session URL received.");
     }
