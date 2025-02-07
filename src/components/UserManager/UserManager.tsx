@@ -18,8 +18,7 @@ const UserManager = () => {
         user?.response.token || ""
       );
       setUsers(data);
-    } catch (error) {
-      console.error("Error loading users:", error);
+    } catch {
       alert("Error loading users");
     }
   }, [user]);
@@ -40,7 +39,6 @@ const UserManager = () => {
       setShowCreateForm(false);
       alert("Usuario creado exitosamente!");
     } catch (error: unknown) {
-      console.error("Error al crear usuario:", error);
       alert(error instanceof Error ? error.message : "Error al crear usuario");
     }
   };
@@ -54,8 +52,7 @@ const UserManager = () => {
       );
       await loadUsers();
       alert("User updated successfully!");
-    } catch (error) {
-      console.error("Error updating user:", error);
+    } catch {
       alert("Error updating user");
     }
   };
@@ -68,8 +65,7 @@ const UserManager = () => {
       );
       await loadUsers();
       alert("User deleted successfully!");
-    } catch (error) {
-      console.error("Error deleting user:", error);
+    } catch {
       alert("Error deleting user");
     }
   };

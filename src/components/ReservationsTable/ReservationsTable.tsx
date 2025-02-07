@@ -1,11 +1,14 @@
 "use client";
 
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useState, useMemo, useEffect, useContext } from "react";
 import { IReservationEdit } from "@/interfaces/IReserve";
 import { FaEdit, FaTrash } from "react-icons/fa";
 import { DeleteModal } from "../DeleteModal/DeleteModal";
-import RemoveCaretakerForm from "../RemoveCaretakerForm/RemoveCaretakerForm";
 import { EditReservationForm } from "../editReservationForm/editReservationForm";
+import { UserContext } from "@/contexts/userContext";
+import { UserData } from "@/interfaces/IUser";
+import { caretakerService } from "@/services/caretakerServices";
+
 interface ReservationsTableProps {
   reservations: IReservationEdit[];
   onEdit: (reservation: IReservationEdit) => void;
@@ -21,7 +24,6 @@ export function ReservationsTable({
   const [selectedReservation, setSelectedReservation] =
     useState<IReservationEdit | null>(null);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [openRemoveCaretakerForm, setOpenRemoveCaretakerForm] = useState(false);
   const [openEditReservationForm, setOpenEditReservationForm] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [dateRange, setDateRange] = useState({
@@ -31,6 +33,12 @@ export function ReservationsTable({
   const [filterField, setFilterField] = useState("id");
   const [filterText, setFilterText] = useState("");
   const [showClearFilterButton, setShowClearFilterButton] = useState(false);
+  const [filterCaretaker, setFilterCaretaker] = useState<string | null>(null);
+  const [availableCaretakers, setAvailableCaretakers] = useState<UserData[]>(
+    []
+  );
+
+  const { user } = useContext(UserContext);
 
   const handleSave = (reservation: IReservationEdit) => {
     onSave(reservation);
@@ -47,15 +55,9 @@ export function ReservationsTable({
       await onDelete(selectedReservation?.id || "");
       setIsDeleteModalOpen(false);
       alert("Reservation deleted successfully!");
-    } catch (error) {
-      console.error("Error deleting reservation:", error);
+    } catch {
       alert("Error deleting reservation");
     }
-  };
-
-  const handleOpenRemoveCaretakerForm = (reservation: IReservationEdit) => {
-    setOpenRemoveCaretakerForm(true);
-    setSelectedReservation(reservation);
   };
 
   const handleOpenEditReservationForm = (reservation: IReservationEdit) => {
@@ -105,6 +107,20 @@ export function ReservationsTable({
           return false;
         }
       }
+      if (filterCaretaker !== null) {
+        if (filterCaretaker === "noCaretaker") {
+          return !reservation.caretakers || reservation.caretakers.length === 0;
+        } else if (filterCaretaker === "select") {
+          return true;
+        } else {
+          return (
+            reservation.caretakers &&
+            reservation.caretakers.some(
+              (caretaker) => caretaker.name === filterCaretaker
+            )
+          );
+        }
+      }
       return true;
     });
   }, [
@@ -113,6 +129,7 @@ export function ReservationsTable({
     dateRange.endDate,
     filterField,
     filterText,
+    filterCaretaker,
   ]);
 
   const handleDateRangeChange = (
@@ -131,6 +148,20 @@ export function ReservationsTable({
       setShowClearFilterButton(false);
     }
   }, [dateRange, filterText]);
+
+  useEffect(() => {
+    if (user?.response.token) {
+      const loadData = async () => {
+        try {
+          const caretakers = await caretakerService.getCaretakers(
+            user.response.token
+          );
+          setAvailableCaretakers(caretakers);
+        } catch {}
+      };
+      loadData();
+    }
+  }, [user?.response.token]);
 
   return (
     <>
@@ -181,6 +212,26 @@ export function ReservationsTable({
                 className="p-2 w-full rounded bg-black-light text-white-ivory border border-gray-700 text-sm focus:outline-none focus:border-gold-soft transition-all duration-300"
               />
             </div>
+            <div className="flex items-center gap-2 flex-1 ml-2 mr-2">
+              <span className="text-gray-400 font-normal text-sm">
+                Caretaker:
+              </span>
+              <select
+                value={filterCaretaker || ""}
+                onChange={(e) => {
+                  setFilterCaretaker(e.target.value);
+                }}
+                className="p-2  ml-4 w-full rounded bg-black-light text-white-ivory border border-gray-700 text-sm focus:outline-none focus:border-gold-soft transition-all duration-300"
+              >
+                <option value="select">Select</option>
+                <option value="noCaretaker">No Caretaker</option>
+                {availableCaretakers.map((caretaker) => (
+                  <option key={caretaker.id} value={caretaker.name}>
+                    {caretaker.name}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
           <div className="flex justify-end mr-2 ">
             {showClearFilterButton && (
@@ -188,6 +239,7 @@ export function ReservationsTable({
                 onClick={() => {
                   setDateRange({ startDate: "", endDate: "" });
                   setFilterText("");
+                  setFilterCaretaker("");
                 }}
                 className="text-gray-500 transition-colors hover:text-gray-700"
               >
@@ -313,16 +365,14 @@ export function ReservationsTable({
                     <td className="px-2 py-3 text-center text-xs text-white-ivory">
                       <div className="flex justify-center">
                         <button
-                          onClick={() => {
-                            if (
-                              reservation.caretakers &&
-                              reservation.caretakers.length > 0
-                            ) {
-                              handleOpenRemoveCaretakerForm(reservation);
-                            } else {
-                              handleOpenEditReservationForm(reservation);
-                            }
-                          }}
+                          onClick={() =>
+                            reservation.caretakers &&
+                            reservation.caretakers.length > 0
+                              ? alert(
+                                  "This reservation is already assigned to a caretaker."
+                                )
+                              : handleOpenEditReservationForm(reservation)
+                          }
                           className="text-gold-soft transition-colors hover:text-gold-hover mr-3"
                           title="Edit"
                         >
@@ -353,14 +403,6 @@ export function ReservationsTable({
               )}
             </tbody>
           </table>
-          {openRemoveCaretakerForm && (
-            <RemoveCaretakerForm
-              reservation={selectedReservation}
-              onClose={() => setOpenRemoveCaretakerForm(false)}
-              onRemove={(reservation) => handleDelete(reservation)}
-            />
-          )}
-
           {openEditReservationForm && (
             <EditReservationForm
               reservation={selectedReservation}
