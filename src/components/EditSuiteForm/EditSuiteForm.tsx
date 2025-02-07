@@ -302,6 +302,7 @@ export const EditSuiteForm = ({
                   onClick={() => {
                     setShowConfirm(false);
                     formik.submitForm();
+                    alert("Suite updated successfully!");
                   }}
                   className="bg-gold-soft text-black-dark px-6 py-2.5 rounded hover:bg-gold-hover text-sm font-medium min-w-[100px]"
                 >
