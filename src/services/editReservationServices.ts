@@ -74,7 +74,7 @@ export const reservationService = {
     if (!response.ok) throw new Error("Error deleting reservation");
   },
 
-  async unassignCaretaker(
+  async removeCaretaker(
     reservationId: string,
     data: { caretakerId: string },
     token?: string
