@@ -94,7 +94,7 @@ const Chat = () => {
                     isSender
                       ? "bg-gold-soft text-black-dark"
                       : isReceiver
-                      ? "bg-gray-700 text-white-basic"
+                      ? "bg-green-olive text-white-basic"
                       : "bg-gray-700 text-white-basic"
                   }`}
                 >
