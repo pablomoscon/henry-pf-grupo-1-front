@@ -1,36 +1,38 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+![logo MariArt](./public/logoReadme.png)
 
-## Getting Started
+> ### Descripción del Proyecto
 
-First, run the development server:
+<p>El objetivo de esta App es modernizar y optimizar el acceso a servicios exclusivos de alojamiento de lujo para gatos. Permitiendo a los usuarios:</p>
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- Acceder a información detallada del alojamiento, como fotografías y descripciones de los servicios.
+- Recibir notificaciones y recordatorios sobre reservas y fechas clave como el check-in y check-out.
+- Una experiencia exclusiva e intuitiva para gestionar reservas en tiempo real.
+- Mantener una comunicación directa con cuidadores mediante un sistema de chat en tiempo real.
+- Acceso a una bitácora con fotos, videos y posteos sobre la estadía del huésped gatuno, actualizados por su cuidador.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+##### GitHub Pages Front: <https://github.com/courreges-do/henry-pf-grupo-1-front>
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+##### GitHub Pages Back: <https://github.com/courreges-do/henry-pf-grupo-1-front>
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+##### Documentación Front: [Enlace a la documentación en PDF](./public/documentacion.pdf)
 
-## Learn More
+> ### Herramientas utilizadas
 
-To learn more about Next.js, take a look at the following resources:
+- Next.js (React, TailwindCSS, API Routes ).
+- Fetch y Axios (para peticiones HTTP).
+- Toastify (alertas, notificaciones).
+- GitHub.
+- OAuth 2.0 y JWT.
+- Vercel.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+> ### Pasos para ejecutar el proyecto localmente
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+1. Clonar Repositorio: git clone <https://github.com/courreges-do/henry-pf-grupo-1-front>
+2. Dentro de la carpeta del proyecto ejecutar: npm install
+3. Posteriormente ejecutar: npm run dev
 
-## Deploy on Vercel
+### Configuración de Variables de Entorno
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Para ejecutar este proyecto, es necesario crear un archivo .env en el directorio raíz con el nombre .env.local y agregar lo siguiente:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+NEXT_PUBLIC_API_URL=https://api.example.com

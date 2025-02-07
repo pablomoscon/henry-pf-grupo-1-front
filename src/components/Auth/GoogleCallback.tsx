@@ -14,21 +14,23 @@ const GoogleCallback = () => {
     const handleCallback = async () => {
       try {
         const params = new URLSearchParams(window.location.search);
+        console.log("1. URL Search Params:", Object.fromEntries(params));
         const token = params.get("token");
         const error = params.get("error");
 
         if (error) {
-          console.error("Google auth error:", error);
+          console.error("2. Google auth error:", error);
           router.push("/login");
           return;
         }
 
         if (!token) {
-          console.error("No token received");
+          console.error("3. No token received in callback");
           router.push("/login");
           return;
         }
 
+        console.log("4. Making API call to /auth/google/callback");
         const response = await fetchWithInterceptor(
           `${API_URL}/auth/google/callback`,
           {
@@ -38,15 +40,26 @@ const GoogleCallback = () => {
           }
         );
 
+        console.log("5. API Response status:", response.status);
+        console.log(
+          "5a. Response headers:",
+          Object.fromEntries(response.headers)
+        );
+
         if (!response.ok) {
           throw new Error("Failed to get user data");
         }
 
         const userData = await response.json();
+        console.log("6. User data received:", {
+          ...userData,
+          token: "REDACTED",
+        });
+
         handleGoogleLogin({ token, user: userData });
         router.push("/dashboard");
       } catch (error) {
-        console.error("Error handling Google callback:", error);
+        console.error("7. Error in callback process:", error);
         router.push("/login");
       }
     };

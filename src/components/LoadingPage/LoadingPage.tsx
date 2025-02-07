@@ -1,27 +1,35 @@
-'use client';
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation'; 
-import { UserContext } from '@/contexts/userContext';
-import { useContext } from 'react';
-import LoadingSpinner from '../LoadingSpinner/LoadingSpinner';
+"use client";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { UserContext } from "@/contexts/userContext";
+import { useContext } from "react";
+import LoadingSpinner from "../LoadingSpinner/LoadingSpinner";
 
 const LoadingPage = () => {
   const { isLogged, handleGoogleLogin } = useContext(UserContext);
   const router = useRouter();
 
-useEffect(() => {
-  const fetchUserData = async () => {
-    try {
-      const authCookie = document.cookie
-        .split('; ')
-        .find((row) => row.startsWith('auth='));
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        console.log("1. All cookies:", document.cookie);
 
-      console.log('Auth cookie:', authCookie);
+        const authCookie = document.cookie
+          .split("; ")
+          .find((row) => row.startsWith("auth="));
 
-      if (!authCookie) return;
+        console.log("2. Auth cookie found:", authCookie);
 
-      const cookieValue = decodeURIComponent(authCookie.split('=')[1]);
-      const { token, user } = JSON.parse(cookieValue);
+        if (!authCookie) {
+          console.log("3. No auth cookie found");
+          return;
+        }
+
+        const cookieValue = decodeURIComponent(authCookie.split("=")[1]);
+        console.log("4. Decoded cookie value:", cookieValue);
+
+        const { token, user } = JSON.parse(cookieValue);
+        console.log("5. Parsed cookie data:", { token: "REDACTED", user });
 
       if (!token || !user) {
         console.error('Token or user data missing.');
@@ -47,8 +55,8 @@ useEffect(() => {
 
 
   return (
-    <div className='flex justify-center items-center h-screen'>
-    <LoadingSpinner/>
+    <div className="flex justify-center items-center h-screen">
+      <LoadingSpinner />
     </div>
   );
 };
