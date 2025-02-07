@@ -30,9 +30,8 @@ export function ReservationsTable({
     startDate: "",
     endDate: "",
   });
-  const [filterField, setFilterField] = useState("id");
+  const [filterField, setFilterField] = useState("select");
   const [filterText, setFilterText] = useState("");
-  const [showClearFilterButton, setShowClearFilterButton] = useState(false);
   const [filterCaretaker, setFilterCaretaker] = useState<string | null>(null);
   const [availableCaretakers, setAvailableCaretakers] = useState<UserData[]>(
     []
@@ -86,25 +85,30 @@ export function ReservationsTable({
         }
       }
       if (filterText.trim() !== "") {
-        let fieldValue = "";
-        switch (filterField) {
-          case "id":
-            fieldValue = reservation.id;
-            break;
-          case "status":
-            fieldValue = reservation.status;
-            break;
-          case "customer":
-            fieldValue = reservation.userName;
-            break;
-          case "suite":
-            fieldValue = reservation.roomName;
-            break;
-          default:
-            fieldValue = "";
-        }
-        if (!fieldValue.toLowerCase().includes(filterText.toLowerCase())) {
-          return false;
+        if (filterField === "select") {
+          return true; // no aplicar filtro
+        } else {
+          // lógica de filtrado actual
+          let fieldValue = "";
+          switch (filterField) {
+            case "id":
+              fieldValue = reservation.id;
+              break;
+            case "status":
+              fieldValue = reservation.status;
+              break;
+            case "customer":
+              fieldValue = reservation.userName;
+              break;
+            case "suite":
+              fieldValue = reservation.roomName;
+              break;
+            default:
+              fieldValue = "";
+          }
+          if (!fieldValue.toLowerCase().includes(filterText.toLowerCase())) {
+            return false;
+          }
         }
       }
       if (filterCaretaker !== null) {
@@ -140,14 +144,6 @@ export function ReservationsTable({
     setDateRange((prev) => ({ ...prev, [type]: value }));
     setTimeout(() => setIsLoading(false), 300);
   };
-
-  useEffect(() => {
-    if (dateRange.startDate || dateRange.endDate || filterText) {
-      setShowClearFilterButton(true);
-    } else {
-      setShowClearFilterButton(false);
-    }
-  }, [dateRange, filterText]);
 
   useEffect(() => {
     if (user?.response.token) {
@@ -198,6 +194,7 @@ export function ReservationsTable({
                 onChange={(e) => setFilterField(e.target.value)}
                 className="p-2  ml-4 w-full rounded bg-black-light text-white-ivory border border-gray-700 text-sm focus:outline-none focus:border-gold-soft transition-all duration-300"
               >
+                <option value="select">All</option>
                 <option value="id">ID</option>
                 <option value="status">Status</option>
                 <option value="customer">Customer</option>
@@ -223,7 +220,7 @@ export function ReservationsTable({
                 }}
                 className="p-2  ml-4 w-full rounded bg-black-light text-white-ivory border border-gray-700 text-sm focus:outline-none focus:border-gold-soft transition-all duration-300"
               >
-                <option value="select">Select</option>
+                <option value="select">All</option>
                 <option value="noCaretaker">No Caretaker</option>
                 {availableCaretakers.map((caretaker) => (
                   <option key={caretaker.id} value={caretaker.name}>
@@ -232,20 +229,6 @@ export function ReservationsTable({
                 ))}
               </select>
             </div>
-          </div>
-          <div className="flex justify-end mr-2 ">
-            {showClearFilterButton && (
-              <button
-                onClick={() => {
-                  setDateRange({ startDate: "", endDate: "" });
-                  setFilterText("");
-                  setFilterCaretaker("");
-                }}
-                className="text-gray-500 transition-colors hover:text-gray-700"
-              >
-                Clear
-              </button>
-            )}
           </div>
         </div>
         <div
@@ -352,16 +335,38 @@ export function ReservationsTable({
                     <td className="truncate px-2 py-3 text-center text-xs text-white-ivory">
                       <div className="mx-auto max-w-full truncate px-1">
                         {reservation.caretakers &&
-                        reservation.caretakers.length > 0
-                          ? reservation.caretakers[0].name || "Unassigned"
-                          : "Unassigned"}
+                        reservation.caretakers.length > 0 ? (
+                          <span style={{ color: "var(--white-ivory)" }}>
+                            {reservation.caretakers[0].name}
+                          </span>
+                        ) : (
+                          <span style={{ color: "var(--gold-soft)" }}>
+                            Unassigned
+                          </span>
+                        )}
                       </div>
                     </td>
                     <td className="truncate px-2 py-3 text-center text-xs text-white-ivory">
                       <div className="mx-auto max-w-full truncate px-1">
-                        {reservation.status}
+                        <span
+                          style={{
+                            color:
+                              reservation.status === "Completed"
+                                ? "var(--green-olive)"
+                                : reservation.status === "Confirmed"
+                                ? "var(--green-dark)"
+                                : reservation.status === "Cancelled"
+                                ? "grey"
+                                : reservation.status === "Pending"
+                                ? "var(--gold-dark)"
+                                : "var(--white-ivory)",
+                          }}
+                        >
+                          {reservation.status}
+                        </span>
                       </div>
                     </td>
+
                     <td className="px-2 py-3 text-center text-xs text-white-ivory">
                       <div className="flex justify-center">
                         <button

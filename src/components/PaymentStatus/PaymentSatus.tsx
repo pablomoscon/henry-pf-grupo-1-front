@@ -20,7 +20,7 @@ export default function PaymentStatus() {
       if (!sessionId || !status || !token) {
         setMessage('Missing sessionId, status, or token.');
         setLoading(false);
-        setTimeout(() => router.push('/'), 2500);
+        setTimeout(() => router.push('/'), 1500);
         return;
       }
 
@@ -32,7 +32,7 @@ export default function PaymentStatus() {
         console.error(error);
       } finally {
         setLoading(false);
-        setTimeout(() => router.push('/'), 2000); 
+        setTimeout(() => router.push('/'), 1000); 
       }
     };
 

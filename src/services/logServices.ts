@@ -8,11 +8,14 @@ export const getPosts1 = () => {
   return posts;
 };
 
-export const getPosts = async (idUser: string): Promise<IPost[]> => {
+export const getPosts = async (idUser: string, token?:string): Promise<IPost[]> => {
   const res = await fetchWithInterceptor(
     `${API_URL}/messages/received/${idUser}`,
     {
       cache: "no-store",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
     }
   )
     .then((res) => res.json())
