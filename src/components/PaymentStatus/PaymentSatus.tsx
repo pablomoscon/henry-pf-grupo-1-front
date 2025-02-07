@@ -3,6 +3,7 @@ import { UserContext } from '@/contexts/userContext';
 import { fetchPaymentStatus } from '@/services/paymentServices';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { useContext, useEffect, useState } from 'react';
+import LoadingSpinner from '../LoadingSpinner/LoadingSpinner';
 
 export default function PaymentStatus() {
   const searchParams = useSearchParams();
@@ -31,12 +32,12 @@ export default function PaymentStatus() {
         console.error(error);
       } finally {
         setLoading(false);
-        setTimeout(() => router.push('/'), 3000); // Redirigir después de 3 segundos
+        setTimeout(() => router.push('/'), 2000); 
       }
     };
 
     checkPaymentStatus();
-  }, [sessionId, status, token, router]); // Elimina hasAlerted de las dependencias
+  }, [sessionId, status, token, router]); 
 
   useEffect(() => {
     if (status === 'succeeded') {
@@ -46,13 +47,13 @@ export default function PaymentStatus() {
     } else if (status) {
       alert('Invalid Payment Status');
     }
-  }, [status]); // Este efecto se ejecuta solo cuando cambia `status`
+  }, [status]); 
 
   return (
     <div className='text-3xl font-bold text-center py-10 h-screen flex items-center justify-center'>
       <div>
         {loading ? (
-          <h1>Loading...</h1>
+         <LoadingSpinner/>
         ) : (
           <h1>
             {status === 'succeeded'
