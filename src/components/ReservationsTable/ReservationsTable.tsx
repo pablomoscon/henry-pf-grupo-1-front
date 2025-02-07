@@ -1,28 +1,24 @@
 "use client";
 
-import React, { useState, useMemo, useEffect } from "react";
 import { IReservationEdit } from "@/interfaces/IReserve";
 import { FaEdit, FaTrash } from "react-icons/fa";
+import { useState, useMemo } from "react";
+import { EditReservationModal } from "../EditReservationModal/EditReservationModal";
 import { DeleteModal } from "../DeleteModal/DeleteModal";
-import RemoveCaretakerForm from "../RemoveCaretakerForm/RemoveCaretakerForm";
-import { EditReservationForm } from "../editReservationForm/editReservationForm";
 interface ReservationsTableProps {
   reservations: IReservationEdit[];
   onEdit: (reservation: IReservationEdit) => void;
   onDelete: (id: string) => void;
-  onSave: (reservation: IReservationEdit) => void;
 }
 
 export function ReservationsTable({
   reservations,
-  onSave,
+  onEdit,
   onDelete,
 }: ReservationsTableProps) {
   const [selectedReservation, setSelectedReservation] =
     useState<IReservationEdit | null>(null);
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [openRemoveCaretakerForm, setOpenRemoveCaretakerForm] = useState(false);
-  const [openEditReservationForm, setOpenEditReservationForm] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [dateRange, setDateRange] = useState({
     startDate: "",
@@ -30,37 +26,16 @@ export function ReservationsTable({
   });
   const [filterField, setFilterField] = useState("id");
   const [filterText, setFilterText] = useState("");
-  const [showClearFilterButton, setShowClearFilterButton] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
-  const handleSave = (reservation: IReservationEdit) => {
-    onSave(reservation);
+  const handleEdit = (reservation: IReservationEdit) => {
     setSelectedReservation(reservation);
+    setIsModalOpen(true);
   };
 
-  const handleDelete = async (reservationToDelete: IReservationEdit) => {
-    setIsDeleteModalOpen(true);
-    setSelectedReservation(reservationToDelete);
-  };
-
-  const handleConfirmDelete = async () => {
-    try {
-      await onDelete(selectedReservation?.id || "");
-      setIsDeleteModalOpen(false);
-      alert("Reservation deleted successfully!");
-    } catch (error) {
-      console.error("Error deleting reservation:", error);
-      alert("Error deleting reservation");
-    }
-  };
-
-  const handleOpenRemoveCaretakerForm = (reservation: IReservationEdit) => {
-    setOpenRemoveCaretakerForm(true);
-    setSelectedReservation(reservation);
-  };
-
-  const handleOpenEditReservationForm = (reservation: IReservationEdit) => {
-    setOpenEditReservationForm(true);
-    setSelectedReservation(reservation);
+  const handleSave = async (updatedReservation: IReservationEdit) => {
+    onEdit(updatedReservation);
+    setIsModalOpen(false);
   };
 
   const filteredReservations = useMemo(() => {
@@ -105,6 +80,7 @@ export function ReservationsTable({
           return false;
         }
       }
+
       return true;
     });
   }, [
@@ -124,13 +100,26 @@ export function ReservationsTable({
     setTimeout(() => setIsLoading(false), 300);
   };
 
-  useEffect(() => {
-    if (dateRange.startDate || dateRange.endDate || filterText) {
-      setShowClearFilterButton(true);
-    } else {
-      setShowClearFilterButton(false);
+  const handleDelete = async (reservationToDelete: IReservationEdit) => {
+    setIsDeleteModalOpen(true);
+    setSelectedReservation(reservationToDelete);
+  };
+
+  const handleConfirmDelete = async () => {
+    try {
+      // Lógica para eliminar la reserva
+      await onDelete(selectedReservation?.id || "");
+      setIsDeleteModalOpen(false);
+      alert("Reservation deleted successfully!");
+    } catch (error) {
+      console.error("Error deleting reservation:", error);
+      alert("Error deleting reservation");
     }
-  }, [dateRange, filterText]);
+  };
+
+  const handleCancelDelete = () => {
+    setIsDeleteModalOpen(false);
+  };
 
   return (
     <>
@@ -159,6 +148,7 @@ export function ReservationsTable({
               />
             </div>
           </div>
+
           <div className="flex flex-wrap w-full gap-4">
             <div className="flex items-center gap-2 flex-1 ml-2 mr-2">
               <span className="text-gray-400 font-normal text-sm">By:</span>
@@ -182,20 +172,8 @@ export function ReservationsTable({
               />
             </div>
           </div>
-          <div className="flex justify-end mr-2 ">
-            {showClearFilterButton && (
-              <button
-                onClick={() => {
-                  setDateRange({ startDate: "", endDate: "" });
-                  setFilterText("");
-                }}
-                className="text-gray-500 transition-colors hover:text-gray-700"
-              >
-                Clear
-              </button>
-            )}
-          </div>
         </div>
+
         <div
           className={`relative transition-opacity duration-300 ${
             isLoading ? "opacity-50" : "opacity-100"
@@ -311,29 +289,18 @@ export function ReservationsTable({
                       </div>
                     </td>
                     <td className="px-2 py-3 text-center text-xs text-white-ivory">
-                      <div className="flex justify-center">
+                      <div className="flex justify-center space-x-2">
                         <button
-                          onClick={() => {
-                            if (
-                              reservation.caretakers &&
-                              reservation.caretakers.length > 0
-                            ) {
-                              handleOpenRemoveCaretakerForm(reservation);
-                            } else {
-                              handleOpenEditReservationForm(reservation);
-                            }
-                          }}
-                          className="text-gold-soft transition-colors hover:text-gold-hover mr-3"
-                          title="Edit"
+                          onClick={() => handleEdit(reservation)}
+                          className="text-blue-400 hover:text-blue-300 transition-colors"
                         >
-                          <FaEdit size={14} />
+                          <FaEdit size={16} />
                         </button>
                         <button
                           onClick={() => handleDelete(reservation)}
-                          className="text-red-500 transition-colors hover:text-red-600"
-                          title="Delete"
+                          className="text-red-400 hover:text-red-300 transition-colors"
                         >
-                          <FaTrash size={14} />
+                          <FaTrash size={16} />
                         </button>
                       </div>
                     </td>
@@ -353,32 +320,21 @@ export function ReservationsTable({
               )}
             </tbody>
           </table>
-          {openRemoveCaretakerForm && (
-            <RemoveCaretakerForm
-              reservation={selectedReservation}
-              onClose={() => setOpenRemoveCaretakerForm(false)}
-              onRemove={(reservation) => handleDelete(reservation)}
-            />
-          )}
-
-          {openEditReservationForm && (
-            <EditReservationForm
-              reservation={selectedReservation}
-              onClose={() => setOpenEditReservationForm(false)}
-              onSave={(updatedReservation) => handleSave(updatedReservation)}
-            />
-          )}
-          {isDeleteModalOpen && (
-            <DeleteModal
-              isOpen={isDeleteModalOpen}
-              onClose={() => setIsDeleteModalOpen(false)}
-              onConfirm={handleConfirmDelete}
-              title="Confirm Delete"
-              message="Are you sure you want to delete this reservation?"
-            />
-          )}
         </div>
       </div>
+      <EditReservationModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSave={handleSave}
+        reservation={selectedReservation}
+      />
+      <DeleteModal
+        isOpen={isDeleteModalOpen}
+        onClose={handleCancelDelete}
+        onConfirm={handleConfirmDelete}
+        title="Delete Reservation"
+        message="Are you sure you want to delete this reservation?"
+      />
     </>
   );
 }
