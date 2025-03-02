@@ -141,18 +141,29 @@ export default function ClientLayout({
               <div className='mt-2 w-full bg-black border border-gold-soft/20 rounded-lg shadow-md overflow-hidden'>
                 <ul className='py-2 text-sm text-gold-soft'>
                   {userReservations.length > 0 ? (
-                    userReservations.map((reservation) => (
-                      <li key={reservation.id} className='text-center'>
-                        <Link
-                          href={`/client-chat/${reservation.id}`}
-                          className='block px-4 py-2 hover:bg-gold-soft/10 transition'
-                        >
-                        {reservation.room.name} 
-                          <br />
-                          {reservation.checkInDate} - {reservation.checkOutDate}
-                        </Link>
-                      </li>
-                    ))
+                    <ul className='space-y-2'>
+                      {userReservations.map(
+                        ({ id, room, checkInDate, checkOutDate }) => (
+                          <li key={id} className='text-center'>
+                            <Link
+                              href={`/client-chat/${id}`}
+                              className='block px-4 py-2 transition hover:bg-gold-soft/10'
+                            >
+                              <span className='text-base font-bold'>
+                                {room.name}
+                              </span>
+                              <br />
+                              <span className='text-sm text-gray-500 block'>
+                                Check-in: {checkInDate}
+                              </span>
+                              <span className='text-sm text-gray-500 block'>
+                                Check-out: {checkOutDate}
+                              </span>
+                            </Link>
+                          </li>
+                        )
+                      )}
+                    </ul>
                   ) : (
                     <p className='px-4 py-2 text-xs text-gray-400 text-center'>
                       No tienes chats activos.
