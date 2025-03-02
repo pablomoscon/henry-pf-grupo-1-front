@@ -10,7 +10,11 @@ export const getCats = async (token?: string): Promise<ICat[]> => {
       headers: token ? { Authorization: `Bearer ${token}` } : {},
     });
 
-    if (!res.ok) return [];
+    // Verificación de respuesta nula o error
+    if (!res || !res.ok) {
+      return [];
+    }
+
     return await res.json();
   } catch {
     return [];
@@ -21,16 +25,22 @@ export const getCatsUser = async (
   id: string,
   token: string | undefined
 ): Promise<ICatUser[]> => {
-  const res = await fetchWithInterceptor(`${API_URL}/users/cats/${id}`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  })
-    .then((res) => res.json())
-    .catch(() => {
-      return [];
+  try {
+    const res = await fetchWithInterceptor(`${API_URL}/users/cats/${id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
     });
-  return res as ICatUser[];
+
+    // Verificación de respuesta nula o error
+    if (!res || !res.ok) {
+      return [];
+    }
+
+    return await res.json();
+  } catch {
+    return [];
+  }
 };
 
 export const catRegister = async (formData: CatFormData, token?: string) => {
@@ -47,17 +57,11 @@ export const catRegister = async (formData: CatFormData, token?: string) => {
   formDataToSend.append("isNeutered", String(catData.isNeutered));
   formDataToSend.append("weight", catData.weight);
   formDataToSend.append("personality", catData.personality);
-  formDataToSend.append(
-    "getsAlongWithOtherCats",
-    catData.getsAlongWithOtherCats
-  );
+  formDataToSend.append("getsAlongWithOtherCats", catData.getsAlongWithOtherCats);
   formDataToSend.append("food", catData.food);
   formDataToSend.append("medication", catData.medication);
   formDataToSend.append("behaviorAtVet", catData.behaviorAtVet);
-  formDataToSend.append(
-    "vaccinationsAndTests",
-    JSON.stringify(catData.vaccinationsAndTests)
-  );
+  formDataToSend.append("vaccinationsAndTests", JSON.stringify(catData.vaccinationsAndTests));
 
   try {
     const res = await fetchWithInterceptor(`${API_URL}/cats`, {
@@ -66,16 +70,22 @@ export const catRegister = async (formData: CatFormData, token?: string) => {
       body: formDataToSend,
     });
 
+    // Verificar si la respuesta es null debido a un 401
+    if (!res) {
+      console.error("Token expirado o problema de red en catRegister");
+      return null; // O maneja la redirección aquí
+    }
+
     if (!res.ok) {
       const errorText = await res.text();
       console.error("Error del servidor:", errorText);
-      throw new Error(`Failed to register cat: ${res.statusText}`);
+      throw new Error(`Failed to register cat: ${res.statusText ?? 'Unknown error'}`);
     }
 
     return await res.json();
   } catch (error) {
     console.error("Error en catRegister:", error);
-    throw error;
+    throw error; 
   }
 };
 
@@ -118,21 +128,25 @@ export const updateCat = async (
   );
 
   try {
-    const res = await fetch(`${API_URL}/cats/${id}`, {
+    const res = await fetchWithInterceptor(`${API_URL}/cats/${id}`, {
       method: "PATCH",
       headers: token ? { Authorization: `Bearer ${token}` } : {},
       body: formDataToSend,
     });
 
-    if (!res.ok) {
-      const errorText = await res.text();
+    if (!res || !res.ok) {
+      if (res?.status === 401) {
+        return;
+      }
+
+      const errorText = await res?.text();
       console.error("Error del servidor:", errorText);
-      throw new Error(`Failed to update cat: ${res.statusText}`);
+      throw new Error(`Failed to update cat: ${res?.statusText ?? 'Unknown error'}`);
     }
 
     return await res.json();
   } catch (error) {
     console.error("Error en updateCat:", error);
-    throw error;
+    throw error; 
   }
 };

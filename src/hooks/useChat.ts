@@ -19,33 +19,26 @@ export const useChat = (chatId: string, user: ChatUser | null | undefined) => {
     if (!socketRef.current) {
       socketRef.current = io(`${API_URL}/messages/chat`, {
         transports: ["websocket"],
-        query: { clientChatRoomId: chatId },
+        query: { chatRoomId: chatId },
       });
 
       socketRef.current.on("connect", () => {
         console.log("Socket connected successfully:", socketRef.current?.id);
-        socketRef.current?.emit("joinRoom", {
-          clientChatRoomId: chatId,
-          currentUser: { id: user.id },
-        });
-      });
-
-      socketRef.current.on("connect_error", (error) => {
-        console.error("Socket connection error:", error);
+        socketRef.current?.emit('joinRoom', { chatRoomId: chatId, currentUser: user });
       });
 
       socketRef.current.on("receive_message", (message: ChatMessage) => {
         console.log("Received message:", message);
 
-        const timestamp = message.timestamp || new Date().toISOString();
+        const isCurrentUserSender = message.senderName === user?.name;
 
         setMessages((prevMessages) => [
           ...prevMessages,
           {
             senderName: message.senderName || "Unknown User",
             body: message.body,
-            timestamp: timestamp,
-            currentUser: false,
+            timestamp: message.timestamp || new Date().toISOString(),
+            currentUser: isCurrentUserSender,
             receiversNames: message.receiversNames || [],
           },
         ]);
@@ -84,7 +77,7 @@ export const useChat = (chatId: string, user: ChatUser | null | undefined) => {
         const messageData = {
           currentUser: user.id,
           body: message,
-          clientChatRoom: chatId,
+          chatRoom: chatId,
           senderName: user.name,
           timestamp: timestamp,
         };

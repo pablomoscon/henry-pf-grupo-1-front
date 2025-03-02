@@ -18,6 +18,11 @@ export const getDateReserved = async (
         },
       }
     );
+
+    if (!response) {
+      throw new Error("Error al obtener las fechas bloqueadas (sin respuesta)");
+    }
+
     if (!response.ok) {
       throw new Error("Error al obtener las reservas");
     }
@@ -58,6 +63,10 @@ export const bookRegister = async (
     },
   });
 
+  if (!res) {
+    return null; 
+  }
+
   if (!res.ok) {
     const errorData = await res.json();
     const errorMessage = JSON.parse(errorData.message).message;
@@ -77,7 +86,12 @@ export const getUserReservations = async (userId: string, token?: string) => {
       }
     );
 
+    if (!response) {
+      throw new Error("Error al obtener las reservas del usuario (sin respuesta)");
+    }
+
     if (!response.ok) return [];
+
     return await response.json();
   } catch (error) {
     console.error("Error al obtener las reservas:", error);
@@ -94,6 +108,10 @@ export const getUserBooks = async (userId: string, token?: string) => {
         headers: token ? { Authorization: `Bearer ${token}` } : {},
       }
     );
+
+    if (!response) {
+      throw new Error("Error al obtener las reservas de libros del usuario (sin respuesta)");
+    }
 
     if (!response.ok) {
       console.error(

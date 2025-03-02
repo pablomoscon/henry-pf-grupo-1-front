@@ -6,13 +6,13 @@ import { Message, ChatContextType } from '@/interfaces/IChat';
 export const ChatContext = createContext<ChatContextType>({
   messages: [],
   addMessage: () => {},
-  currentChatId: null,
-  setCurrentChatId: () => {},
+  chatId: null,
+  setChatId: () => {},
 });
 
 export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
   const [messages, setMessages] = useState<Message[]>([]);
-  const [currentChatId, setCurrentChatId] = useState<string | null>(null);
+  const [chatId, setChatId] = useState<string | null>(null);
 
   const addMessage = (message: Omit<Message, 'id' | 'timestamp'>) => {
     setMessages((prev) => [
@@ -30,8 +30,8 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
       value={{
         messages,
         addMessage,
-        currentChatId,
-        setCurrentChatId,
+        chatId,
+        setChatId,
       }}
     >
       {children}

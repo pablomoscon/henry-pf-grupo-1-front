@@ -4,27 +4,38 @@ import { IPost } from "@/interfaces/IPost";
 import { API_URL } from "../../envs";
 import { fetchWithInterceptor } from "./fetchInterceptor";
 
+// Obtener publicaciones mockeadas
 export const getPosts1 = () => {
   return posts;
 };
 
-export const getPosts = async (idUser: string, token?:string): Promise<IPost[]> => {
-  const res = await fetchWithInterceptor(
-    `${API_URL}/messages/received/${idUser}`,
-    {
-      cache: "no-store",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    }
-  )
-    .then((res) => res.json())
-    .catch(() => {
+// Obtener publicaciones desde la API
+export const getPosts = async (idUser: string, token?: string): Promise<IPost[]> => {
+  try {
+    const res = await fetchWithInterceptor(
+      `${API_URL}/messages/received/${idUser}`,
+      {
+        cache: "no-store",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    if (!res || !res.ok) {
+      console.error("Error fetching posts.");
       return [];
-    });
-  return res as IPost[];
+    }
+
+    const postsData: IPost[] = await res.json();
+    return postsData;
+  } catch (error) {
+    console.error("Error fetching posts:", error);
+    return [];  // Devuelve un array vacío en caso de error
+  }
 };
 
+// Registrar una nueva publicación
 export const registerPost = async (
   formData: IPostSend,
   token: string | undefined
@@ -52,16 +63,17 @@ export const registerPost = async (
       },
     });
 
-    if (!res.ok) {
-      const errorText = await res.text();
+    // Verificar si la respuesta es nula o no válida
+    if (!res || !res.ok) {
+      const errorText = await res?.text();  // Usar el operador de encadenamiento opcional
       console.error("Error del servidor:", errorText);
-      throw new Error(`Failed to register post: ${res.statusText}`);
+      throw new Error(`Failed to register post: ${res?.statusText}`);
     }
 
     const responseData = await res.json();
     return responseData;
   } catch (error) {
-    console.error("Error en podtRegister:", error);
-    throw error;
+    console.error("Error en postRegister:", error);
+    throw error;  // Lanza el error para que pueda ser manejado en otro nivel si es necesario
   }
 };

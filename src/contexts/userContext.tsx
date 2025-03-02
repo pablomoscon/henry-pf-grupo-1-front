@@ -1,7 +1,7 @@
-"use client";
-import { LoginResponse, UserData } from "@/interfaces/IUser";
-import { useState, createContext, useEffect } from "react";
-import { setLogoutHandler } from "@/services/fetchInterceptor";
+'use client';
+import { LoginResponse, UserData } from '@/interfaces/IUser';
+import { useState, createContext, useEffect } from 'react';
+import { setLogoutHandler } from '@/services/fetchInterceptor';
 
 interface UserContextProps {
   user: LoginResponse | null;
@@ -10,7 +10,7 @@ interface UserContextProps {
   logOut: () => void;
   updateUser: (userData: Partial<UserData>) => void;
   handleGoogleLogin: (googleData: { token: string; user: UserData }) => void;
-  loading: boolean; // Nuevo: indica si el contexto está cargando
+  loading: boolean;
 }
 
 export const UserContext = createContext<UserContextProps>({
@@ -20,27 +20,27 @@ export const UserContext = createContext<UserContextProps>({
   logOut: () => {},
   updateUser: () => {},
   handleGoogleLogin: () => {},
-  loading: true, // Nuevo: valor inicial
+  loading: true,
 });
 
 const UserProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<LoginResponse | null>(null);
-  const [loading, setLoading] = useState(true); // Nuevo: estado para el loading
+  const [loading, setLoading] = useState(true);
+  let isLoggingOut = false; // Evita múltiples llamadas a logOut
 
   useEffect(() => {
     if (user) {
-      localStorage.setItem("user", JSON.stringify(user));
+      localStorage.setItem('user', JSON.stringify(user));
     }
   }, [user]);
 
   useEffect(() => {
-    // Cargar usuario desde localStorage
-    const localUser = localStorage.getItem("user");
+    const localUser = localStorage.getItem('user');
     setUser(localUser ? JSON.parse(localUser) : null);
-    setLoading(false); // Actualiza el estado de loading después de cargar
+    setLoading(false);
 
-    // Configurar el handler de logout
-    setLogoutHandler(() => logOut());
+    // Asignar logOut solo una vez
+    setLogoutHandler(logOut);
   }, []);
 
   const isLogged = () => {
@@ -48,12 +48,15 @@ const UserProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const logOut = async () => {
-    alert("You have logged out.");
+    if (isLoggingOut) return; // Previene doble logout
+    isLoggingOut = true;
+
+    alert('You have logged out.');
     await new Promise((resolve) => setTimeout(resolve, 800));
-    localStorage.removeItem("user");
+    localStorage.removeItem('user');
     setUser(null);
     setLoading(true);
-    window.location.href = "/";
+    window.location.href = '/';
   };
 
   const updateUser = (userData: Partial<UserData>) => {
@@ -73,13 +76,13 @@ const UserProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const handleGoogleLogin = (googleData: { token: string; user: UserData }) => {
-    console.log("1. Handling Google login in context:", {
+    console.log('1. Handling Google login in context:', {
       ...googleData,
-      token: "REDACTED",
+      token: 'REDACTED',
     });
 
     const formattedResponse: LoginResponse = {
-      success: "success",
+      success: 'success',
       response: {
         token: googleData.token,
         user: googleData.user,
@@ -87,7 +90,7 @@ const UserProvider = ({ children }: { children: React.ReactNode }) => {
       user: googleData.user,
     };
 
-    console.log("2. Setting formatted user data in context");
+    console.log('2. Setting formatted user data in context');
     setUser(formattedResponse);
   };
 
@@ -100,7 +103,7 @@ const UserProvider = ({ children }: { children: React.ReactNode }) => {
         logOut,
         updateUser,
         handleGoogleLogin,
-        loading, // Nuevo: se expone loading en el contexto
+        loading,
       }}
     >
       {children}

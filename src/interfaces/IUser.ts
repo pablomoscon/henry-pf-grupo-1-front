@@ -1,3 +1,5 @@
+import { Reservation } from "./IReserve";
+
 export interface UserLogin {
   email: string;
   password: string;
@@ -30,6 +32,7 @@ export interface UserData {
   phone: string;
   address: string;
   customerId: string;
+  reservations?: Reservation[];
 }
 
 export interface User {

@@ -11,8 +11,8 @@ export const reservationService = {
       },
     });
 
-    if (!response.ok) {
-      throw new Error(`Error ${response.status}: ${response.statusText}`);
+    if (response === null || !response.ok) {
+      throw new Error(`Error ${response?.status || "Unknown"}: ${response?.statusText || "No response"}`);
     }
 
     return response.json();

@@ -9,6 +9,11 @@ export const caretakerService = {
         Authorization: `Bearer ${token}`,
       },
     });
+
+    if (!response) {
+      throw new Error("Failed to fetch caretakers");
+    }
+
     return response.json();
   },
 
@@ -31,6 +36,10 @@ export const caretakerService = {
         }),
       }
     );
+
+    if (!response) {
+      throw new Error("Failed to create caretaker");
+    }
 
     if (!response.ok) {
       const error = await response.json();
@@ -55,6 +64,10 @@ export const caretakerService = {
       body: JSON.stringify(updateData),
     });
 
+    if (!res) {
+      throw new Error("Failed to update caretaker");
+    }
+
     if (!res.ok) {
       const error = await res.json();
       throw new Error(error.message || "Failed to update profile");
@@ -64,12 +77,19 @@ export const caretakerService = {
   },
 
   async deleteCaretaker(id: string, token: string): Promise<void> {
-    const response = await fetch(`${API_URL}/users/${id}`, {
+    const response = await fetchWithInterceptor(`${API_URL}/users/${id}`, {
       method: "DELETE",
       headers: {
         Authorization: `Bearer ${token}`,
       },
     });
-    if (!response.ok) throw new Error("Error deleting caretaker");
+
+    if (!response) {
+      throw new Error("Failed to delete caretaker");
+    }
+
+    if (!response.ok) {
+      throw new Error("Error deleting caretaker");
+    }
   },
 };

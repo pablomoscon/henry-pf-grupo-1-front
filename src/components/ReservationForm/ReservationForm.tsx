@@ -192,50 +192,56 @@ const ReservationForm = () => {
     });
   };
 
-  const handleModalConfirm = async () => {
-    closeModal();
-    try {
-      const res = await bookRegister(posData, userData.token);
-      alert("Reservation successful!");
+const handleModalConfirm = async () => {
+  closeModal();
+  try {
+    const res = await bookRegister(posData, userData.token);
 
-      if (!res.message) {
-        const reservationId = res.id;
-        await confirmPayment(reservationId, userData.token);
-        setUserData({
-          checkInDate: "",
-          checkOutDate: "",
-          roomId: "",
-          name: "",
-          price: "0",
-          userId: "",
-          token: "",
-          numCat: 0,
-          fullName: "",
-          customerId: "",
-          totalAmount: 0,
-          catsIds: [],
-        });
-        setPosData({
-          userId: "",
-          roomId: "",
-          checkInDate: "",
-          checkOutDate: "",
-          totalAmount: 0,
-          catsIds: [],
-        });
-      } else {
-        alert(res.message || "Reservation failed.");
-      }
-    } catch (error) {
-      console.error("Error during reservation:", error);
-
-      if (error instanceof Error) {
-        alert(error.message || "Connection error. Please try again later.");
-      } else {
-        alert("An unknown error occurred. Please try again later.");
-      }
+    if (!res) {
+      // Si el fetchInterceptor devolvió null, significa que fue un 401 y se ejecutó logoutHandler
+      return;
     }
-  };
+
+    alert('Reservation successful!');
+
+    if (!res.message) {
+      const reservationId = res.id;
+      await confirmPayment(reservationId, userData.token);
+      setUserData({
+        checkInDate: '',
+        checkOutDate: '',
+        roomId: '',
+        name: '',
+        price: '0',
+        userId: '',
+        token: '',
+        numCat: 0,
+        fullName: '',
+        customerId: '',
+        totalAmount: 0,
+        catsIds: [],
+      });
+      setPosData({
+        userId: '',
+        roomId: '',
+        checkInDate: '',
+        checkOutDate: '',
+        totalAmount: 0,
+        catsIds: [],
+      });
+    } else {
+      alert(res.message || 'Reservation failed.');
+    }
+  } catch (error) {
+    console.error('Error during reservation:', error);
+
+    if (error instanceof Error) {
+      alert(error.message || 'Connection error. Please try again later.');
+    } else {
+      alert('An unknown error occurred. Please try again later.');
+    }
+  }
+};
 
   const handleOnSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
