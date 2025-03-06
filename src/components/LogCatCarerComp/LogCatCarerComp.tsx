@@ -1,27 +1,27 @@
-"use client";
-import { useState, useContext, useEffect } from "react";
-import { useSearchParams, useRouter } from "next/navigation";
-import { getPosts, registerPost } from "@/services/logServices";
-import { UserContext } from "@/contexts/userContext";
-import { IPostSend, IPost } from "@/interfaces/IPost";
-import CardLog from "../CardLog/CardLog";
-import ModalLog from "../ModalLog/ModalLog";
-import LoadingSpinner from "../LoadingSpinner/LoadingSpinner";
+'use client';
+import { useState, useContext, useEffect } from 'react';
+import { useSearchParams, useRouter } from 'next/navigation';
+import { getPosts, registerPost } from '@/services/logServices';
+import { UserContext } from '@/contexts/userContext';
+import { IPostSend, IPost } from '@/interfaces/IPost';
+import CardLog from '../CardLog/CardLog';
+import ModalLog from '../ModalLog/ModalLog';
+import LoadingSpinner from '../LoadingSpinner/LoadingSpinner';
 
 const LogCatCareComp = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const reservationId = searchParams.get("reservationId");
-  const userName = searchParams.get("userName");
-  const catsNames = searchParams.get("catsNames")?.split(",");
-  const idReceiver = searchParams.get("idReceiver");
+  const reservationId = searchParams.get('reservationId');
+  const userName = searchParams.get('userName');
+  const catsNames = searchParams.get('catsNames')?.split(',');
+  const idReceiver = searchParams.get('idReceiver');
 
   const [posts, setPosts] = useState<IPost[]>([]);
   const [loading, setLoading] = useState(true);
-  const [postText, setPostText] = useState("");
+  const [postText, setPostText] = useState('');
   const [media, setMedia] = useState<File | null>(null);
   const [showModal, setShowModal] = useState(false);
-  const [fileName, setFileName] = useState("");
+  const [fileName, setFileName] = useState('');
 
   const { user } = useContext(UserContext);
   const token = user?.response.token;
@@ -41,7 +41,7 @@ const LogCatCareComp = () => {
 
         setPosts(sortedPosts);
       } catch (error) {
-        console.error("Error fetching posts:", error);
+        console.error('Error fetching posts:', error);
       } finally {
         setLoading(false);
       }
@@ -52,26 +52,26 @@ const LogCatCareComp = () => {
 
   const handleMediaConfirm = (file: File | null) => {
     setMedia(file);
-    setFileName(file ? file.name : "");
+    setFileName(file ? file.name : '');
     setShowModal(false);
   };
 
   const handleSubmit = async () => {
     if (!reservationId) {
-      alert("No reservation selected!");
+      alert('No reservation selected!');
       return;
     }
 
     if (!postText.trim() && !media) {
-      alert("You must add text or select a photo/video before posting.");
+      alert('You must add text or select a photo/video before posting.');
       return;
     }
 
     const formData: IPostSend = {
       file: media || undefined,
       body: postText,
-      sender: idUser || "",
-      receiver: idReceiver || "",
+      sender: idUser || '',
+      receiver: idReceiver || '',
       reservationId,
     };
 
@@ -80,14 +80,14 @@ const LogCatCareComp = () => {
 
       setPosts((prevPosts) => [newPost, ...prevPosts]);
 
-      setPostText("");
+      setPostText('');
       setMedia(null);
-      setFileName("");
+      setFileName('');
 
-      alert("Post added successfully!");
+      alert('Post added successfully!');
     } catch (error) {
-      console.error("Error submitting post:", error);
-      alert("Failed to add post.");
+      console.error('Error submitting post:', error);
+      alert('Failed to add post.');
     }
   };
 
