@@ -15,13 +15,15 @@ const UserManager = () => {
   const loadUsers = useCallback(async () => {
     try {
       const data = await userManagerService.getUsers(
-        user?.response.token || ""
+        user?.response.token || ''
       );
-      setUsers(data);
+
+      setUsers(data ?? []);
     } catch {
-      alert("Error loading users");
+      alert('Error loading users');
     }
   }, [user]);
+
 
   useEffect(() => {
     if (user?.response.user.role !== "admin") {
