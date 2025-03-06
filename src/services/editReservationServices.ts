@@ -11,13 +11,14 @@ export const reservationService = {
       },
     });
 
-    if (!response.ok) {
-      throw new Error(`Error ${response.status}: ${response.statusText}`);
+    if (!response || !response.ok) {
+      throw new Error(`Error ${response?.status ?? 'unknown'}: ${response?.statusText ?? 'Unknown error'}`);
     }
 
     const data = await response.json();
     return data;
   },
+
   async createReservation(
     data: Omit<IReservationEdit, "id">
   ): Promise<IReservationEdit> {
@@ -26,7 +27,11 @@ export const reservationService = {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
     });
-    if (!response.ok) throw new Error("Error creating reservation");
+
+    if (!response || !response.ok) {
+      throw new Error("Error creating reservation");
+    }
+
     return response.json();
   },
 
@@ -47,10 +52,11 @@ export const reservationService = {
         }
       );
 
-      if (!response.ok) {
-        const errorData = await response.json();
+      // Verificamos si la respuesta es nula o no es válida
+      if (!response || !response.ok) {
+        const errorData = await response?.json();  // Usamos el encadenamiento opcional
         throw new Error(
-          `Error ${response.status}: ${response.statusText} - ${errorData.message}`
+          `Error ${response?.status ?? 'unknown'}: ${response?.statusText ?? 'Unknown error'} - ${errorData?.message ?? 'Unknown message'}`
         );
       }
       return await response.json();
@@ -66,7 +72,11 @@ export const reservationService = {
         Authorization: `Bearer ${token}`,
       },
     });
-    if (!response.ok) throw new Error("Error deleting reservation");
+
+    // Verificamos si la respuesta es nula o no es válida
+    if (!response || !response.ok) {
+      throw new Error("Error deleting reservation");
+    }
   },
 
   async removeCaretaker(
@@ -86,11 +96,11 @@ export const reservationService = {
         }
       );
 
-      if (!response.ok) {
-        const errorData = await response.json();
-
+      // Verificamos si la respuesta es nula o no es válida
+      if (!response || !response.ok) {
+        const errorData = await response?.json();  // Usamos el encadenamiento opcional
         throw new Error(
-          `Error ${response.status}: ${response.statusText} - ${errorData.message}`
+          `Error ${response?.status ?? 'unknown'}: ${response?.statusText ?? 'Unknown error'} - ${errorData?.message ?? 'Unknown message'}`
         );
       }
 

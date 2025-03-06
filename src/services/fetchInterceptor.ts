@@ -1,5 +1,6 @@
 type LogoutFunction = () => void;
 let logoutHandler: LogoutFunction | null = null;
+let isLoggingOut = false; // Para evitar múltiples llamadas a logout
 
 export const setLogoutHandler = (handler: LogoutFunction) => {
   logoutHandler = handler;
@@ -8,7 +9,7 @@ export const setLogoutHandler = (handler: LogoutFunction) => {
 export const fetchWithInterceptor = async (
   url: string,
   options?: RequestInit
-): Promise<Response> => {
+): Promise<Response | null> => {
   try {
     const response = await fetch(url, {
       ...options,
@@ -19,18 +20,16 @@ export const fetchWithInterceptor = async (
     });
 
     if (response.status === 401) {
-      if (logoutHandler) {
+      if (logoutHandler && !isLoggingOut) {
+        isLoggingOut = true;
         logoutHandler();
-      } else {
-        localStorage.removeItem("user");
-        window.location.href = "/";
       }
-      throw new Error("Unauthorized - Redirecting to login");
+      return null; 
     }
 
     return response;
   } catch (error) {
     console.error("Fetch error:", error);
-    throw error;
+    return null;
   }
 };

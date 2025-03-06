@@ -15,6 +15,11 @@ export const userRegister = async (data: UserRegister) => {
     body: JSON.stringify(data),
     headers: { "content-type": "application/json" },
   });
+
+  if (res === null) {
+    throw new Error("No response received or unauthorized");
+  }
+
   return res.json();
 };
 
@@ -24,6 +29,11 @@ export const userLogin = async (data: UserLogin): Promise<LoginResponse> => {
     body: JSON.stringify(data),
     headers: { "content-type": "application/json" },
   });
+
+  if (res === null) {
+    throw new Error("No response received or unauthorized");
+  }
+
   return res.json();
 };
 
@@ -40,6 +50,10 @@ export const updateUserProfile = async (
     },
     body: JSON.stringify(userData),
   });
+
+  if (res === null) {
+    return null; 
+  }
 
   if (!res.ok) {
     throw new Error("Failed to update profile");

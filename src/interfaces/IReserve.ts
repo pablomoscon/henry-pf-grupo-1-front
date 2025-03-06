@@ -66,5 +66,5 @@ export interface Caretaker {
 
 export interface Reservation {
   id: string;
-  caretakers: Caretaker[];
+  caretakers?: Caretaker[];
 }

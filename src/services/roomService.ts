@@ -5,12 +5,11 @@ import { fetchWithInterceptor } from "./fetchInterceptor";
 export const getRooms = async (): Promise<IRoomResponse[]> => {
   const res = await fetchWithInterceptor(`${API_URL}/rooms?page=1&limit=100`, {
     cache: "no-store",
-  })
-    .then((res) => res.json())
-    .catch(() => {
-      return [];
-    });
-  return res as IRoomResponse[];
+  });
+
+  if (!res) return []; // Si la respuesta es null, devolvemos un array vacío.
+
+  return res.json().catch(() => []);
 };
 
 export const getRoomById = async (
@@ -18,10 +17,11 @@ export const getRoomById = async (
 ): Promise<IRoomResponse | undefined> => {
   const res = await fetchWithInterceptor(`${API_URL}/rooms/${id}`, {
     cache: "no-store",
-  }).catch(() => null);
+  });
 
-  if (!res || !res.ok) return undefined;
-  return (await res.json()) as IRoomResponse;
+  if (!res || !res.ok) return undefined; // Si no hay respuesta o hay error, devolvemos undefined.
+
+  return res.json().catch(() => undefined);
 };
 
 interface RoomDataToRegister {
@@ -39,12 +39,6 @@ export const registerRoom = async (
 ) => {
   try {
     const formData = new FormData();
-
-    // Agregar logs para debug
-    console.log("Token:", token);
-    console.log("Room data:", roomData);
-
-    // Asegurarse de que todos los campos requeridos estén presentes
     formData.append("name", roomData.name);
     formData.append("description", roomData.description);
     formData.append("price", roomData.price.toString());
@@ -52,8 +46,6 @@ export const registerRoom = async (
     if (roomData.img) {
       formData.append("img", roomData.img);
     }
-
-    // Cambiar cómo se envían los features
     if (roomData.features && roomData.features.length > 0) {
       roomData.features.forEach((feature, index) => {
         formData.append(`features[${index}]`, feature);
@@ -70,9 +62,12 @@ export const registerRoom = async (
       body: formData,
     });
 
+    if (!response) {
+      throw new Error("Error en la conexión");
+    }
+
     if (!response.ok) {
       const errorData = await response.json();
-      console.error("Error response:", errorData);
       throw new Error(errorData.message || "Error al crear la suite");
     }
 
@@ -115,18 +110,15 @@ export const updateRoom = async (
 ) => {
   try {
     const formData = new FormData();
-
     formData.append("name", roomData.name);
     formData.append("description", roomData.description);
     formData.append("price", roomData.price.toString());
     formData.append("number_of_cats", roomData.number_of_cats.toString());
 
-    // Manejar la imagen solo si hay una nueva
     if (roomData.img instanceof File) {
       formData.append("img", roomData.img);
     }
 
-    // Manejar features de la misma manera que en registerRoom
     if (roomData.features && roomData.features.length > 0) {
       roomData.features.forEach((feature, index) => {
         formData.append(`features[${index}]`, feature);
@@ -135,13 +127,17 @@ export const updateRoom = async (
       formData.append("features", "[]");
     }
 
-    const response = await fetch(`${API_URL}/rooms/${id}`, {
+    const response = await fetchWithInterceptor(`${API_URL}/rooms/${id}`, {
       method: "PATCH",
       headers: {
         Authorization: `Bearer ${token}`,
       },
       body: formData,
     });
+
+    if (!response) {
+      throw new Error("Error en la conexión");
+    }
 
     if (!response.ok) {
       const errorData = await response.json();

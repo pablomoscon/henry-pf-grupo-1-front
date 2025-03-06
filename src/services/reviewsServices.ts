@@ -2,6 +2,7 @@ import { fetchWithInterceptor } from "./fetchInterceptor";
 import { IReview, IReviewCreate } from "@/interfaces/IReview";
 import { API_URL } from "../../envs";
 
+// Función para obtener las reseñas
 export const fetchReviews = async (): Promise<IReview[]> => {
   try {
     const response = await fetchWithInterceptor(`${API_URL}/reviews`, {
@@ -11,7 +12,8 @@ export const fetchReviews = async (): Promise<IReview[]> => {
       },
     });
 
-    if (!response.ok) {
+    // Verificar si la respuesta es null o si no es exitosa
+    if (response === null || !response.ok) {
       throw new Error("Failed to fetch reviews");
     }
 
@@ -23,6 +25,7 @@ export const fetchReviews = async (): Promise<IReview[]> => {
   }
 };
 
+// Función para crear una reseña
 export const createReview = async (
   reviewData: IReviewCreate,
   token: string
@@ -37,7 +40,7 @@ export const createReview = async (
       body: JSON.stringify(reviewData),
     });
 
-    if (!response.ok) {
+    if (response === null || !response.ok) {
       throw new Error("Failed to create review");
     }
 

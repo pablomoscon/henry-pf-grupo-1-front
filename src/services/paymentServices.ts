@@ -1,6 +1,7 @@
 import { API_URL } from "../../envs";
 import { fetchWithInterceptor } from "./fetchInterceptor";
 
+// Función para obtener el estado del pago
 export const fetchPaymentStatus = async (
   sessionId: string,
   status: string,
@@ -26,6 +27,7 @@ export const fetchPaymentStatus = async (
   return response.text();
 };
 
+// Función para confirmar el pago
 export const confirmPayment = async (reservationId: string, token?: string) => {
   try {
     console.log("token", token);
@@ -42,7 +44,7 @@ export const confirmPayment = async (reservationId: string, token?: string) => {
       }
     );
 
-    if (!response.ok) {
+    if (response === null || !response.ok) {
       throw new Error("Error creating the payment session");
     }
 

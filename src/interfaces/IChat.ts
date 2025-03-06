@@ -1,3 +1,5 @@
+import { IReservation } from "./IReserve";
+
 export interface Message {
   id: string;
   body: string;
@@ -9,8 +11,8 @@ export interface Message {
 export interface ChatContextType {
   messages: Message[];
   addMessage: (message: Omit<Message, "id" | "timestamp">) => void;
-  currentChatId: string | null;
-  setCurrentChatId: (id: string | null) => void;
+  chatId: string | null;
+  setChatId: (id: string | null) => void;
 }
 
 export interface ChatMessage {
@@ -19,6 +21,12 @@ export interface ChatMessage {
   timestamp: string | Date;
   currentUser?: boolean;
   receiversNames?: string[];
+}
+
+export interface ChatModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  userReservations: Array<IReservation>;
 }
 
 export interface ChatUser {

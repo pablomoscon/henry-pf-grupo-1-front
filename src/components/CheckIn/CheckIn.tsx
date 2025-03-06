@@ -24,9 +24,8 @@ const CheckIn: React.FC<CheckInProps> = ({ roomId, token }) => {
         return;
       }
       try {
-        console.log("Token enviado al servicio:", token);
+        
         const blockedDates = await getDateReserved(roomId, token);
-        console.log("Fechas bloqueadas recibidas:", blockedDates);
         setReservedDates(blockedDates.map((date) => dayjs(date)));
       } catch (error) {
         console.error("Error al obtener las fechas bloqueadas:", error);

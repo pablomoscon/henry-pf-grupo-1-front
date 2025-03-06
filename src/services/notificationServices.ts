@@ -1,6 +1,7 @@
 import { API_URL } from "../../envs";
 import { fetchWithInterceptor } from "./fetchInterceptor";
 
+// Obtener todas las notificaciones
 export const getAllNotifications = async (
   userId: string,
   token: string,
@@ -16,7 +17,11 @@ export const getAllNotifications = async (
         },
       }
     );
-    if (!response.ok) return [];
+
+    if (response === null || !response.ok) {
+      return [];
+    }
+
     return await response.json();
   } catch (error) {
     console.error("Error fetching notifications:", error);
@@ -24,6 +29,7 @@ export const getAllNotifications = async (
   }
 };
 
+// Obtener notificaciones no leídas
 export const getUnreadNotifications = async (userId: string, token: string) => {
   try {
     const response = await fetchWithInterceptor(
@@ -34,7 +40,12 @@ export const getUnreadNotifications = async (userId: string, token: string) => {
         },
       }
     );
-    if (!response.ok) return [];
+
+    // Verificar si la respuesta es null o no es exitosa
+    if (response === null || !response.ok) {
+      return [];
+    }
+
     return await response.json();
   } catch (error) {
     console.error("Error fetching notifications:", error);
@@ -42,6 +53,7 @@ export const getUnreadNotifications = async (userId: string, token: string) => {
   }
 };
 
+// Marcar una notificación como leída
 export const markNotificationAsRead = async (
   notificationId: string,
   token: string
@@ -58,10 +70,13 @@ export const markNotificationAsRead = async (
         body: JSON.stringify({ isRead: true }),
       }
     );
-    if (!response.ok) {
+
+    // Verificar si la respuesta es null o no es exitosa
+    if (response === null || !response.ok) {
       console.error("Failed to mark notification as read");
       return false;
     }
+
     return true;
   } catch (error) {
     console.error("Error marking notification as read:", error);
