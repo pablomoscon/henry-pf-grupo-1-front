@@ -28,12 +28,14 @@ const UserProvider = ({ children }: { children: React.ReactNode }) => {
   const [loading, setLoading] = useState(true);
   let isLoggingOut = false; // Evita múltiples llamadas a logOut
 
+  // Se ejecuta cuando `user` cambia, no necesita `logOut` como dependencia
   useEffect(() => {
     if (user) {
       localStorage.setItem('user', JSON.stringify(user));
     }
   }, [user]);
 
+  // Se ejecuta solo una vez al montar el componente, no necesita `logOut` como dependencia
   useEffect(() => {
     const localUser = localStorage.getItem('user');
     setUser(localUser ? JSON.parse(localUser) : null);
@@ -41,7 +43,7 @@ const UserProvider = ({ children }: { children: React.ReactNode }) => {
 
     // Asignar logOut solo una vez
     setLogoutHandler(logOut);
-  }, []);
+  }, []); // Lista de dependencias vacía
 
   const isLogged = () => {
     return user !== null && user.response.token !== undefined;

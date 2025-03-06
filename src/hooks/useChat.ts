@@ -7,12 +7,22 @@ export const useChat = (chatId: string, user: ChatUser | null | undefined) => {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const socketRef = useRef<Socket | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const lastChatId = useRef(chatId);
+  const lastUserId = useRef(user?.id);
 
   useEffect(() => {
     if (!chatId || !user?.id) {
       console.log("Missing required data:", { chatId, user });
       return;
     }
+
+    // Evitar reconexiones innecesarias si el chatId y user.id no cambian
+    if (lastChatId.current === chatId && lastUserId.current === user.id) {
+      return;
+    }
+
+    lastChatId.current = chatId;
+    lastUserId.current = user.id;
 
     console.log("Initializing socket connection:", { chatId, user });
 
@@ -49,14 +59,7 @@ export const useChat = (chatId: string, user: ChatUser | null | undefined) => {
         (data: { messages: ChatMessage[] }) => {
           console.log("Initial messages:", data.messages);
 
-          const updatedMessages = data.messages.map((msg: ChatMessage) => {
-            console.log("Processing message:", msg);
-            return {
-              ...msg,
-            };
-          });
-
-          setMessages(updatedMessages);
+          setMessages(data.messages.map((msg: ChatMessage) => ({ ...msg })));
         }
       );
 
@@ -96,7 +99,7 @@ export const useChat = (chatId: string, user: ChatUser | null | undefined) => {
         ]);
       }
     },
-    [chatId, user]
+    [chatId, user?.id]
   );
 
   return { messages, sendMessage, errorMessage };
