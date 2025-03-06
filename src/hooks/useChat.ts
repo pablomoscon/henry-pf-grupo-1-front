@@ -34,13 +34,11 @@ export const useChat = (chatId: string, user: ChatUser | null | undefined) => {
 
       socketRef.current.on("connect", () => {
         console.log("Socket connected successfully:", socketRef.current?.id);
-        socketRef.current?.emit('joinRoom', { chatRoomId: chatId, currentUser: user });
+        socketRef.current?.emit("joinRoom", { chatRoomId: chatId, currentUser: user });
       });
 
       socketRef.current.on("receive_message", (message: ChatMessage) => {
         console.log("Received message:", message);
-
-        const isCurrentUserSender = message.senderName === user?.name;
 
         setMessages((prevMessages) => [
           ...prevMessages,
@@ -48,20 +46,16 @@ export const useChat = (chatId: string, user: ChatUser | null | undefined) => {
             senderName: message.senderName || "Unknown User",
             body: message.body,
             timestamp: message.timestamp || new Date().toISOString(),
-            currentUser: isCurrentUserSender,
+            currentUser: message.senderName === user.name,
             receiversNames: message.receiversNames || [],
           },
         ]);
       });
 
-      socketRef.current.on(
-        "initial_messages",
-        (data: { messages: ChatMessage[] }) => {
-          console.log("Initial messages:", data.messages);
-
-          setMessages(data.messages.map((msg: ChatMessage) => ({ ...msg })));
-        }
-      );
+      socketRef.current.on("initial_messages", (data: { messages: ChatMessage[] }) => {
+        console.log("Initial messages:", data.messages);
+        setMessages(data.messages.map((msg: ChatMessage) => ({ ...msg })));
+      });
 
       socketRef.current.on("message_error", (data) => {
         console.log("Error received from server:", data);
