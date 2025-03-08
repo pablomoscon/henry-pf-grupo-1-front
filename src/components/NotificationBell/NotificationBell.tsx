@@ -8,7 +8,8 @@ import {
 } from '@/services/notificationServices';
 import { INotification } from '@/interfaces/INotification';
 import { FaBell } from 'react-icons/fa';
-import { io } from 'socket.io-client'; // Importamos socket.io-client
+import { io, Socket } from 'socket.io-client';
+
 
 const NotificationBell = () => {
   const [notifications, setNotifications] = useState<INotification[]>([]);
@@ -16,8 +17,8 @@ const NotificationBell = () => {
   const { user } = useContext(UserContext);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
-  const pathname = usePathname(); // Obtener la ruta actual
-  const socketRef = useRef<any>(null); // Referencia para el socket
+  const pathname = usePathname(); 
+  const socketRef = useRef<Socket | null>(null);
 
   const fetchNotifications = useCallback(async () => {
     if (user?.response?.user?.id && user?.response?.token) {
@@ -55,7 +56,7 @@ const NotificationBell = () => {
       );
 
       return () => {
-        socketRef.current.disconnect(); // Desconectar al desmontar el componente
+        socketRef.current?.disconnect(); // Desconectar al desmontar el componente
       };
     }
   }, [user]);
