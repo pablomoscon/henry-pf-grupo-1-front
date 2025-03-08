@@ -78,27 +78,27 @@ const NotificationBell = () => {
     }
   }, [pathname, notifications, user, fetchNotifications]);
 
-  const handleNotificationClick = async (notification: INotification) => {
-    if (user?.response?.token) {
-      const success = await markNotificationAsRead(
-        notification.id,
-        user.response.token
-      );
-      if (success) {
-        await fetchNotifications(); // Actualiza las notificaciones
-      }
+ const handleNotificationClick = async (notification: INotification) => {
+   if (user?.response?.token) {
+     // Marcar la notificación como leída, pero sin esperar a que termine
+     markNotificationAsRead(notification.id, user.response.token);
 
-      setIsOpen(false);
-      
-      if (notification.chatId) {
-        if (user.response.user.role === 'user') {
-          router.push(`/client-chat/${notification.chatId}`);
-        } else if (user.response.user.role === 'caretaker') {
-          router.push(`/caretaker-chat/${notification.chatId}`);
-        }
-      }
-    }
-  };
+     setIsOpen(false);
+
+     // Redirección rápida sin esperar que se marque como leída
+     if (notification.chatId) {
+       if (user.response.user.role === 'user') {
+         router.push(`/client-chat/${notification.chatId}`);
+       } else if (user.response.user.role === 'caretaker') {
+         router.push(`/caretaker-chat/${notification.chatId}`);
+       }
+     }
+
+     // Actualización de notificaciones en segundo plano (sin bloquear la redirección)
+     fetchNotifications();
+   }
+ };
+
 
   if (!user?.response?.user) {
     return null;
