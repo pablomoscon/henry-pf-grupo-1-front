@@ -1,7 +1,7 @@
 'use client';
 import { useState, useEffect, useContext, useRef, useCallback } from 'react';
 import { UserContext } from '@/contexts/userContext';
-import { useRouter, usePathname } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import {
   markNotificationAsRead,
   getAllNotifications,
@@ -14,7 +14,6 @@ const NotificationBell = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { user } = useContext(UserContext);
   const dropdownRef = useRef<HTMLDivElement>(null);
-  const router = useRouter();
   const pathname = usePathname(); // Obtener la ruta actual
 
   const fetchNotifications = useCallback(async () => {
@@ -64,11 +63,12 @@ const NotificationBell = () => {
       if (success) {
         await fetchNotifications(); // Actualiza las notificaciones
       }
+
       if (notification.chatId) {
         if (user.response.user.role === 'user') {
-          router.push(`/client-chat/${notification.chatId}`);
+          window.location.href = `/client-chat/${notification.chatId}`;
         } else if (user.response.user.role === 'caretaker') {
-          router.push(`/caretaker-chat/${notification.chatId}`);
+          window.location.href = `/caretaker-chat/${notification.chatId}`;
         }
       }
     }
