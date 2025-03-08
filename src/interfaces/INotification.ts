@@ -3,4 +3,5 @@ export interface INotification {
   message: string;
   isRead: boolean;
   createdAt: string;
+  chatId?: string;
 }

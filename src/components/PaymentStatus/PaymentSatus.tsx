@@ -21,6 +21,8 @@ export default function PaymentStatus() {
         setMessage('Missing sessionId, status, or token.');
         setLoading(false);
         setTimeout(() => router.push('/'), 1500);
+        console.log();
+        
         return;
       }
 
