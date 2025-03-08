@@ -8,6 +8,8 @@ import {
 } from '@/services/notificationServices';
 import { INotification } from '@/interfaces/INotification';
 import { FaBell } from 'react-icons/fa';
+import { io, Socket } from 'socket.io-client';
+
 
 const NotificationBell = () => {
   const [notifications, setNotifications] = useState<INotification[]>([]);
@@ -15,7 +17,8 @@ const NotificationBell = () => {
   const { user } = useContext(UserContext);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
-  const pathname = usePathname(); // Obtener la ruta actual
+  const pathname = usePathname(); 
+  const socketRef = useRef<Socket | null>(null);
 
   const fetchNotifications = useCallback(async () => {
     if (user?.response?.user?.id && user?.response?.token) {
@@ -35,22 +38,42 @@ const NotificationBell = () => {
     return () => clearInterval(interval);
   }, [fetchNotifications]);
 
+  // Establecer conexión a WebSocket
   useEffect(() => {
-    // Detectar si estamos en una página de chat y marcar las notificaciones como leídas
+    if (user?.response?.user?.id) {
+      // Conectar al WebSocket con el namespace 'messages/notifications'
+      socketRef.current = io('http://localhost:3000/messages/notifications');
+
+      // Escuchar las notificaciones en tiempo real
+      socketRef.current.on(
+        'new_notification',
+        (notification: INotification) => {
+          setNotifications((prevNotifications) => [
+            notification,
+            ...prevNotifications,
+          ]);
+        }
+      );
+
+      return () => {
+        socketRef.current?.disconnect(); // Desconectar al desmontar el componente
+      };
+    }
+  }, [user]);
+
+  useEffect(() => {
     const chatPageRegex = /\/(client-chat|caretaker-chat)\/\d+/;
     if (chatPageRegex.test(pathname)) {
       const unreadNotifications = notifications.filter(
         (notification) => !notification.isRead
       );
 
-      // Marcar las notificaciones como leídas
       unreadNotifications.forEach(async (notification) => {
         if (user?.response?.token) {
           await markNotificationAsRead(notification.id, user.response.token);
         }
       });
 
-      // Luego actualizamos las notificaciones
       fetchNotifications();
     }
   }, [pathname, notifications, user, fetchNotifications]);
@@ -64,6 +87,9 @@ const NotificationBell = () => {
       if (success) {
         await fetchNotifications(); // Actualiza las notificaciones
       }
+
+      setIsOpen(false);
+      
       if (notification.chatId) {
         if (user.response.user.role === 'user') {
           router.push(`/client-chat/${notification.chatId}`);
