@@ -17,7 +17,7 @@ const NotificationBell = () => {
   const { user } = useContext(UserContext);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
-  const pathname = usePathname(); 
+  const pathname = usePathname();
   const socketRef = useRef<Socket | null>(null);
 
   const fetchNotifications = useCallback(async () => {
@@ -78,31 +78,32 @@ const NotificationBell = () => {
     }
   }, [pathname, notifications, user, fetchNotifications]);
 
- const handleNotificationClick = async (notification: INotification) => {
-   if (user?.response?.token) {
-     // Marcar la notificación como leída, pero sin esperar a que termine
-     markNotificationAsRead(notification.id, user.response.token);
+  const handleNotificationClick = async (notification: INotification) => {
+    if (user?.response?.token) {
+      // Marcar la notificación como leída, pero sin esperar a que termine
+      markNotificationAsRead(notification.id, user.response.token);
 
-     setIsOpen(false);
+      setIsOpen(false);
 
-     // Redirección rápida sin esperar que se marque como leída
-     if (notification.chatId) {
-       if (user.response.user.role === 'user') {
-         router.push(`/client-chat/${notification.chatId}`);
-       } else if (user.response.user.role === 'caretaker') {
-         router.push(`/caretaker-chat/${notification.chatId}`);
-       }
-     }
+      // Redirección rápida sin esperar que se marque como leída
+      if (notification.chatId) {
+        if (user.response.user.role === 'user') {
+          router.push(`/client-chat/${notification.chatId}`);
+        } else if (user.response.user.role === 'caretaker') {
+          router.push(`/caretaker-chat/${notification.chatId}`);
+        }
+      }
 
-     // Actualización de notificaciones en segundo plano (sin bloquear la redirección)
-     fetchNotifications();
-   }
- };
-
+      // Actualización de notificaciones en segundo plano (sin bloquear la redirección)
+      fetchNotifications();
+    }
+  };
 
   if (!user?.response?.user) {
     return null;
   }
+
+  const lastFourNotifications = notifications.slice(0, 4);
 
   return (
     <div className='relative' ref={dropdownRef}>
@@ -131,7 +132,7 @@ const NotificationBell = () => {
           )}
       </button>
 
-      {isOpen && notifications.length > 0 && (
+      {isOpen && lastFourNotifications.length > 0 && (
         <div
           className='absolute right-0 mt-2 w-80 rounded-lg shadow-lg z-50'
           style={{
@@ -140,7 +141,7 @@ const NotificationBell = () => {
           }}
         >
           <div className='max-h-96 overflow-y-auto'>
-            {notifications
+            {lastFourNotifications
               .sort((a, b) => (a.isRead === b.isRead ? 0 : a.isRead ? 1 : -1))
               .map((notification) => (
                 <div
