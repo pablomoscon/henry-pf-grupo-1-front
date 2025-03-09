@@ -6,6 +6,7 @@ import { markNotificationAsRead } from '@/services/notificationServices';
 import { INotification } from '@/interfaces/INotification';
 import { FaBell } from 'react-icons/fa';
 import { io, Socket } from 'socket.io-client';
+import { API_URL } from '../../../envs';
 
 const NotificationBell = () => {
   const [notifications, setNotifications] = useState<INotification[]>([]);
@@ -20,7 +21,7 @@ const NotificationBell = () => {
   // Establish WebSocket connection for real-time notifications
   useEffect(() => {
     if (user?.response?.user?.id) {
-      socketRef.current = io('http://localhost:3000/messages/notifications');
+      socketRef.current = io(`${API_URL}/messages/notifications`);
       socketRef.current.on('connect', () => {
         console.log('Socket connected!', user.response.user.id);
         socketRef.current?.emit('join', user.response.user.id); // Join the user to their channel
