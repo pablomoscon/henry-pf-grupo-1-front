@@ -32,7 +32,10 @@ const LogCatCareComp = () => {
       if (!reservationId) return;
       setLoading(true);
       try {
-        const data = await getPosts(reservationId, token);
+        const data = await getPosts(
+          reservationId,
+          token
+        );
 
         const sortedPosts = data.sort(
           (a, b) =>
@@ -73,10 +76,14 @@ const LogCatCareComp = () => {
       sender: idUser || '',
       receiver: idReceiver || '',
       reservationId,
+      caretakerName:user?.response.user.name || ''
     };
 
     try {
-      const newPost = await registerPost(formData, token);
+      const newPost = await registerPost(
+        formData,
+        token
+      );
 
       setPosts((prevPosts) => [newPost, ...prevPosts]);
 

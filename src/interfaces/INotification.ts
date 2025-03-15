@@ -4,4 +4,5 @@ export interface INotification {
   isRead: boolean;
   createdAt: string;
   chatId?: string;
+  type?: 'post' | 'chat';
 }

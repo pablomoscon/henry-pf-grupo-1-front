@@ -77,3 +77,22 @@ export const registerPost = async (
     throw error;  // Lanza el error para que pueda ser manejado en otro nivel si es necesario
   }
 };
+
+export const markPostsAsRead = async (postIds: string[], token?: string) => {
+  try {
+    const res = await fetchWithInterceptor(`${API_URL}/messages/`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ postIds, isRead: true }),
+    });
+
+    if (!res || !res.ok) {
+      console.error("Error marking posts as read.");
+    }
+  } catch (error) {
+    console.error("Error in markPostsAsRead:", error);
+  }
+};
