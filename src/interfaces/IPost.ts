@@ -33,6 +33,7 @@ export interface IPost {
   sender: IUser;
   receivers: IUser[];
   reservation: IReservation;
+  isRead: boolean;
 }
 
 export interface IPostSend {
@@ -41,6 +42,7 @@ export interface IPostSend {
   file?: File;
   body: string;
   reservationId: string;
+  caretakerName: string;
 }
 
 /* export interface IPosRecived {

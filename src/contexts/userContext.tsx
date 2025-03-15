@@ -49,7 +49,6 @@ const UserProvider = ({ children }: { children: React.ReactNode }) => {
     setUser(localUser ? JSON.parse(localUser) : null);
     setLoading(false);
 
-    // Ahora logOut es estable y no cambia en cada render
     setLogoutHandler(logOut);
   }, [logOut]);
 

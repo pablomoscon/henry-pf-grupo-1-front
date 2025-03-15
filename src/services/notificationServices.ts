@@ -71,6 +71,8 @@ export const markNotificationAsRead = async (
       }
     );
 
+    console.log("Request body:", { isRead: true });
+
     // Verificar si la respuesta es null o no es exitosa
     if (response === null || !response.ok) {
       console.error("Failed to mark notification as read");
@@ -82,4 +84,6 @@ export const markNotificationAsRead = async (
     console.error("Error marking notification as read:", error);
     return false;
   }
-};
+  };
+
+
