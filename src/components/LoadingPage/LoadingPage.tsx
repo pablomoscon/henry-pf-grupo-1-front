@@ -38,7 +38,7 @@ const LoadingPage = () => {
     };
 
     if (!isLogged()) {
-      fetchUserData(); // Llama a la función solo si no está logueado
+      fetchUserData();
     } else {
       router.push('/profile');
     }

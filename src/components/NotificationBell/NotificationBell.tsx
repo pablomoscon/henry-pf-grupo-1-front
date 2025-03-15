@@ -21,14 +21,13 @@ const NotificationBell = () => {
   const lastMarkedRef = useRef<Set<string>>(new Set());
   const dropdownRef = useRef<HTMLDivElement | null>(null);
 
-  // Obtener notificaciones del backend al montar el componente
   const fetchNotifications = useCallback(async () => {
     if (user?.response?.user?.id && user?.response?.token) {
       const allNotifications = await getAllNotifications(
         user.response.user.id,
         user.response.token,
-        1, 
-        3 
+        1,
+        3
       );
       setNotifications(allNotifications.notifications || []);
     }
@@ -47,20 +46,30 @@ const NotificationBell = () => {
       socketRef.current.on(
         'new_notification',
         (notification: INotification) => {
-          console.log(' Nueva notificación recibida:', notification);
+          console.log('Nueva notificación recibida:', notification);
 
-         setNotifications((prevNotifications) => {
-           const alreadyExists = prevNotifications.some(
-             (notif) => notif.id === notification.id
-           );
-           if (alreadyExists) return prevNotifications;
+          // Comprobar si la notificación ya existe
+          setNotifications((prevNotifications) => {
+            const existingNotificationIndex = prevNotifications.findIndex(
+              (notif) => notif.id === notification.id
+            );
 
-           const updatedNotifications = [
-             notification,
-             ...prevNotifications,
-           ].slice(0, 3);
-           return updatedNotifications;
-         });
+            if (existingNotificationIndex !== -1) {
+              // Si ya existe, actualizarla a "unread" si está leída
+              const updatedNotifications = [...prevNotifications];
+              if (updatedNotifications[existingNotificationIndex].isRead) {
+                updatedNotifications[existingNotificationIndex] = {
+                  ...updatedNotifications[existingNotificationIndex],
+                  isRead: false, // Cambiar el estado de la notificación a "unread"
+                };
+              }
+              return updatedNotifications;
+            }
+
+            // Si no existe, agregarla al principio del array (max 3 notificaciones)
+            const updatedNotifications = [notification, ...prevNotifications];
+            return updatedNotifications.slice(0, 3);
+          });
         }
       );
 
@@ -76,45 +85,45 @@ const NotificationBell = () => {
   }, [fetchNotifications]);
 
   // Marcar notificaciones como leídas al visitar el chat
-useEffect(() => {
-  const chatPageRegex = /\/(client-chat|caretaker-chat)\/\d+/;
-  const isChatPage = chatPageRegex.test(pathname);
-  const isPostPage = pathname === '/client-feed';
+  useEffect(() => {
+    const chatPageRegex = /\/(client-chat|caretaker-chat)\/\d+/;
+    const isChatPage = chatPageRegex.test(pathname);
+    const isPostPage = pathname === '/client-feed';
 
-  console.log('🔍 Notificaciones:', notifications);
-  
-const unreadNotifications = notifications.filter(
-  (notification) =>
-    !notification.isRead &&
-    !lastMarkedRef.current.has(notification.id) &&
-    ((isChatPage && notification.type === 'chat') || // Asegurar coincidencia
-      (isPostPage && notification.type === 'post'))
-);
+    console.log('🔍 Notificaciones:', notifications);
 
-  console.log('🔍 Notificaciones a marcar como leídas:', unreadNotifications);
+    const unreadNotifications = notifications.filter(
+      (notification) =>
+        !notification.isRead &&
+        !lastMarkedRef.current.has(notification.id) &&
+        ((isChatPage && notification.type === 'chat') || // Asegurar coincidencia
+          (isPostPage && notification.type === 'post'))
+    );
 
-  if (unreadNotifications.length > 0) {
-    lastMarkedRef.current = new Set([
-      ...lastMarkedRef.current,
-      ...unreadNotifications.map((n) => n.id),
-    ]);
+    console.log('🔍 Notificaciones a marcar como leídas:', unreadNotifications);
 
-    const markAll = async () => {
-      if (user?.response?.token) {
-        console.log('✅ Marcando notificaciones como leídas...');
-        await Promise.all(
-          unreadNotifications.map((notification) =>
-            markNotificationAsRead(notification.id, user.response.token)
-          )
-        );
-        console.log('🔄 Actualizando lista de notificaciones...');
-        fetchNotifications();
-      }
-    };
+    if (unreadNotifications.length > 0) {
+      lastMarkedRef.current = new Set([
+        ...lastMarkedRef.current,
+        ...unreadNotifications.map((n) => n.id),
+      ]);
 
-    markAll();
-  }
-}, [pathname, notifications, user, fetchNotifications]);
+      const markAll = async () => {
+        if (user?.response?.token) {
+          console.log('✅ Marcando notificaciones como leídas...');
+          await Promise.all(
+            unreadNotifications.map((notification) =>
+              markNotificationAsRead(notification.id, user.response.token)
+            )
+          );
+          console.log('🔄 Actualizando lista de notificaciones...');
+          fetchNotifications(); // Solo actualizar cuando sea necesario
+        }
+      };
+
+      markAll();
+    }
+  }, [pathname, notifications, user, fetchNotifications]);
 
   // Click en una notificación → marcar como leída y redirigir
   const handleNotificationClick = async (notification: INotification) => {
@@ -128,7 +137,7 @@ const unreadNotifications = notifications.filter(
           user.response.user.role === 'user' ? 'client-chat' : 'caretaker-chat';
         router.push(`/${rolePath}/${notification.chatId}`);
       }
-      fetchNotifications(); // Asegúrate de actualizar las notificaciones después de marcar como leídas
+      fetchNotifications(); 
     }
   };
 
@@ -170,8 +179,8 @@ const unreadNotifications = notifications.filter(
             {notifications
               .sort(
                 (a, b) =>
-                  new Date(a.createdAt).getTime() -
-                  new Date(b.createdAt).getTime()
+                  new Date(b.createdAt).getTime() -
+                  new Date(a.createdAt).getTime()
               )
               .map((notification) => (
                 <div
