@@ -9,6 +9,7 @@ export const useChat = (chatId: string, user: ChatUser | null | undefined) => {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const lastChatId = useRef(chatId);
   const lastUserId = useRef(user?.id);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     // If chatId or user ID is missing, stop execution
@@ -63,6 +64,7 @@ export const useChat = (chatId: string, user: ChatUser | null | undefined) => {
         console.log("Initial messages:", data.messages);
         // Set the initial messages state
         setMessages(data.messages.map((msg: ChatMessage) => ({ ...msg })));
+        setLoading(false); 
       });
     }
 
@@ -106,5 +108,5 @@ export const useChat = (chatId: string, user: ChatUser | null | undefined) => {
     [chatId, user?.id] // Dependencies to send message only when chatId or user.id change
   );
 
-  return { messages, sendMessage, errorMessage };
+  return { messages, sendMessage, errorMessage, loading };
 };
