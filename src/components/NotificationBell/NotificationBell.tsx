@@ -14,6 +14,7 @@ import { API_URL } from '../../../envs';
 const NotificationBell = () => {
   const [notifications, setNotifications] = useState<INotification[]>([]);
   const [isOpen, setIsOpen] = useState(false);
+  const [hasNewNotification, setHasNewNotification] = useState(false);
   const { user } = useContext(UserContext);
   const router = useRouter();
   const pathname = usePathname();
@@ -33,7 +34,6 @@ const NotificationBell = () => {
     }
   }, [user]);
 
-  // Configurar WebSockets para recibir notificaciones en tiempo real
   useEffect(() => {
     if (user?.response?.user?.id) {
       socketRef.current = io(`${API_URL}/messages/notifications`);
@@ -48,28 +48,27 @@ const NotificationBell = () => {
         (notification: INotification) => {
           console.log('Nueva notificación recibida:', notification);
 
-          // Comprobar si la notificación ya existe
           setNotifications((prevNotifications) => {
             const existingNotificationIndex = prevNotifications.findIndex(
               (notif) => notif.id === notification.id
             );
 
             if (existingNotificationIndex !== -1) {
-              // Si ya existe, actualizarla a "unread" si está leída
               const updatedNotifications = [...prevNotifications];
               if (updatedNotifications[existingNotificationIndex].isRead) {
                 updatedNotifications[existingNotificationIndex] = {
                   ...updatedNotifications[existingNotificationIndex],
-                  isRead: false, // Cambiar el estado de la notificación a "unread"
+                  isRead: false,
                 };
               }
               return updatedNotifications;
             }
 
-            // Si no existe, agregarla al principio del array (max 3 notificaciones)
             const updatedNotifications = [notification, ...prevNotifications];
             return updatedNotifications.slice(0, 3);
           });
+
+          setHasNewNotification(true);
         }
       );
 
@@ -79,28 +78,22 @@ const NotificationBell = () => {
     }
   }, [user]);
 
-  // Cargar notificaciones al montar el componente
   useEffect(() => {
     fetchNotifications();
   }, [fetchNotifications]);
 
-  // Marcar notificaciones como leídas al visitar el chat
   useEffect(() => {
     const chatPageRegex = /\/(client-chat|caretaker-chat)\/\d+/;
     const isChatPage = chatPageRegex.test(pathname);
     const isPostPage = pathname === '/client-feed';
 
-    console.log('🔍 Notificaciones:', notifications);
-
     const unreadNotifications = notifications.filter(
       (notification) =>
         !notification.isRead &&
         !lastMarkedRef.current.has(notification.id) &&
-        ((isChatPage && notification.type === 'chat') || // Asegurar coincidencia
+        ((isChatPage && notification.type === 'chat') ||
           (isPostPage && notification.type === 'post'))
     );
-
-    console.log('🔍 Notificaciones a marcar como leídas:', unreadNotifications);
 
     if (unreadNotifications.length > 0) {
       lastMarkedRef.current = new Set([
@@ -110,14 +103,12 @@ const NotificationBell = () => {
 
       const markAll = async () => {
         if (user?.response?.token) {
-          console.log('✅ Marcando notificaciones como leídas...');
           await Promise.all(
             unreadNotifications.map((notification) =>
               markNotificationAsRead(notification.id, user.response.token)
             )
           );
-          console.log('🔄 Actualizando lista de notificaciones...');
-          fetchNotifications(); // Solo actualizar cuando sea necesario
+          fetchNotifications();
         }
       };
 
@@ -125,7 +116,6 @@ const NotificationBell = () => {
     }
   }, [pathname, notifications, user, fetchNotifications]);
 
-  // Click en una notificación → marcar como leída y redirigir
   const handleNotificationClick = async (notification: INotification) => {
     if (user?.response?.token) {
       await markNotificationAsRead(notification.id, user.response.token);
@@ -137,9 +127,40 @@ const NotificationBell = () => {
           user.response.user.role === 'user' ? 'client-chat' : 'caretaker-chat';
         router.push(`/${rolePath}/${notification.chatId}`);
       }
-      fetchNotifications(); 
+      fetchNotifications();
     }
   };
+
+  const toggleDropdown = () => {
+    setIsOpen(!isOpen);
+  };
+
+  // Se asegura de que el círculo rojo desaparezca al abrir el menú
+  useEffect(() => {
+    if (isOpen) {
+      setHasNewNotification(false);
+    }
+  }, [isOpen]);
+
+  // Cierra el menú si se hace clic fuera de él
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        setIsOpen(false);
+      }
+    };
+
+    if (isOpen) {
+      window.addEventListener('click', handleClickOutside);
+    }
+
+    return () => {
+      window.removeEventListener('click', handleClickOutside);
+    };
+  }, [isOpen]);
 
   if (!user?.response?.user) {
     return null;
@@ -148,7 +169,7 @@ const NotificationBell = () => {
   return (
     <div className='relative' ref={dropdownRef}>
       <button
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={toggleDropdown}
         className='relative p-2'
         style={{ color: 'var(--gold-soft)', transition: 'color 0.3s ease' }}
         onMouseEnter={(e) =>
@@ -157,12 +178,9 @@ const NotificationBell = () => {
         onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--gold-soft)')}
       >
         <FaBell className='text-xl' />
-        {notifications.some((notification) => !notification.isRead) && (
+        {hasNewNotification && (
           <span className='absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center'>
-            {
-              notifications.filter((notification) => !notification.isRead)
-                .length
-            }
+            !
           </span>
         )}
       </button>
