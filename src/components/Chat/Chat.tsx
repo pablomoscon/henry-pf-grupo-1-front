@@ -4,6 +4,7 @@ import { useContext, useState, useEffect, useRef } from 'react';
 import { ChatContext } from '@/contexts/chatContext';
 import { UserContext } from '@/contexts/userContext';
 import { useChat } from '@/hooks/useChat';
+import LoadingSpinner from '../LoadingSpinner/LoadingSpinner';
 
 const Chat = () => {
   const { user } = useContext(UserContext);
@@ -63,7 +64,7 @@ const Chat = () => {
         {/* Mostrar spinner si está cargando */}
         {loading ? (
           <div className='flex-1 flex justify-center items-center'>
-            <div className='animate-spin rounded-full h-12 w-12 border-t-4 border-gold-soft border-solid'></div>
+           <LoadingSpinner/>
           </div>
         ) : (
           <>
