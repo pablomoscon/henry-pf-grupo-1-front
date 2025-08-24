@@ -14,7 +14,7 @@
 
 ##### GitHub Pages Back: <https://github.com/courreges-do/henry-pf-grupo-1-front>
 
-##### Documentación Front: [Enlace a la documentación en PDF](./public/documentacion.pdf)
+##### Documentación Front: [Enlace a la documentación en PDF](./public/manual_usuario.pdf)
 
 > ### Herramientas utilizadas
 
